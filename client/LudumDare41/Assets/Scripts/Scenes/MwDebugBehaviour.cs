@@ -1,5 +1,6 @@
 ﻿using Network;
 using UnityEngine;
+using Utils;
 
 namespace Scenes {
 	public class MwDebugBehaviour : MonoBehaviour , IUpdateStreamSubscriber {

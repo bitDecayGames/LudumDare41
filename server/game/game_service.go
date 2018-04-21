@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/bitDecayGames/LudumDare41/server/cards"
@@ -13,6 +14,7 @@ var mutex = &sync.Mutex{}
 
 type GameService interface {
 	NewGame(*lobby.Lobby, gameboard.GameBoard, cards.CardSet) *Game
+	GetGame(string) (*Game, error)
 }
 
 type gameService struct {
@@ -41,4 +43,14 @@ func (gs *gameService) NewGame(lobby *lobby.Lobby, board gameboard.GameBoard, ca
 	mutex.Unlock()
 
 	return game
+}
+
+func (gs *gameService) GetGame(name string) (*Game, error) {
+	for _, game := range gs.activeGames {
+		if game.Name == name {
+			return game, nil
+		}
+	}
+
+	return nil, fmt.Errorf("game not found for name %s", name)
 }

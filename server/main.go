@@ -8,8 +8,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/http/httputil"
+	"strconv"
 	"strings"
 	"time"
+
+	"github.com/bitDecayGames/LudumDare41/server/state"
 
 	"github.com/bitDecayGames/LudumDare41/server/cards"
 	"github.com/bitDecayGames/LudumDare41/server/game"
@@ -21,10 +24,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// TODO Turn timeout logic
+
 const (
 	// Networking
 	port        = 8080
 	apiv1       = "/api/v1"
+	testRoute   = apiv1 + "/test"
 	pubsubRoute = apiv1 + "/pubsub"
 	lobbyRoute  = apiv1 + "/lobby"
 	gameRoute   = apiv1 + "/game"
@@ -50,8 +56,10 @@ func main() {
 
 	r := mux.NewRouter()
 	r.Use(loggingMiddleware)
-	// Test ping
-	r.HandleFunc(apiv1+"/ping", PingHandler).Methods("POST")
+	// Tests
+	r.HandleFunc(testRoute+"/ping", TestPingHandler).Methods("POST")
+	r.HandleFunc(testRoute+"/game/{gameName}", TestCreateGameHandler).Methods("POST")
+	r.HandleFunc(testRoute+"/game/{gameName}/player/{playerName}/cards", TestSubmitHandHandler).Methods("POST")
 	// PubSub
 	r.HandleFunc(pubsubRoute, PubSubHandler)
 	r.HandleFunc(pubsubRoute+"/connection/{connectionID}", UpdatePubSubConnectionHandler).Methods("PUT")
@@ -60,14 +68,9 @@ func main() {
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/join", LobbyJoinHandler).Methods("PUT")
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/players", LobbyGetPlayersHandler).Methods("GET")
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/start", LobbyStartHandler).Methods("PUT")
-	// TODO Below
 	// Game
-	// Cards are list on ints, need tick as well
-	// Trigger next round once all submitted
 	r.HandleFunc(gameRoute+"/{gameName}/tick/{tick}/player/{playerName}/cards", CardsSubmitHandler).Methods("PUT")
-	// Get current tick
 	r.HandleFunc(gameRoute+"/{gameName}/tick", GetCurrentTickHandler).Methods("GET")
-	// Game state + players cards for a tick
 	r.HandleFunc(gameRoute+"/{gameName}/tick/{tick}/player/{playerName}", GetGameStateHandler).Methods("GET")
 
 	log.Printf("Server started on %s", host)
@@ -124,7 +127,7 @@ type PingMessage struct {
 	Status string `json:"status"`
 }
 
-func PingHandler(w http.ResponseWriter, r *http.Request) {
+func TestPingHandler(w http.ResponseWriter, r *http.Request) {
 	var body pingBody
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
@@ -155,6 +158,86 @@ func PingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(pingBytes)
+}
+
+type testCreateGameReqBody struct {
+	playerNames []string `json:"playeNames"`
+}
+
+func TestCreateGameHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	gameName := vars["gameName"]
+
+	var reqBody testCreateGameReqBody
+	err := json.NewDecoder(r.Body).Decode(&reqBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	lobby, err := lobbyService.NewLobby()
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// TODO Might need a mutex lock here
+	lobby.Name = gameName
+
+	for _, playerName := range reqBody.playerNames {
+		_, err = lobby.AddPlayer(playerName)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+	}
+
+	errors := CreateGame(lobby)
+	if len(errors) > 0 {
+		for _, err := range errors {
+			log.Println(err)
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func TestSubmitHandHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	gameName := vars["gameName"]
+	playerName := vars["playerName"]
+
+	game, err := gameService.GetGame(gameName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	player, err := game.GetPlayer(playerName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// For now, always grab the first 3 cards
+	cardIds := []int{}
+	for _, card := range player.Hand[0:3] {
+		cardIds = append(cardIds, card.ID)
+	}
+
+	errors := SubmitCards(gameName, playerName, game.CurrentState.Tick, cardIds)
+	if len(errors) > 0 {
+		for _, err := range errors {
+			log.Println(err)
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func PubSubHandler(w http.ResponseWriter, r *http.Request) {
@@ -307,45 +390,176 @@ func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	errors := CreateGame(lobby)
+	if len(errors) > 0 {
+		for _, err := range errors {
+			log.Println(err)
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func CreateGame(lobby *lobby.Lobby) []error {
 	// TODO Allow different boards and card sets.
 	board := gameboard.LoadBoard("default")
 	cardSet := cards.LoadSet("default")
 	game := gameService.NewGame(lobby, board, cardSet)
 
-	if len(game.Players) < minNumPlayers {
-		err = fmt.Errorf("minimum number of %v players not met: %v", minNumPlayers, game.Players)
-		log.Println(err)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	// TODO Fix
+	// if len(game.Players) < minNumPlayers {
+	// 	err := fmt.Errorf("minimum number of %v players not met: %v", minNumPlayers, game.Players)
+	// 	return []error{err}
+	// }
 
-	if len(game.Players) > maxNumPlayers {
-		err = fmt.Errorf("maximum number of %v players exceeded: %v", maxNumPlayers, game.Players)
-		log.Println(err)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	// if len(game.Players) > maxNumPlayers {
+	// 	err := fmt.Errorf("maximum number of %v players exceeded: %v", maxNumPlayers, game.Players)
+	// 	return []error{err}
+	// }
 
 	msg := pubsub.Message{
 		MessageType: pubsub.GameUpdateMessage,
 		ID:          game.Name,
 		Tick:        game.CurrentState.Tick,
 	}
-	errors := pubSubService.SendMessage(game.Name, msg)
+	return pubSubService.SendMessage(game.Name, msg)
+}
+
+type submitCardsReqBody struct {
+	CardIds []int `json:"cardIds"`
+}
+
+func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	gameName := vars["gameName"]
+	playerName := vars["playerName"]
+	tick, err := strconv.Atoi(vars["tick"])
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var reqBody submitCardsReqBody
+	err = json.NewDecoder(r.Body).Decode(&reqBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	errors := SubmitCards(gameName, playerName, tick, reqBody.CardIds)
 	if len(errors) > 0 {
+		for _, err := range errors {
+			log.Println(err)
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 }
 
-func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
+func SubmitCards(gameName, playerName string, tick int, cardIds []int) []error {
+	game, err := gameService.GetGame(gameName)
+	if err != nil {
+		return []error{err}
+	}
+
+	err = game.SubmitCards(playerName, tick, cardIds)
+	if err != nil {
+		return []error{err}
+	}
+
+	// Check for advance to next turn
+	if game.AreSubmissionsComplete() {
+		log.Printf("Starting next turn for game %s at tick %v", game.Name, game.CurrentState.Tick)
+
+		_ = game.AggregateTurn()
+		game.ExecuteTurn()
+
+		log.Printf("Turn complete for game %s at tick %v", game.Name, game.CurrentState.Tick)
+
+		msg := pubsub.Message{
+			MessageType: pubsub.GameUpdateMessage,
+			ID:          game.Name,
+			Tick:        game.CurrentState.Tick,
+		}
+		return pubSubService.SendMessage(game.Name, msg)
+	}
+
+	return []error{}
+}
+
+type getTickResBody struct {
+	Tick int `json:"tick"`
 }
 
 func GetCurrentTickHandler(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
+	vars := mux.Vars(r)
+	gameName := vars["gameName"]
+
+	game, err := gameService.GetGame(gameName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	resBody := getTickResBody{
+		Tick: game.CurrentState.Tick,
+	}
+	err = json.NewEncoder(w).Encode(&resBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+type gameStateResBody struct {
+	PlayersHand  []cards.Card    `json:"playersHand"`
+	CurrentState state.GameState `json:"currentState"`
 }
 
 func GetGameStateHandler(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
+	vars := mux.Vars(r)
+	gameName := vars["gameName"]
+	playerName := vars["playerName"]
+	tick, err := strconv.Atoi(vars["tick"])
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	game, err := gameService.GetGame(gameName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if game.CurrentState.Tick != tick {
+		err = fmt.Errorf("tick %v does not match %v for game %s", tick, game.CurrentState.Tick, game.Name)
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	player, err := game.GetPlayer(playerName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	resBody := gameStateResBody{
+		PlayersHand:  player.Hand,
+		CurrentState: game.CurrentState,
+	}
+	err = json.NewEncoder(w).Encode(&resBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }

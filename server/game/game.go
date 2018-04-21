@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"log"
 	"sort"
 
 	"github.com/bitDecayGames/LudumDare41/server/cards"
@@ -64,19 +65,54 @@ func DealCards(inState state.GameState) state.GameState {
 	return inState
 }
 
-func (g *Game) SubmitCards(player string, playerCards []cards.Card) error {
+func (g *Game) AreSubmissionsComplete() bool {
+	numSubmissons := 0
+	for _, p := range g.Players {
+		if len(g.pendingSubmissions[p.Name]) > 0 {
+			numSubmissons++
+		}
+	}
+	log.Printf("%v/%v player submissions pending", numSubmissons, len(g.Players))
+	return numSubmissons == len(g.pendingSubmissions) &&
+		numSubmissons == len(g.Players)
+}
+
+func (g *Game) GetPlayer(name string) (*state.Player, error) {
+	for _, p := range g.Players {
+		if p.Name == name {
+			return p, nil
+		}
+	}
+
+	return nil, fmt.Errorf("player not fround with name %s", name)
+}
+
+func (g *Game) SubmitCards(playerName string, tick int, cardIds []int) error {
+	if g.CurrentState.Tick != tick {
+		return fmt.Errorf("expected tick of %v, not %v", g.CurrentState.Tick, tick)
+	}
+
 	// TODO validate these cards
-	if g.pendingSubmissions[player] != nil {
+	if g.pendingSubmissions[playerName] != nil {
 		return fmt.Errorf("Player already has a pending submission")
 	}
 
-	submission := make([]cards.Card, 0)
-
-	for _, c := range playerCards {
-		submission = append(submission, c)
+	player, err := g.GetPlayer(playerName)
+	if err != nil {
+		return err
 	}
 
-	g.pendingSubmissions[player] = submission
+	// Find cards
+	submission := []cards.Card{}
+	for _, id := range cardIds {
+		for _, card := range player.Hand {
+			if card.ID == id {
+				submission = append(submission, card)
+			}
+		}
+	}
+
+	g.pendingSubmissions[playerName] = submission
 	return nil
 }
 

@@ -55,17 +55,17 @@ public class LobbyBehaviour : MonoBehaviour, IUpdateStreamSubscriber {
 		if (messageType == "connectionStarted") {
 			Debug.Log("Saving connection id: " + json.id);
 			State.connectionId = json.id;
-			WebApi.BroadcastConnectionId(() => { }, (err, status) => {
+			StartCoroutine(WebApi.BroadcastConnectionId(() => { }, (err, status) => {
 				Debug.LogError("Failed to broadcast connection id(" + status + "): " + err);
-			});
+			}));
 		}
 		if (messageType == "playerJoin") {
 			Debug.Log("Player joined: " + json.id);
-			WebApi.RefreshCurrentLobby((l) => {
+			StartCoroutine(WebApi.RefreshCurrentLobby((l) => {
 				RefreshLobbyMembers();
 			}, (err, status) => {
 				Debug.LogError("Failed to refresh lobby id(" + status + "): " + err);
-			});
+			}));
 		}
 		// TODO: if message is something like: "RefreshLobbyMembers" then refresh
 		// TODO: if message is something like: "RequestTick0" then move to game board?
