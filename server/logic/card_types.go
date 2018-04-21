@@ -14,6 +14,8 @@ const Card_rotate_clockwise = "rotateClockwiseCard"
 const Card_rotate_counterclockwise = "rotateCounterclockwiseCard"
 const Card_rotate_180 = "rotate180Card"
 
+const Card_shoot_main_turret = "shootMainTurretCard"
+
 var CardTypeMap = map[string]cards.Card{
 	Card_move_forward_1: cards.Card{
 		ID:       -1,
@@ -44,5 +46,10 @@ var CardTypeMap = map[string]cards.Card{
 	Card_rotate_180: cards.Card{
 		ID:       -1,
 		CardType: Card_rotate_180,
+	},
+
+	Card_shoot_main_turret: cards.Card{
+		ID:       -1,
+		CardType: Card_shoot_main_turret,
 	},
 }
