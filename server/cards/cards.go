@@ -9,6 +9,7 @@ type Card struct {
 	ID       int
 	Priority int
 	Owner    string
+	CardType string
 }
 
 // CardSet is an instance of a set of cards
@@ -20,6 +21,10 @@ func LoadSet(name string) CardSet {
 	return CardSet{
 		Cards: []Card{
 			Card{ID: 1},
+			Card{ID: 2},
+			Card{ID: 3},
+			Card{ID: 4},
+			Card{ID: 5},
 		},
 	}
 }
@@ -36,4 +41,14 @@ func NewDeckFromSet(cardSet CardSet, playerCount int, playerNumber int) []Card {
 	}
 
 	return deck
+}
+
+func ShuffleCards(inCards []Card) []Card {
+	shuffled := make([]Card, len(inCards))
+	perm := rand.Perm(len(inCards))
+	for i, randIndex := range perm {
+		shuffled[i] = inCards[randIndex]
+	}
+
+	return shuffled
 }

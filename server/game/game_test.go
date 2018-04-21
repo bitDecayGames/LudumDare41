@@ -39,9 +39,7 @@ func TestGameCreation(t *testing.T) {
 func TestCardSubmission(t *testing.T) {
 	g := GetTestGame()
 
-	g.DealCards()
-
-	for _, player := range g.Players {
+	for _, player := range g.CurrentState.Players {
 		if len(player.Hand) != HAND_SIZE {
 			t.Fatal("Player was not dealt correct hand size")
 		}
