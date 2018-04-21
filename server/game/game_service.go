@@ -10,11 +10,19 @@ type GameService interface {
 	NewGame(*lobby.Lobby, gameboard.GameBoard, cards.CardSet) *Game
 }
 
+type Vector struct {
+	X int
+	Y int
+}
+
 type Player struct {
 	Name    string
 	Deck    []cards.Card
 	Discard []cards.Card
 	Hand    []cards.Card
+
+	Pos    Vector
+	Facing Vector
 }
 
 type gameService struct {

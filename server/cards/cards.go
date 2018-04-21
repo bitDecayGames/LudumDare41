@@ -8,6 +8,7 @@ import (
 type Card struct {
 	ID       int
 	Priority int
+	Owner    string
 }
 
 // CardSet is an instance of a set of cards

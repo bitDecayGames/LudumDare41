@@ -15,14 +15,14 @@ type Game struct {
 	Board   gameboard.GameBoard
 	CardSet cards.CardSet
 
-	pendingSubmissions map[string][]cards.Card
+	pendingSubmissions map[string][]cards.Card // Player submissions
+	pendingSequence    []cards.Card            // Ordered list of all player cards
 }
 
 func newGame(players map[string]*Player, board gameboard.GameBoard, cardSet cards.CardSet) *Game {
 
 	playerNum := 1
 	for _, player := range players {
-		// TODO: Still need to ensure unique priority across ALL players' cards
 		player.Deck = cards.NewDeckFromSet(cardSet, len(players), playerNum)
 		playerNum += 1
 	}
@@ -40,19 +40,25 @@ func (g *Game) DealCards() {
 	for _, player := range g.Players {
 		for len(player.Hand) < HAND_SIZE {
 			// TODO: Actually pull cards from the player deck. Shuffle cards if needed
-			player.Hand = append(player.Hand, cards.Card{ID: 1, Priority: priority})
+			player.Hand = append(player.Hand, cards.Card{ID: 1, Priority: priority, Owner: player.Name})
 			priority += 1
 		}
 	}
 }
 
-func (g *Game) SubmitCards(player string, cards []cards.Card) error {
+func (g *Game) SubmitCards(player string, playerCards []cards.Card) error {
 	// TODO validate these cards
 	if g.pendingSubmissions[player] != nil {
 		return fmt.Errorf("Player already has a pending submission")
 	}
 
-	g.pendingSubmissions[player] = cards
+	submission := make([]cards.Card, 0)
+
+	for _, c := range playerCards {
+		submission = append(submission, c)
+	}
+
+	g.pendingSubmissions[player] = submission
 	return nil
 }
 
@@ -64,5 +70,20 @@ func (g *Game) AggregateTurn() []cards.Card {
 	g.pendingSubmissions = make(map[string][]cards.Card)
 
 	sort.Slice(cardOrder, func(i, j int) bool { return cardOrder[i].Priority > cardOrder[j].Priority })
+	g.pendingSequence = cardOrder
 	return cardOrder
+}
+
+func (g *Game) ExecuteTurn() {
+	// This should carry out the full step sequence (cards) and calculate all actions that fall out
+
+	// 1. Get starting state
+	// gameBytes, _ := json.Marshal(g)
+	// 2. Execute all cards
+	for _, c := range g.pendingSequence {
+		// TODO: Game logic here
+		fmt.Println(fmt.Sprintf("%+v", c))
+	}
+
+	// 3. Save ending state so we can tell players about it
 }

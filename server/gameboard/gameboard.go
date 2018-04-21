@@ -1,7 +1,11 @@
 package gameboard
 
+const empty_tile = "empty"
+const wall_tile = "wall"
+
 type Tile struct {
-	Passable bool
+	ID       int
+	TileType string `json:"tileType"`
 }
 
 type GameBoard struct {
@@ -12,8 +16,8 @@ func LoadBoard(name string) GameBoard {
 	// TODO: Load this from file / config
 	return GameBoard{
 		tiles: [][]Tile{
-			{Tile{Passable: true}},
-			{Tile{Passable: true}},
+			{Tile{TileType: empty_tile}},
+			{Tile{TileType: empty_tile}},
 		},
 	}
 }
