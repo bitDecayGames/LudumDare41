@@ -9,12 +9,12 @@ import (
 	"github.com/bitDecayGames/LudumDare41/server/lobby"
 )
 
-func GetTestGame() *Game {
+func GetTestGame() (*Game, error) {
 	gameService := NewGameService()
 
 	lobby, err := lobby.NewLobbyService().NewLobby()
 	if err != nil {
-		t.Fatal(err)
+		return nil, err
 	}
 
 	lobby.AddPlayer("1")
@@ -22,7 +22,7 @@ func GetTestGame() *Game {
 	board := gameboard.LoadBoard("default")
 	cardSet := cards.LoadSet("default")
 	game := gameService.NewGame(lobby, board, cardSet)
-	return game
+	return game, nil
 }
 
 func TestGameCreation(t *testing.T) {
@@ -45,7 +45,10 @@ func TestGameCreation(t *testing.T) {
 }
 
 func TestCardSubmission(t *testing.T) {
-	g := GetTestGame()
+	g, err := GetTestGame()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	g.DealCards()
 

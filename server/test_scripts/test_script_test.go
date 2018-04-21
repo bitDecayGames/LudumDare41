@@ -14,7 +14,10 @@ import (
 
 func TestFullRun(t *testing.T) {
 	lobbyServer := lobby.NewLobbyService()
-	lobby := lobbyServer.NewLobby()
+	lobby, err := lobbyServer.NewLobby()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	lobby.AddPlayer("Logan")
 	lobby.AddPlayer("Jake")
