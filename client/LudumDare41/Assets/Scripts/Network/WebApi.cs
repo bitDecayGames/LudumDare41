@@ -48,6 +48,18 @@ namespace Network {
         #endregion
 
         /// <summary>
+        /// Just a quick ping to the server to see if it is online
+        /// </summary>
+        /// <param name="success">status 200</param>
+        /// <param name="failure"></param>
+        public static IEnumerator Ping(Action success, Action<string, int> failure) {
+            return httpGet(new MyRequest()
+                .Url(host + "/ping")
+                .Success(body => success())
+                .Failure(failure));
+        }
+        
+        /// <summary>
         /// Request a new lobby instance from the server
         /// </summary>
         /// <param name="success">the lobby code to join</param>
