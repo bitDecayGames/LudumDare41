@@ -41,6 +41,43 @@ func TestApplyingCardMoveForward(t *testing.T) {
 	}
 }
 
+func TestApplyingCardMoveForwardPartialBlock(t *testing.T) {
+	testCard := CardTypeMap[Card_move_forward_3]
+	testCard.Owner = "player1"
+	testPlayer := state.Player{
+		Name:    "player1",
+		Discard: make([]cards.Card, 0),
+		Hand:    []cards.Card{testCard},
+		Pos:     utils.Vector{X: 0, Y: 0},
+		Facing:  utils.Vector{X: 0, Y: 1},
+	}
+	gs := state.GameState{
+		Players: []state.Player{testPlayer},
+		Board: gameboard.GameBoard{
+			Tiles: [][]gameboard.Tile{
+				[]gameboard.Tile{
+					gameboard.Tile{TileType: gameboard.Empty_tile},
+					gameboard.Tile{TileType: gameboard.Empty_tile},
+					gameboard.Tile{TileType: gameboard.Empty_tile},
+				},
+			},
+		},
+	}
+
+	seq, newState := ApplyCard(testCard, gs)
+	if len(newState.Players[0].Hand) != 0 {
+		t.Fatal("Card was not discarded after use")
+	}
+
+	if len(seq.steps) != 2 {
+		t.Fatalf("Sequence not proper: %v", seq)
+	}
+
+	if !(newState.Players[0].Pos.X == 0 && newState.Players[0].Pos.Y == 2) {
+		t.Fatal("Player was not properly moved forward")
+	}
+}
+
 func TestApplyingCardMoveBackward(t *testing.T) {
 	testCard := CardTypeMap[Card_move_backward_1]
 	testCard.Owner = "player1"
