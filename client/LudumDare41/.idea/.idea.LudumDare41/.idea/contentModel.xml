@@ -5,7 +5,26 @@
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets/Scripts" t="Include">
         <e p="Model" t="Include">
+          <e p="Action" t="Include">
+            <e p="Abstract" t="Include">
+              <e p="IAction.cs" t="Include" />
+              <e p="IMove.cs" t="Include" />
+              <e p="IRotate.cs" t="Include" />
+              <e p="IShoot.cs" t="Include" />
+            </e>
+            <e p="DirectFire.cs" t="Include" />
+            <e p="MoveBackward.cs" t="Include" />
+            <e p="MoveForward.cs" t="Include" />
+            <e p="RotateClockwise.cs" t="Include" />
+            <e p="RotateCounterClockwise.cs" t="Include" />
+          </e>
+          <e p="Card.cs" t="Include" />
+          <e p="GameBoard.cs" t="Include" />
           <e p="GameState.cs" t="Include" />
+          <e p="Player.cs" t="Include" />
+          <e p="ProcessedTurn.cs" t="Include" />
+          <e p="Step.cs" t="Include" />
+          <e p="Tile.cs" t="Include" />
         </e>
       </e>
       <e p="Library" t="ExcludeRecursive" />
@@ -16,6 +35,6 @@
         <e p="bin" t="ExcludeRecursive" />
       </e>
     </e>
-    <e p="$USER_HOME$/Library/Caches/Rider2018.1/resharper-host/local/Transient/ReSharperHost/v12/SolutionCaches/_LudumDare41.567851703.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/Rider2018.1/resharper-host/local/Transient/ReSharperHost/v12/SolutionCaches/_LudumDare41.-860981756.00" t="ExcludeRecursive" />
   </component>
 </project>

@@ -53,7 +53,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Model\Action\Abstract\IAction.cs" />
+    <Compile Include="Assets\Scripts\Model\Action\Abstract\IMove.cs" />
+    <Compile Include="Assets\Scripts\Model\Action\Abstract\IRotate.cs" />
+    <Compile Include="Assets\Scripts\Model\Action\Abstract\IShoot.cs" />
+    <Compile Include="Assets\Scripts\Model\Action\DirectFire.cs" />
+    <Compile Include="Assets\Scripts\Model\Action\MoveBackward.cs" />
+    <Compile Include="Assets\Scripts\Model\Action\MoveForward.cs" />
+    <Compile Include="Assets\Scripts\Model\Action\RotateClockwise.cs" />
+    <Compile Include="Assets\Scripts\Model\Action\RotateCounterClockwise.cs" />
+    <Compile Include="Assets\Scripts\Model\Card.cs" />
+    <Compile Include="Assets\Scripts\Model\GameBoard.cs" />
     <Compile Include="Assets\Scripts\Model\GameState.cs" />
+    <Compile Include="Assets\Scripts\Model\Player.cs" />
+    <Compile Include="Assets\Scripts\Model\ProcessedTurn.cs" />
+    <Compile Include="Assets\Scripts\Model\Step.cs" />
+    <Compile Include="Assets\Scripts\Model\Tile.cs" />
     <Reference Include="UnityEngine.UI">
       <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -126,6 +141,9 @@
     <Reference Include="UnityEditor.OSXStandalone.Extensions">
       <HintPath>/Applications/Unity/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Rider.Unity.Editor.Plugin.Repacked">
+      <HintPath>/Users/mwingfield/Documents/LudumDare41/client/LudumDare41/Assets/Plugins/Editor/JetBrains/JetBrains.Rider.Unity.Editor.Plugin.Repacked.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.Advertisements">
       <HintPath>/Users/mwingfield/Library/Unity/cache/packages/packages.unity.com/com.unity.ads@2.0.3/UnityEngine.Advertisements.dll</HintPath>
     </Reference>
@@ -146,9 +164,6 @@
     </Reference>
     <Reference Include="UnityEngine.StandardEvents">
       <HintPath>/Users/mwingfield/Library/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.10/UnityEngine.StandardEvents.dll</HintPath>
-    </Reference>
-    <Reference Include="JetBrains.Rider.Unity.Editor.Plugin.Repacked">
-      <HintPath>/Users/mwingfield/Documents/LudumDare41/Assets/Plugins/Editor/JetBrains/JetBrains.Rider.Unity.Editor.Plugin.Repacked.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
