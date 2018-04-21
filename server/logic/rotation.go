@@ -2,7 +2,7 @@ package logic
 
 import "github.com/bitDecayGames/LudumDare41/server/state"
 
-func rotate(player *state.Player, degrees int, stepSeq *StepSequence, g state.GameState) (*StepSequence, state.GameState) {
+func rotate(player *state.Player, degrees int, stepSeq []Step, g state.GameState) ([]Step, state.GameState) {
 	var newX int
 	var newY int
 
@@ -22,11 +22,11 @@ func rotate(player *state.Player, degrees int, stepSeq *StepSequence, g state.Ga
 	player.Facing.Y = newY
 
 	step := Step{
-		actions: []Action{
+		Actions: []Action{
 			DegreesToRotateAction(degrees, player.Name),
 		},
 	}
-	stepSeq.steps = append(stepSeq.steps, step)
+	stepSeq = append(stepSeq, step)
 
 	return stepSeq, g
 }
