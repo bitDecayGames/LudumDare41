@@ -1,67 +1,71 @@
 package main
 
 import (
-	"github.com/bitDecayGames/LudumDare41/server/lobby"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/bitDecayGames/LudumDare41/server/pubsub"
+	"github.com/gorilla/mux"
 )
 
 const (
-	jacque = "Jacque"
-	monday = "Monday"
+	port = 8080
 )
 
+var pubSubService pubsub.PubSubService
+
 func main() {
-	// create 2 player game
-	lobbyService := lobby.NewLobbyService()
-	lobby := lobbyService.NewLobby()
+	host := fmt.Sprintf(":%v", port)
+	log.Printf("Starting server on %s ...", host)
 
-	lobby.AddPlayer(jacque)
-	lobby.AddPlayer(monday)
+	pubSubService = pubsub.NewPubSubService()
 
-	// deck := deck.LoadDeck("default")
+	r := mux.NewRouter()
+	r.HandleFunc("/api/v1/ping", PingHandler).Methods("POST")
+	r.HandleFunc("/api/v1/pubsub", PubSubHandler)
 
-	// map := map.LoadMap("testLevel")
-	// gameInstance := game.NewGame(lobby, map, deck)
+	log.Printf("Server started on %s", host)
 
-	// gameInstance.Start()
-
-	// gameInstance.DealCards()
-	// gameInstance.SendUpdates() // This sends SanitizedGameStates to each player to set initial state
-
-	// gameInstance.SubmitCards(jacque, cards)
-	// gameInstance.SubmitCards(monday, cards)
-
-	// gameInstance.PrioritizeCards()
-
-	// gameInstance.ResolveCards()
-
-	// if gameInstance.GameOver() {
-	// 	os.Exit(1)
-	// }
-
-	// gameInstance.DealCards()
-	// gameInstance.SendUpdates()
+	http.ListenAndServe(host, r)
 }
 
-// GameState is a fully encompassing snapshot of the state of the game
-type GameState struct {
+type PingMessage struct {
+	Status string `json:"status"`
 }
 
-// SanitizedGameState is a copy of the game state tailored to a single player. It only contains information pertinent to that player
-type SanitizedGameState struct {
+func PingHandler(w http.ResponseWriter, r *http.Request) {
+	msg := pubsub.Message{
+		Type: "ping",
+	}
+
+	err := pubSubService.SendMessage(msg)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	pingMsg := PingMessage{
+		Status: "ok",
+	}
+
+	pingBytes, err := json.Marshal(pingMsg)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(pingBytes)
+
+	log.Println("Ping")
 }
 
-// TurnSubmission represents a given player's card choices for the given turn
-type TurnSubmission struct {
-	PlayerID int
-	Tick     int
-	Cards    []Card
-}
-
-// TickUpdate is a data update intended to be sent to the client that contains all needed information on the start state and end state of a given game tick
-type TickUpdate struct {
-	Tick       int
-	PlayerID   int
-	StartState GameState
-	EndState   GameState
-	// Sequences
+func PubSubHandler(w http.ResponseWriter, r *http.Request) {
+	err := pubSubService.AddSubscription(w, r)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	log.Println("Added pubsub subscription")
 }
