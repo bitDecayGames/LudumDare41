@@ -65,6 +65,7 @@ func PubSubHandler(w http.ResponseWriter, r *http.Request) {
 	err := pubSubService.AddSubscription(w, r)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 	log.Println("Added pubsub subscription")
 }

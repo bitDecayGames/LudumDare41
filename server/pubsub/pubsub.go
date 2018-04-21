@@ -12,7 +12,12 @@ type Message struct {
 	Type string `json:"type"`
 }
 
-var upgrader = websocket.Upgrader{}
+var upgrader = websocket.Upgrader{
+	// TODO Remove to prevent cross origin requests
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
 
 type PubSubService interface {
 	AddSubscription(http.ResponseWriter, *http.Request) error
