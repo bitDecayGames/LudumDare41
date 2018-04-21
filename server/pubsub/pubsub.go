@@ -5,8 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/websocket"
 	"github.com/satori/go.uuid"
+
+	"github.com/gorilla/websocket"
 )
 
 type Message struct {
@@ -27,7 +28,7 @@ type PubSubService interface {
 }
 
 type pubSubService struct {
-	subscriptions []subscription
+	subscriptions []*subscription
 }
 
 type subscription struct {
@@ -47,7 +48,7 @@ func (ps *pubSubService) AddSubscription(w http.ResponseWriter, r *http.Request)
 		return "", err
 	}
 
-	sub := subscription{
+	sub := &subscription{
 		connectionID: uuid.NewV4().String(),
 		conn:         conn,
 	}
@@ -58,13 +59,11 @@ func (ps *pubSubService) AddSubscription(w http.ResponseWriter, r *http.Request)
 		ConnectionID: sub.connectionID,
 	}
 
-	log.Printf("%+v", body)
-
 	return sub.connectionID, conn.WriteJSON(body)
 }
 
 func (ps *pubSubService) UpdateSubscription(connectionID, gameName, playerName string) error {
-	var curSub subscription
+	var curSub *subscription
 	for _, sub := range ps.subscriptions {
 		if sub.connectionID == connectionID {
 			curSub = sub
@@ -72,7 +71,7 @@ func (ps *pubSubService) UpdateSubscription(connectionID, gameName, playerName s
 		}
 	}
 
-	if curSub.connectionID == "" {
+	if curSub == nil {
 		return fmt.Errorf("subscription not found for connectionID %s", connectionID)
 	}
 
@@ -99,6 +98,6 @@ func (ps *pubSubService) SendMessage(gameName string, msg Message) []error {
 
 func NewPubSubService() PubSubService {
 	return &pubSubService{
-		subscriptions: []subscription{},
+		subscriptions: []*subscription{},
 	}
 }

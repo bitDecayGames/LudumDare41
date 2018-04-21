@@ -71,14 +71,14 @@ func PubSubHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Added new pubsub subscription with connectionID %s", connectionID)
 }
 
-type UpdateSubBody struct {
-	gameName   string
-	playerName string
+type updateSubBody struct {
+	GameName   string `json:"gameName"`
+	PlayerName string `json:"playerName"`
 }
 
 func UpdatePubSubConnectionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	var body UpdateSubBody
+	var body updateSubBody
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		log.Println(err)
@@ -88,7 +88,7 @@ func UpdatePubSubConnectionHandler(w http.ResponseWriter, r *http.Request) {
 
 	connectionID := vars["connectionID"]
 
-	err = pubSubService.UpdateSubscription(connectionID, body.gameName, body.playerName)
+	err = pubSubService.UpdateSubscription(connectionID, body.GameName, body.PlayerName)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
