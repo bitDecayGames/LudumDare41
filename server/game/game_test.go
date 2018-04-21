@@ -14,15 +14,11 @@ func TestGameCreation(t *testing.T) {
 	lobby := lobby.NewLobbyService().NewLobby()
 	lobby.AddPlayer("1")
 	lobby.AddPlayer("2")
-	board := gameboard.NewBoard("default")
+	board := gameboard.LoadBoard("default")
 	cardSet := cards.LoadSet("default")
 	game := gameService.NewGame(lobby, board, cardSet)
 
 	if len(game.Players) != 2 {
 		t.Error("Lobby players did not carry over into game")
-	}
-
-	if game.Board == nil {
-		t.Error("Game board is nil")
 	}
 }

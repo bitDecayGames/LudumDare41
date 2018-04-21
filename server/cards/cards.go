@@ -5,13 +5,13 @@ type Card struct {
 	ID int
 }
 
-// Deck is an instance of a set of cards
-type Deck struct {
+// CardSet is an instance of a set of cards
+type CardSet struct {
 	Cards []Card
 }
 
-func LoadSet(name string) Deck {
-	return Deck{
+func LoadSet(name string) CardSet {
+	return CardSet{
 		Cards: []Card{
 			Card{ID: 1},
 		},
