@@ -1,36 +1,43 @@
 package main
 
+import "github.com/bitDecayGames/LudumDare41/server/lobby"
+
+const (
+	jacque = "Jacque"
+	monday = "Monday"
+)
+
 func main() {
 	// create 2 player game
+	lobbyService := lobby.NewLobbyService()
+	lobby := lobbyService.NewLobby()
 
-	lobby := game.NewLobby()
+	lobby.AddPlayer(jacque)
+	lobby.AddPlayer(monday)
 
-	lobby.addPlayer("Jacque")
-	lobby.addPlayer("Monday")
+	// deck := deck.LoadDeck("default")
 
-	deck := deck.LoadDeck("default")
+	// map := map.LoadMap("testLevel")
+	// gameInstance := game.NewGame(lobby, map, deck)
 
-	map := map.LoadMap("testLevel")
-	gameInstance := game.NewGame(lobby, map, deck)
+	// gameInstance.Start()
 
-	gameInstance.Start()
+	// gameInstance.DealCards()
+	// gameInstance.SendUpdates() // This sends SanitizedGameStates to each player to set initial state
 
-	gameInstance.DealCards()
-	gameInstance.SendUpdates() // This sends SanitizedGameStates to each player to set initial state
+	// gameInstance.SubmitCards(jacque, cards)
+	// gameInstance.SubmitCards(monday, cards)
 
-	gameInstance.SubmitCards("Jacque", cards)
-	gameInstance.SubmitCards("Monday", cards)
+	// gameInstance.PrioritizeCards()
 
-	gameInstance.PrioritizeCards()
+	// gameInstance.ResolveCards()
 
-	gameInstance.ResolveCards()
+	// if gameInstance.GameOver() {
+	// 	os.Exit(1)
+	// }
 
-	if gameInstance.GameOver() {
-		os.Exit(1)
-	}
-
-	gameInstance.DealCards()
-	gameInstance.SendUpdates()
+	// gameInstance.DealCards()
+	// gameInstance.SendUpdates()
 }
 
 // Card represents a single unique playing card
