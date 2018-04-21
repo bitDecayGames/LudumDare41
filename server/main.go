@@ -25,6 +25,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/api/v1/ping", PingHandler).Methods("POST")
 	r.HandleFunc("/api/v1/pubsub", PubSubHandler)
+	r.HandleFunc("/api/v1/pubsub/connection/{connectionID}", UpdatePubSubConnectionHandler).Methods("PUT")
 
 	log.Printf("Server started on %s", host)
 
@@ -40,8 +41,8 @@ func PingHandler(w http.ResponseWriter, r *http.Request) {
 		Type: "ping",
 	}
 
-	err := pubSubService.SendMessage(msg)
-	if err != nil {
+	errors := pubSubService.SendMessage("test", msg)
+	if len(errors) > 0 {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -62,10 +63,35 @@ func PingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func PubSubHandler(w http.ResponseWriter, r *http.Request) {
-	err := pubSubService.AddSubscription(w, r)
+	connectionID, err := pubSubService.AddSubscription(w, r)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	log.Println("Added pubsub subscription")
+	log.Printf("Added new pubsub subscription with connectionID %s", connectionID)
+}
+
+type updateSubBody struct {
+	GameName   string `json:"gameName"`
+	PlayerName string `json:"playerName"`
+}
+
+func UpdatePubSubConnectionHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	var body updateSubBody
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	connectionID := vars["connectionID"]
+
+	err = pubSubService.UpdateSubscription(connectionID, body.GameName, body.PlayerName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 }

@@ -2,11 +2,13 @@
 using UnityEngine;
 
 namespace Scenes {
-	public class MwDebugBehaviour : MonoBehaviour {
+	public class MwDebugBehaviour : MonoBehaviour , IUpdateStreamSubscriber {
 
 		// Use this for initialization
 		void Start () {
-			
+			var updater = GetComponent<UpdateStream>();
+			updater.StartListening();
+			updater.Subscribe(this);
 		}
 	
 		// Update is called once per frame
@@ -21,6 +23,12 @@ namespace Scenes {
 			}, (msg, status) => {
 				Debug.Log("Error response(" + status + "): " + msg);
 			}));
+			
+			GetComponent<UpdateStream>().Send("Hello ping");
+		}
+
+		public void receiveUpdateStreamMessage(string message) {
+			Debug.Log("Successfully subscribed and got message: " + message);
 		}
 	}
 }

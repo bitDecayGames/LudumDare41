@@ -21,6 +21,8 @@ namespace Network {
         public static ProcessedTurn processedTurn = null;
         public static int currentTick = 0;
 
+        private WebApi() { }
+
         #region REST Examples
 
         /* GET JSON 
@@ -53,8 +55,9 @@ namespace Network {
         /// <param name="success">status 200</param>
         /// <param name="failure"></param>
         public static IEnumerator Ping(Action success, Action<string, int> failure) {
-            return httpGet(new MyRequest()
-                .Url(host + "/ping")
+            return httpPost(new MyRequest()
+                .Url(host + "/api/v1/ping")
+                .Body(" ")
                 .Success(body => success())
                 .Failure(failure));
         }
