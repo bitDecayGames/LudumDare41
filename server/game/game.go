@@ -94,12 +94,11 @@ func (g *Game) ExecuteTurn() {
 	// This should carry out the full step sequence (cards) and calculate all actions that fall out
 
 	// 1. Get starting state
-	// g.currentState
+	startState := g.CurrentState
 	// 2. Execute all cards
 	intermState := g.CurrentState
 	stepSequence := make([]logic.StepSequence, 0)
 	for _, c := range g.pendingSequence {
-		// TODO: Game logic here
 		fmt.Println(fmt.Sprintf("%+v", c))
 		seq, newState := logic.ApplyCard(c, intermState)
 		stepSequence = append(stepSequence, seq)
@@ -107,6 +106,9 @@ func (g *Game) ExecuteTurn() {
 	}
 
 	intermState = DealCards(intermState)
-	// 3. Save ending state so we can tell players about it
+	// 3. Update clients with these things:
+	fmt.Println(startState)
+	fmt.Println(stepSequence)
+	intermState.Tick += 1
 	g.CurrentState = intermState
 }
