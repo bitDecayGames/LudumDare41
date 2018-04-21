@@ -2,7 +2,8 @@ package cards
 
 // Card represents a single unique playing card
 type Card struct {
-	ID int
+	ID       int
+	Priority int
 }
 
 // CardSet is an instance of a set of cards
