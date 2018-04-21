@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/satori/go.uuid"
 
@@ -20,6 +21,8 @@ var upgrader = websocket.Upgrader{
 		return true
 	},
 }
+
+var mutex = &sync.Mutex{}
 
 type PubSubService interface {
 	AddSubscription(http.ResponseWriter, *http.Request) (string, error)
@@ -53,7 +56,9 @@ func (ps *pubSubService) AddSubscription(w http.ResponseWriter, r *http.Request)
 		conn:         conn,
 	}
 
+	mutex.Lock()
 	ps.subscriptions = append(ps.subscriptions, sub)
+	mutex.Unlock()
 
 	body := connectionBody{
 		ConnectionID: sub.connectionID,
@@ -75,8 +80,10 @@ func (ps *pubSubService) UpdateSubscription(connectionID, gameName, playerName s
 		return fmt.Errorf("subscription not found for connectionID %s", connectionID)
 	}
 
+	mutex.Lock()
 	curSub.gameName = gameName
 	curSub.playerName = playerName
+	mutex.Unlock()
 
 	return nil
 }
