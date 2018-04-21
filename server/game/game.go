@@ -13,14 +13,24 @@ const HAND_SIZE = 5
 type Game struct {
 	Players map[string]*Player
 	Board   gameboard.GameBoard
+	CardSet cards.CardSet
 
 	pendingSubmissions map[string][]cards.Card
 }
 
-func newGame(players map[string]*Player, board gameboard.GameBoard) *Game {
+func newGame(players map[string]*Player, board gameboard.GameBoard, cardSet cards.CardSet) *Game {
+
+	playerNum := 1
+	for _, player := range players {
+		// TODO: Still need to ensure unique priority across ALL players' cards
+		player.Deck = cards.NewDeckFromSet(cardSet, len(players), playerNum)
+		playerNum += 1
+	}
+
 	return &Game{
 		Players:            players,
 		Board:              board,
+		CardSet:            cardSet,
 		pendingSubmissions: make(map[string][]cards.Card),
 	}
 }

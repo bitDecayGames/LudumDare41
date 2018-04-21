@@ -36,7 +36,15 @@ func TestFullRun(t *testing.T) {
 			t.Fatal("Player was not dealt correct hand size")
 		}
 		fmt.Println(fmt.Sprintf("Player %v cards: %v", player.Name, player.Hand))
-		g.SubmitCards(player.Name, player.Hand[0:3])
+		err := g.SubmitCards(player.Name, player.Hand[0:3])
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		err = g.SubmitCards(player.Name, player.Hand[0:3])
+		if err == nil {
+			t.Fatal("Duplicate submission allowed")
+		}
 	}
 
 	turnCards := g.AggregateTurn()

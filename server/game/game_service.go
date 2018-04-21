@@ -11,8 +11,10 @@ type GameService interface {
 }
 
 type Player struct {
-	Name string
-	Hand []cards.Card
+	Name    string
+	Deck    []cards.Card
+	Discard []cards.Card
+	Hand    []cards.Card
 }
 
 type gameService struct {
@@ -31,5 +33,5 @@ func (gs *gameService) NewGame(lobby *lobby.Lobby, board gameboard.GameBoard, ca
 			Hand: make([]cards.Card, 0),
 		}
 	}
-	return newGame(players, board)
+	return newGame(players, board, cardSet)
 }
