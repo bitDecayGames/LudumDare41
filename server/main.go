@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -30,6 +31,10 @@ func main() {
 	http.ListenAndServe(host, r)
 }
 
+type PingMessage struct {
+	Status string `json:"status"`
+}
+
 func PingHandler(w http.ResponseWriter, r *http.Request) {
 	msg := pubsub.Message{
 		Type: "ping",
@@ -41,7 +46,18 @@ func PingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	pingMsg := PingMessage{
+		Status: "ok",
+	}
+
+	pingBytes, err := json.Marshal(pingMsg)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(pingBytes)
+
 	log.Println("Ping")
 }
 
