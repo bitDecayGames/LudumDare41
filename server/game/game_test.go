@@ -11,7 +11,11 @@ import (
 func TestGameCreation(t *testing.T) {
 	gameService := NewGameService()
 
-	lobby := lobby.NewLobbyService().NewLobby()
+	lobby, err := lobby.NewLobbyService().NewLobby()
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	lobby.AddPlayer("1")
 	lobby.AddPlayer("2")
 	board := gameboard.LoadBoard("default")

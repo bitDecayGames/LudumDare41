@@ -4,14 +4,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/bitDecayGames/LudumDare41/server/pubsub"
 	"github.com/gorilla/mux"
 )
 
 const (
-	port = 8080
+	port       = 8080
+	apiv1      = "/api/v1"
+	lobbyRoute = apiv1 + "/lobby"
 )
 
 var pubSubService pubsub.PubSubService
@@ -20,12 +24,20 @@ func main() {
 	host := fmt.Sprintf(":%v", port)
 	log.Printf("Starting server on %s ...", host)
 
+	rand.Seed(time.Now().UnixNano())
+
 	pubSubService = pubsub.NewPubSubService()
 
 	r := mux.NewRouter()
-	r.HandleFunc("/api/v1/ping", PingHandler).Methods("POST")
-	r.HandleFunc("/api/v1/pubsub", PubSubHandler)
-	r.HandleFunc("/api/v1/pubsub/connection/{connectionID}", UpdatePubSubConnectionHandler).Methods("PUT")
+	// Test ping
+	r.HandleFunc(apiv1+"/ping", PingHandler).Methods("POST")
+	// PubSub
+	r.HandleFunc(apiv1+"/pubsub", PubSubHandler)
+	r.HandleFunc(apiv1+"/pubsub/connection/{connectionID}", UpdatePubSubConnectionHandler).Methods("PUT")
+	// Lobby
+	// r.HandleFunc(lobbyRoute, LobbyCreateHandler).Methods("POST")
+	// r.HandleFunc(lobbyRoute+"{lobbyName}/join", LobbyJoinHandler).Methods("POST")
+	// r.HandleFunc(lobbyRoute+"{lobbyName}/start", LobbyStartHandler).Methods("PUT")
 
 	log.Printf("Server started on %s", host)
 
@@ -95,3 +107,19 @@ func UpdatePubSubConnectionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// func LobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
+
+// }
+
+// type joinLobbyBody struct {
+// 	PlayerName string `json:"playerName"`
+// }
+
+// func LobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+// }
+
+// func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+// }
