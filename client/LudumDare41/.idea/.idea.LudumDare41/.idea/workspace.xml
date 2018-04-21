@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="08405251-fa16-4e53-a56d-cb7a0b377451" name="Default" comment="" />
+    <list default="true" id="08405251-fa16-4e53-a56d-cb7a0b377451" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.LudumDare41/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LudumDare41/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -10,7 +12,21 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="Player.cs" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Model/Player.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="4" column="28" lean-forward="true" selection-start-line="4" selection-start-column="28" selection-end-line="4" selection-end-column="28" />
+              <folding>
+                <marker date="1524330318000" expanded="true" signature="16:132" ph="{...}" />
+                <marker date="1524330318000" expanded="true" signature="68:130" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
@@ -88,12 +104,6 @@
               <item name="LudumDare41" type="483dac07:UnityExplorerNode$Root" />
               <item name="" type="1045f7f1:UnityExplorerNode" />
             </path>
-            <path>
-              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="LudumDare41" type="483dac07:UnityExplorerNode$Root" />
-              <item name="" type="1045f7f1:UnityExplorerNode" />
-              <item name="" type="1045f7f1:UnityExplorerNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -136,12 +146,12 @@
       <option name="presentableId" value="Default" />
       <updated>1524325060105</updated>
       <workItem from="1524325062431" duration="1094000" />
-      <workItem from="1524327209123" duration="3218000" />
+      <workItem from="1524327209123" duration="3715000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4312000" />
+    <option name="totallyTimeSpent" value="4809000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -161,8 +171,8 @@
       <window_info anchor="bottom" id="Unit Tests" order="7" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.32879046" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2262324" />
+      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.32879046" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2262324" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Unity" order="7" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -347,17 +357,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Model/Player.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="28" selection-start-line="4" selection-start-column="28" selection-end-line="4" selection-end-column="28" />
-          <folding>
-            <marker date="1524330318000" expanded="true" signature="16:132" ph="{...}" />
-            <marker date="1524330318000" expanded="true" signature="68:130" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/Model/GameState.cs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -389,6 +388,17 @@
             <marker date="1524330318000" expanded="false" signature="6:62" ph="..." />
             <marker date="1524330318000" expanded="true" signature="80:302" ph="{...}" />
             <marker date="1524330318000" expanded="true" signature="139:300" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Model/Player.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="28" lean-forward="true" selection-start-line="4" selection-start-column="28" selection-end-line="4" selection-end-column="28" />
+          <folding>
+            <marker date="1524330318000" expanded="true" signature="16:132" ph="{...}" />
+            <marker date="1524330318000" expanded="true" signature="68:130" ph="{...}" />
           </folding>
         </state>
       </provider>
