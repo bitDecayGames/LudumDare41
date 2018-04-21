@@ -52,6 +52,7 @@ namespace Network {
         public static IEnumerator Ping(Action success, Action<string, int> failure) {
             return httpPost(new MyRequest()
                 .Url(State.host + "/api/v1/ping")
+                .Header("Content-Type", "application/json")
                 .Body("{\"gameName\":\"test\"}")
                 .Success(body => success())
                 .Failure(failure));
@@ -84,6 +85,7 @@ namespace Network {
             State.myName = name;
             return httpPut(new MyRequest()
                 .Url(State.host + "/api/v1/lobby/" + State.lobby.code + "/join")
+                .Header("Content-Type", "application/json")
                 .Body(JsonUtility.ToJson(new JoinLobbyRequest(name)))
                 .Success((body) => {
                     var resp = JsonUtility.FromJson<JoinLobbyResponse>(body);
@@ -104,6 +106,7 @@ namespace Network {
             State.lobby.code = lobbyCode;
             return httpPut(new MyRequest()
                 .Url(State.host + "/api/v1/lobby/" + State.lobby.code + "/join")
+                .Header("Content-Type", "application/json")
                 .Body(JsonUtility.ToJson(new JoinLobbyRequest(name)))
                 .Success((body) => {
                     var resp = JsonUtility.FromJson<JoinLobbyResponse>(body);
@@ -141,6 +144,7 @@ namespace Network {
         public static IEnumerator BroadcastConnectionId(Action success, Action<string, int> failure) {
             return httpPut(new MyRequest()
                 .Url(State.host + "/api/v1/pubsub/connection/" + State.connectionId)
+                .Header("Content-Type", "application/json")
                 .Body(JsonUtility.ToJson(new ConnectionIdRequest(State.lobby.code, State.myName)))
                 .Success((body) => { success(); })
                 .Failure(failure));
@@ -187,19 +191,12 @@ namespace Network {
             return httpGet(new MyRequest()
                 .Url(State.host + "/api/v1/game/" + State.lobby.code + "/tick/" + (State.state == null ? State.currentTick : State.state.tick) + "/player/" + State.myName)
                 .Success(body => {
-                    // TODO: handle a processed turn here
-                    //success(null);
+                    // handle a processed turn here
+                    Debug.Log("Game state: " + body);
+                    var pt = JsonUtility.FromJson<ProcessedTurn>(body);
+                    success(pt);
                 })
-                .Failure((msg, status) => {
-                    if (status == 400) {
-                        var err = JsonUtility.FromJson<ServerError>(msg);
-                        if (err.tick >= 0 && err.tick != State.currentTick) {
-                            State.currentTick = err.tick;
-                        }
-                    }
-
-                    failure(msg, -1307);
-                }));
+                .Failure(failure));
         }
 
         /// <summary>

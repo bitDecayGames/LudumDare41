@@ -2,6 +2,7 @@
 using Network;
 using Network.Messages;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Utils;
 
@@ -46,7 +47,10 @@ public class LobbyBehaviour : MonoBehaviour, IUpdateStreamSubscriber {
 
 	public void StartGame() {
 		Debug.Log("Trying to start the game");
-		// TODO: send a start game request
+		// send a start game request
+		StartCoroutine(WebApi.StartGame(() => {
+			Debug.Log("Start game message sent");
+		}, (err, status) => Debug.LogError("Failed to start game(" + status + "): " + err)));
 	}
 
 	public void receiveUpdateStreamMessage(string messageType, string message) {
@@ -58,16 +62,18 @@ public class LobbyBehaviour : MonoBehaviour, IUpdateStreamSubscriber {
 			StartCoroutine(WebApi.BroadcastConnectionId(() => { }, (err, status) => {
 				Debug.LogError("Failed to broadcast connection id(" + status + "): " + err);
 			}));
-		}
-		if (messageType == "playerJoin") {
+		} else if (messageType == "playerJoin") {
 			Debug.Log("Player joined: " + json.id);
 			StartCoroutine(WebApi.RefreshCurrentLobby((l) => {
 				RefreshLobbyMembers();
 			}, (err, status) => {
 				Debug.LogError("Failed to refresh lobby id(" + status + "): " + err);
 			}));
+		} else if (messageType == "gameUpdate") {
+			Debug.Log("Game is starting");
+			State.currentTick = json.tick;
+			GetComponent<UpdateStream>().StopListening();
+			SceneManager.LoadScene("Game");
 		}
-		// TODO: if message is something like: "RefreshLobbyMembers" then refresh
-		// TODO: if message is something like: "RequestTick0" then move to game board?
 	}
 }
