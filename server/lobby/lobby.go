@@ -4,6 +4,7 @@ import "fmt"
 
 type LobbyService interface {
 	NewLobby() *Lobby
+	GetLobbies() []*Lobby
 }
 
 type lobbyService struct {
@@ -15,17 +16,23 @@ type Lobby struct {
 	Players []string
 }
 
-func (ls lobbyService) NewLobby() *Lobby {
+func (ls *lobbyService) NewLobby() *Lobby {
 	// TODO Generate random, non-conflicting name
 	lobbyName := "test"
-	return &Lobby{
+	lobby := &Lobby{
 		Name:    lobbyName,
 		Players: []string{},
 	}
+	ls.lobbies = append(ls.lobbies, lobby)
+	return lobby
+}
+
+func (ls *lobbyService) GetLobbies() []*Lobby {
+	return ls.lobbies
 }
 
 func NewLobbyService() LobbyService {
-	return lobbyService{
+	return &lobbyService{
 		lobbies: []*Lobby{},
 	}
 }

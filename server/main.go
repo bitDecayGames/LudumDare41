@@ -1,6 +1,8 @@
 package main
 
-import "github.com/bitDecayGames/LudumDare41/server/lobby"
+import (
+	"github.com/bitDecayGames/LudumDare41/server/lobby"
+)
 
 const (
 	jacque = "Jacque"
@@ -38,11 +40,6 @@ func main() {
 
 	// gameInstance.DealCards()
 	// gameInstance.SendUpdates()
-}
-
-// Card represents a single unique playing card
-type Card struct {
-	ID int
 }
 
 // GameState is a fully encompassing snapshot of the state of the game

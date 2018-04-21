@@ -7,6 +7,10 @@ func TestLobbyPlayerAdd(t *testing.T) {
 
 	lobby := lobbyService.NewLobby()
 
+	if len(lobbyService.GetLobbies()) != 1 {
+		t.Error("Lobby not added to the service")
+	}
+
 	err := lobby.AddPlayer("Jacque")
 	if err != nil {
 		t.Error(err)
