@@ -45,8 +45,8 @@ func main() {
 	// Lobby
 	r.HandleFunc(lobbyRoute, LobbyCreateHandler).Methods("POST")
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/join", LobbyJoinHandler).Methods("POST")
+	r.HandleFunc(lobbyRoute+"/{lobbyName}/players", LobbyGetPlayersHandler).Methods("GET")
 	// TODO Below
-	r.HandleFunc(lobbyRoute+"/{lobbyName}/players", LobbyJoinHandler).Methods("GET")
 	// Don't return anything
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/start", LobbyStartHandler).Methods("PUT")
 	// Game
@@ -83,6 +83,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 		}
 
 		// we copy the captured response headers to our new response
+		w.WriteHeader(rec.Code)
 		for k, v := range rec.Header() {
 			w.Header()[k] = v
 		}
@@ -238,8 +239,30 @@ func LobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type getPlayersResBody struct {
+	Players []string `json:"players"`
+}
+
 func LobbyGetPlayersHandler(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
+	vars := mux.Vars(r)
+	lobbyName := vars["lobbyName"]
+
+	lobby, err := lobbyService.GetLobby(lobbyName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	resBody := getPlayersResBody{
+		Players: lobby.GetPlayers(),
+	}
+	err = json.NewEncoder(w).Encode(&resBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
