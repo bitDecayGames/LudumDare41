@@ -48,5 +48,11 @@ func ApplyCard(c cards.Card, g state.GameState) ([]Step, state.GameState) {
 		steps, g = shootMainGun(affectedPlayer, steps, g)
 	}
 
+	for i, p := range g.Players {
+		if p.Name == affectedPlayer.Name {
+			g.Players[i] = *affectedPlayer
+		}
+	}
+
 	return steps, g
 }
