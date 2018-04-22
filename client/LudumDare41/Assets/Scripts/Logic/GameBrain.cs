@@ -16,6 +16,8 @@ namespace Logic {
         public Hud HudPrefab;
         public EventSystem HudEventSystemPrefab;
         public List<TileMaterial> tileMaterials;
+        public GameObject SoundPlayerObj;
+        SoundsManager SoundPlayer;
 
         private Camera camera;
         private Hud hud;
@@ -27,6 +29,9 @@ namespace Logic {
             camera = Camera.main;
             hud = Instantiate(HudPrefab);
             Instantiate(HudEventSystemPrefab);
+
+            SoundPlayer = SoundPlayerObj.GetComponent<SoundsManager>();
+            SoundPlayer.playSound(SoundsManager.SFX.TankFiring);
         }
 
         private void SetupCamera(int boardWidth) {
