@@ -1,5 +1,7 @@
 package utils
 
+var DeadVector = Vector{X: -1, Y: -1}
+
 type Vector struct {
 	X int
 	Y int
