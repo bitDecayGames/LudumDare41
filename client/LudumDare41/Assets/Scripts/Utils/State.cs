@@ -9,5 +9,6 @@ namespace Utils {
         public static GameState state = null;
         public static ProcessedTurn processedTurn = null;
         public static int currentTick = 0;
+        public static string connectionId = null;
     }
 }
