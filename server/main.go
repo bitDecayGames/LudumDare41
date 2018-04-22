@@ -21,10 +21,15 @@ import (
 )
 
 const (
+	// Networking
 	port       = 8080
 	apiv1      = "/api/v1"
 	lobbyRoute = apiv1 + "/lobby"
 	gameRoute  = apiv1 + "/game"
+
+	// Game
+	minNumPlayers = 2
+	maxNumPlayers = 4
 )
 
 var pubSubService pubsub.PubSubService
@@ -281,7 +286,6 @@ func LobbyGetPlayersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Don't return anything
 func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	lobbyName := vars["lobbyName"]
@@ -296,7 +300,32 @@ func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO Allow different boards and card sets.
 	board := gameboard.LoadBoard("default")
 	cardSet := cards.LoadSet("default")
-	_ = gameService.NewGame(lobby, board, cardSet)
+	game := gameService.NewGame(lobby, board, cardSet)
+
+	if len(game.Players) < minNumPlayers {
+		err = fmt.Errorf("minimum number of %v players not met: %v", minNumPlayers, game.Players)
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if len(game.Players) > maxNumPlayers {
+		err = fmt.Errorf("maximum number of %v players exceeded: %v", maxNumPlayers, game.Players)
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	msg := pubsub.Message{
+		MessageType: pubsub.GameUpdateMessage,
+		ID:          game.Name,
+		Tick:        game.CurrentState.Tick,
+	}
+	errors := pubSubService.SendMessage(game.Name, msg)
+	if len(errors) > 0 {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {

@@ -13,6 +13,7 @@ import (
 const HAND_SIZE = 5
 
 type Game struct {
+	Name    string
 	Players map[string]*state.Player
 	Board   gameboard.GameBoard
 	CardSet cards.CardSet
@@ -23,7 +24,7 @@ type Game struct {
 	pendingSequence    []cards.Card            // Ordered list of all player cards
 }
 
-func newGame(players map[string]*state.Player, board gameboard.GameBoard, cardSet cards.CardSet) *Game {
+func newGame(players map[string]*state.Player, board gameboard.GameBoard, cardSet cards.CardSet, name string) *Game {
 
 	playerNum := 1
 	for _, player := range players {
@@ -36,6 +37,7 @@ func newGame(players map[string]*state.Player, board gameboard.GameBoard, cardSe
 	fmt.Println(fmt.Sprintf("New State: %+v", currentState))
 
 	return &Game{
+		Name:               name,
 		Players:            players,
 		Board:              board,
 		CardSet:            cardSet,
