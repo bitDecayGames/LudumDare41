@@ -15,6 +15,7 @@ func attemptMoveBackwards(player *state.Player, stepSeq *StepSequence, g state.G
 	return attemptMove(player, utils.VecScale(player.Facing, -1), stepSeq, g)
 }
 
+// TODO: after a movement, we need to check for collecting a crate
 func attemptMove(player *state.Player, direction utils.Vector, stepSeq *StepSequence, g state.GameState) (*StepSequence, state.GameState) {
 	targetPos := utils.VecAdd(player.Pos, direction)
 	if isEmptyTile(targetPos, g) {

@@ -23,6 +23,7 @@ func shootMainGun(affectedPlayer *state.Player, stepSeq *StepSequence, g state.G
 					GetDeathAction(target.Name),
 				},
 			})
+		target.DiscardEntireHand()
 		target.Pos = utils.Vector{X: -1, Y: -1}
 	}
 	// sequence will always include the player shooting

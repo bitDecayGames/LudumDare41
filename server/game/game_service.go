@@ -22,7 +22,9 @@ type gameService struct {
 }
 
 func NewGameService() GameService {
-	return &gameService{}
+	return &gameService{
+		activeGames: []*Game{},
+	}
 }
 
 func (gs *gameService) NewGame(lobby *lobby.Lobby, board gameboard.GameBoard, cardSet cards.CardSet) *Game {
