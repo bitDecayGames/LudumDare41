@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/bitDecayGames/LudumDare41/server/utils"
+
 	"github.com/bitDecayGames/LudumDare41/server/cards"
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
 	"github.com/bitDecayGames/LudumDare41/server/lobby"
@@ -35,6 +37,11 @@ func (gs *gameService) NewGame(lobby *lobby.Lobby, board gameboard.GameBoard, ca
 			Hand:    make([]cards.Card, 0),
 			Discard: make([]cards.Card, 0),
 			Deck:    make([]cards.Card, 0),
+			Pos:     utils.Vector{},
+			Facing: utils.Vector{
+				X: 0,
+				Y: 1,
+			},
 		}
 	}
 

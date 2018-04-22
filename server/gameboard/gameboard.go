@@ -21,11 +21,19 @@ type GameBoard struct {
 func LoadBoard(name string) GameBoard {
 	// TODO: Load this from file / config
 	board := GameBoard{
-		Tiles: [][]Tile{
-			{Tile{TileType: Empty_tile}},
-			{Tile{TileType: Empty_tile}},
-		},
+		Tiles:          [][]Tile{},
 		FlattenedTiles: []Tile{},
+	}
+
+	dim := 5
+	for x := 0; x < dim; x++ {
+		board.Tiles = append(board.Tiles, []Tile{})
+		for y := 0; y < dim; y++ {
+			tile := Tile{
+				TileType: Empty_tile,
+			}
+			board.Tiles[x] = append(board.Tiles[x], tile)
+		}
 	}
 
 	// Assign x/y values
