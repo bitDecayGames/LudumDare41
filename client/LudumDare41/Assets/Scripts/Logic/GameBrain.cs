@@ -16,6 +16,8 @@ namespace Logic {
         public Hud HudPrefab;
         public EventSystem HudEventSystemPrefab;
         public List<TileMaterial> tileMaterials;
+        public GameObject SoundPlayerObj;
+        SoundsManager SoundPlayer;
 
         private Camera camera;
         private Hud hud;
@@ -28,6 +30,9 @@ namespace Logic {
             camera = Camera.main;
             hud = Instantiate(HudPrefab);
             Instantiate(HudEventSystemPrefab);
+
+            SoundPlayer = SoundPlayerObj.GetComponent<SoundsManager>();
+            SoundPlayer.playSound(SoundsManager.SFX.TankFiring);
         }
 
         private void SetupCamera(int boardWidth) {
@@ -61,9 +66,9 @@ namespace Logic {
             // based on turn start board, create the tile layout
             DestroyTiles();
             DestroyPlayers();
-            GenerateTiles(turn.start.board.tiles);
+            GenerateTiles(turn.start.gameBoard.tiles);
             GeneratePlayers(turn.start.players);
-            SetupCamera(turn.start.board.width);
+            SetupCamera(turn.start.gameBoard.width);
 
             // TODO: based on the turn steps, create sequences of actions
             // TODO: all of these methods will eventually need to become asynchronous to handle the animation delays
@@ -71,7 +76,7 @@ namespace Logic {
             // based on turn end board, recreate the tile layout
             DestroyTiles();
             DestroyPlayers();
-            GenerateTiles(turn.end.board.tiles);
+            GenerateTiles(turn.end.gameBoard.tiles);
             GeneratePlayers(turn.end.players);
             var myPlayer = turn.end.players.Find(p => p.name == State.myName);
             if (myPlayer != null) {
