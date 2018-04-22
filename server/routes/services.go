@@ -10,6 +10,12 @@ import (
 	"github.com/bitDecayGames/LudumDare41/server/pubsub"
 )
 
+const (
+	// Game
+	minNumPlayers = 2
+	maxNumPlayers = 4
+)
+
 type Services struct {
 	PubSub pubsub.PubSubService
 	Lobby  lobby.LobbyService
