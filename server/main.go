@@ -10,7 +10,9 @@ import (
 	"net/http/httputil"
 	"time"
 
+	"github.com/bitDecayGames/LudumDare41/server/cards"
 	"github.com/bitDecayGames/LudumDare41/server/game"
+	"github.com/bitDecayGames/LudumDare41/server/gameboard"
 
 	"github.com/bitDecayGames/LudumDare41/server/lobby"
 
@@ -117,7 +119,7 @@ func PingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	msg := pubsub.Message{
-		Type: pubsub.PingMessage,
+		MessageType: pubsub.PingMessage,
 	}
 
 	// TODO Change game name passed in?
@@ -233,8 +235,8 @@ func LobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	msg := pubsub.Message{
-		Type: pubsub.PlayerJoinMessage,
-		ID:   sanitizedPlayerName,
+		MessageType: pubsub.PlayerJoinMessage,
+		ID:          sanitizedPlayerName,
 	}
 	errors := pubSubService.SendMessage(lobbyName, msg)
 	if len(errors) > 0 {
@@ -281,18 +283,20 @@ func LobbyGetPlayersHandler(w http.ResponseWriter, r *http.Request) {
 
 // Don't return anything
 func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
-	// lobbyName := vars["lobbyName"]
+	vars := mux.Vars(r)
+	lobbyName := vars["lobbyName"]
 
-	// lobby, err := lobbyService.GetLobby(lobbyName)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
+	lobby, err := lobbyService.GetLobby(lobbyName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
-	// // TODO Add gameboard
-	// game := gameService.NewGame(lobby)
+	// TODO Allow different boards and card sets.
+	board := gameboard.LoadBoard("default")
+	cardSet := cards.LoadSet("default")
+	_ = gameService.NewGame(lobby, board, cardSet)
 }
 
 func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
