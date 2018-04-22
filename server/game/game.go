@@ -160,6 +160,7 @@ func (g *Game) ExecuteTurn() {
 	// 3. Update clients with these things:
 	fmt.Println(startState)
 	fmt.Println(stepSequence)
+	fmt.Println(fmt.Sprintf("Pending Seq %+v", g.pendingSequence))
 	intermState.Tick += 1
 	g.CurrentState = intermState
 }
