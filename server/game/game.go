@@ -77,6 +77,16 @@ func (g *Game) AreSubmissionsComplete() bool {
 		numSubmissons == len(g.Players)
 }
 
+func (g *Game) GetPlayer(name string) (*state.Player, error) {
+	for _, p := range g.Players {
+		if p.Name == name {
+			return p, nil
+		}
+	}
+
+	return nil, fmt.Errorf("player not fround with name %s", name)
+}
+
 func (g *Game) SubmitCards(playerName string, tick int, cardIds []int) error {
 	if g.CurrentState.Tick != tick {
 		return fmt.Errorf("expected tick of %v, not %v", g.CurrentState.Tick, tick)
@@ -87,16 +97,9 @@ func (g *Game) SubmitCards(playerName string, tick int, cardIds []int) error {
 		return fmt.Errorf("Player already has a pending submission")
 	}
 
-	// Find player
-	var player *state.Player
-	for _, p := range g.Players {
-		if p.Name == playerName {
-			player = p
-			break
-		}
-	}
-	if player == nil {
-		return fmt.Errorf("player not fround with name %s", playerName)
+	player, err := g.GetPlayer(playerName)
+	if err != nil {
+		return err
 	}
 
 	// Find cards

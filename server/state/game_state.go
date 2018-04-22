@@ -6,8 +6,8 @@ import (
 
 type GameState struct {
 	Tick    int
-	Players []Player            `` // Only single player, not all
-	Board   gameboard.GameBoard ``
+	Players []Player
+	Board   gameboard.GameBoard `json:"gameBoard"`
 }
 
 func NewState(tick int, players map[string]*Player, board gameboard.GameBoard) GameState {

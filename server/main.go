@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bitDecayGames/LudumDare41/server/state"
+
 	"github.com/bitDecayGames/LudumDare41/server/cards"
 	"github.com/bitDecayGames/LudumDare41/server/game"
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
@@ -66,9 +68,7 @@ func main() {
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/start", LobbyStartHandler).Methods("PUT")
 	// Game
 	r.HandleFunc(gameRoute+"/{gameName}/tick/{tick}/player/{playerName}/cards", CardsSubmitHandler).Methods("PUT")
-	// Get current tick
 	r.HandleFunc(gameRoute+"/{gameName}/tick", GetCurrentTickHandler).Methods("GET")
-	// Game state + players cards for a tick
 	r.HandleFunc(gameRoute+"/{gameName}/tick/{tick}/player/{playerName}", GetGameStateHandler).Methods("GET")
 
 	log.Printf("Server started on %s", host)
@@ -398,15 +398,77 @@ func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Return tick in json
+type getTickResBody struct {
+	Tick int `json:"tick"`
+}
+
 func GetCurrentTickHandler(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
+	vars := mux.Vars(r)
+	gameName := vars["gameName"]
+
+	game, err := gameService.GetGame(gameName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	resBody := getTickResBody{
+		Tick: game.CurrentState.Tick,
+	}
+	err = json.NewEncoder(w).Encode(&resBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+type gameStateResBody struct {
+	PlayersHand  []cards.Card    `json:"playersHand"`
+	CurrentState state.GameState `json:"currentState"`
 }
 
 func GetGameStateHandler(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
+	vars := mux.Vars(r)
+	gameName := vars["gameName"]
+	playerName := vars["playerName"]
+	tick, err := strconv.Atoi(vars["tick"])
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-	/*
+	game, err := gameService.GetGame(gameName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
-	 */
+	if game.CurrentState.Tick != tick {
+		err = fmt.Errorf("tick %v does not match %v for game %s", tick, game.CurrentState.Tick, game.Name)
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	player, err := game.GetPlayer(playerName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	resBody := gameStateResBody{
+		PlayersHand:  player.Hand,
+		CurrentState: game.CurrentState,
+	}
+	err = json.NewEncoder(w).Encode(&resBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
