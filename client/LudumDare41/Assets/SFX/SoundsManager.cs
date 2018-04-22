@@ -19,9 +19,9 @@ public class SoundsManager : MonoBehaviour {
         TankDeath
     }
     // Use this for initialization
-    void Start () {
+    void Awake () {
         audioSource = GetComponent<AudioSource>();
-
+        Debug.Log("Audio source: " + audioSource);
     }
 	
 	// Update is called once per frame
@@ -33,7 +33,9 @@ public class SoundsManager : MonoBehaviour {
         foreach(AudioClip clip in SoundsList)
         {
             if (clip.name == sound.ToString())
-            {                
+            {
+                Debug.Log("clip name: " + clip.name);
+                Debug.Log("sound enum: " + sound);
                 audioSource.clip = clip;
                 audioSource.Play();
             }
