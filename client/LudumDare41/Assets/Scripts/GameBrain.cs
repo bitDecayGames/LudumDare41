@@ -228,6 +228,7 @@ public class GameBrain : MonoBehaviour {
 
         //foreach(Card card in Turn.inputs)
         //{
+        
 
         //}
         List<GameObject> inGameTiles = Board.Gametiles;
