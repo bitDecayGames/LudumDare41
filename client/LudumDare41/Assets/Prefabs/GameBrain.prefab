@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1340869252792110}
+  m_IsPrefabParent: 1
+--- !u!1 &1340869252792110
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4816626898054142}
+  - component: {fileID: 114366457775935452}
+  m_Layer: 0
+  m_Name: GameBrain
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4816626898054142
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1340869252792110}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.5, y: -0.5, z: 5.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114366457775935452
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1340869252792110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 754291aacf78b104880203ead681a80e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TilePrefab: {fileID: 1442746585869998, guid: 09e72db968c040a40b1a46d13d557a3a, type: 2}
+  PlayerPrefab: {fileID: 1595927985036772, guid: 829d7cefe4bdd284b8d8a0cc95ecedb3,
+    type: 2}
+  HudPrefab: {fileID: 114567668191537996, guid: 6876d46eb61345c479c4b423903ababf,
+    type: 2}
+  HudEventSystemPrefab: {fileID: 114014860272920174, guid: 031855da9c0bd4990b156456042e9adf,
+    type: 2}
+  tileMaterials:
+  - name: Dirt
+    material: {fileID: 2100000, guid: ec928633413555d4c9fc47a012293f7d, type: 2}
+  - name: Grass
+    material: {fileID: 2100000, guid: 3c9a26b85e377d340b77f5783d99842b, type: 2}
+  - name: Fire
+    material: {fileID: 2100000, guid: 2ff1ebc81eab55b49af7a7b8238eb35a, type: 2}
+  - name: Mountain
+    material: {fileID: 2100000, guid: 452cfcb01b9c8a64bb5b1549cbada8d6, type: 2}
+  - name: Water
+    material: {fileID: 2100000, guid: 23f9d77e814b01b47a0849e230238dd8, type: 2}
