@@ -207,7 +207,7 @@ namespace Network {
         /// <param name="failure"></param>
         public static IEnumerator SubmitCardChoices(List<Card> cards, Action success, Action<string, int> failure) {
             return httpPut(new MyRequest()
-                .Url(State.host + "/api/v1/game/" + State.lobby.code + "/tick/" + State.state.tick + "/player/" + State.myName + "/cards")
+                .Url(State.host + "/api/v1/game/" + State.lobby.code + "/tick/" + (State.state == null ? State.currentTick : State.state.tick) + "/player/" + State.myName + "/cards")
                 .Header("Content-Type", "application/json")
                 .Body(JsonUtility.ToJson(new SubmitCardsRequest(cards)))
                 .Success(body => success())

@@ -26,7 +26,7 @@ namespace Utils {
         public static GameState GenerateGameState() {
             var state = new GameState();
             state.tick = rnd.Next(10);
-            state.board = GenerateGameBoard();
+            state.gameBoard = GenerateGameBoard();
             state.players = new List<Player>();
             for (int i = 0; i < 4; i++) state.players.Add(GeneratePlayer());
             return state;
