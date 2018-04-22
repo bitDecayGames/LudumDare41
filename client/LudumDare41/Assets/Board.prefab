@@ -54,3 +54,4 @@ MonoBehaviour:
   width: 10
   height: 10
   Tiles: []
+  Gametiles: []
