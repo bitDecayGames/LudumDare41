@@ -14,11 +14,14 @@ import (
 const (
 	PingMessage       = "ping"
 	PlayerJoinMessage = "playerJoin"
+	GameUpdateMessage = "gameUpdate"
 )
 
 type Message struct {
 	Type string `json:"type"`
 	ID   string `json:"id"`
+	// TODO Find a better way of adding custom fields without bloating this struct.
+	Tick int `json:"tick"`
 }
 
 var upgrader = websocket.Upgrader{
@@ -48,7 +51,7 @@ type subscription struct {
 }
 
 type connectionBody struct {
-	ConnectionID string `json:"connectionID"`
+	ConnectionID string `json:"connectionId"`
 }
 
 func (ps *pubSubService) AddSubscription(w http.ResponseWriter, r *http.Request) (string, error) {
