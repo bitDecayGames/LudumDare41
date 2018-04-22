@@ -147,6 +147,37 @@ namespace Network {
         }
         
         /// <summary>
+        /// Notify everyone that the game has started
+        /// </summary>
+        /// <param name="success">status 200</param>
+        /// <param name="failure"></param>
+        /// <returns></returns>
+        public static IEnumerator StartGame(Action success, Action<string, int> failure) {
+            return httpPut(new MyRequest()
+                .Url(State.host + "/api/v1/lobby/" + State.lobby.code + "/start")
+                .Body(" ")
+                .Success(body => { success(); })
+                .Failure(failure));
+        }
+        
+        /// <summary>
+        /// Gets the current game's tick
+        /// </summary>
+        /// <param name="success">the current tick for the game</param>
+        /// <param name="failure"></param>
+        /// <returns></returns>
+        public static IEnumerator CurrentGameTick(Action<int> success, Action<string, int> failure) {
+            return httpGet(new MyRequest()
+                .Url(State.host + "/api/v1/game/" + State.lobby.code + "/tick")
+                .Success(body => {
+                    var resp = JsonUtility.FromJson<TickResponse>(body);
+                    State.currentTick = resp.tick;
+                    success(resp.tick);
+                })
+                .Failure(failure));
+        }
+        
+        /// <summary>
         /// Refresh the current game state and get the current processed turn
         /// </summary>
         /// <param name="success">the current processed turn</param>
@@ -154,11 +185,10 @@ namespace Network {
         /// <returns></returns>
         public static IEnumerator RefreshGameState(Action<ProcessedTurn> success, Action<string, int> failure) {
             return httpGet(new MyRequest()
-                .Url(State.host + "/api/v1/game/" + State.lobby.code + "/state/" + (State.state == null ? State.currentTick : State.state.tick))
+                .Url(State.host + "/api/v1/game/" + State.lobby.code + "/tick/" + (State.state == null ? State.currentTick : State.state.tick) + "/player/" + State.myName)
                 .Success(body => {
-                    State.processedTurn = JsonUtility.FromJson<ProcessedTurn>(body);
-                    State.state = State.processedTurn.start;
-                    success(State.processedTurn);
+                    // TODO: handle a processed turn here
+                    //success(null);
                 })
                 .Failure((msg, status) => {
                     if (status == 400) {
@@ -179,10 +209,10 @@ namespace Network {
         /// <param name="success">status 200</param>
         /// <param name="failure"></param>
         public static IEnumerator SubmitCardChoices(List<Card> cards, Action success, Action<string, int> failure) {
-            return httpPost(new MyRequest()
-                .Url(State.host + "/api/v1/game/" + State.lobby.code + "/input/" + State.state.tick)
+            return httpPut(new MyRequest()
+                .Url(State.host + "/api/v1/game/" + State.lobby.code + "/tick/" + State.state.tick + "/player/" + State.myName + "/cards")
                 .Header("Content-Type", "application/json")
-                .Body(JsonUtility.ToJson(cards))
+                .Body(JsonUtility.ToJson(new SubmitCardsRequest(cards)))
                 .Success(body => success())
                 .Failure(failure));
         }
