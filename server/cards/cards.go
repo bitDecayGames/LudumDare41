@@ -9,6 +9,7 @@ type Card struct {
 	ID       int
 	Priority int
 	Owner    string
+	CardType string
 }
 
 // CardSet is an instance of a set of cards
@@ -17,11 +18,14 @@ type CardSet struct {
 }
 
 func LoadSet(name string) CardSet {
-	return CardSet{
-		Cards: []Card{
-			Card{ID: 1},
-		},
+	set := CardSet{
+		Cards: []Card{},
 	}
+
+	for i := 0; i < 5; i++ {
+		set.Cards = append(set.Cards, Card{CardType: "moveForward1Card"})
+	}
+	return set
 }
 
 // NewDeckFromSet will generate a new deck of cards with a unique priority assuming only a `playerCount` number of decks are generated and with a unique set of `playerNumber`
@@ -36,4 +40,14 @@ func NewDeckFromSet(cardSet CardSet, playerCount int, playerNumber int) []Card {
 	}
 
 	return deck
+}
+
+func ShuffleCards(inCards []Card) []Card {
+	shuffled := make([]Card, len(inCards))
+	perm := rand.Perm(len(inCards))
+	for i, randIndex := range perm {
+		shuffled[i] = inCards[randIndex]
+	}
+
+	return shuffled
 }

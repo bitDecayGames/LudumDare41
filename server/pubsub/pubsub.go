@@ -11,8 +11,18 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+const (
+	PingMessage              = "ping"
+	ConnectionStartedMessage = "connectionStarted"
+	PlayerJoinMessage        = "playerJoin"
+	GameUpdateMessage        = "gameUpdate"
+)
+
 type Message struct {
-	Type string `json:"type"`
+	MessageType string `json:"messageType"`
+	ID          string `json:"id"`
+	// TODO Find a better way of adding custom fields without bloating this struct.
+	Tick int `json:"tick"`
 }
 
 var upgrader = websocket.Upgrader{
@@ -41,10 +51,6 @@ type subscription struct {
 	playerName   string
 }
 
-type connectionBody struct {
-	ConnectionID string `json:"connectionID"`
-}
-
 func (ps *pubSubService) AddSubscription(w http.ResponseWriter, r *http.Request) (string, error) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -60,8 +66,9 @@ func (ps *pubSubService) AddSubscription(w http.ResponseWriter, r *http.Request)
 	ps.subscriptions = append(ps.subscriptions, sub)
 	mutex.Unlock()
 
-	body := connectionBody{
-		ConnectionID: sub.connectionID,
+	body := Message{
+		MessageType: ConnectionStartedMessage,
+		ID:          sub.connectionID,
 	}
 
 	return sub.connectionID, conn.WriteJSON(body)
@@ -97,6 +104,7 @@ func (ps *pubSubService) SendMessage(gameName string, msg Message) []error {
 				log.Printf("%s, %v, %v", gameName, msg, err)
 				errors = append(errors, err)
 			}
+			log.Printf("Sent message %+v to game %s", msg, gameName)
 		}
 	}
 

@@ -1,5 +1,6 @@
 ﻿using Network;
 using UnityEngine;
+using Utils;
 
 namespace Scenes {
 	public class MwDebugBehaviour : MonoBehaviour , IUpdateStreamSubscriber {
@@ -7,7 +8,7 @@ namespace Scenes {
 		// Use this for initialization
 		void Start () {
 			var updater = GetComponent<UpdateStream>();
-			updater.StartListening();
+			updater.StartListening(() => {});
 			updater.Subscribe(this);
 		}
 	
@@ -27,7 +28,7 @@ namespace Scenes {
 			GetComponent<UpdateStream>().Send("Hello ping");
 		}
 
-		public void receiveUpdateStreamMessage(string message) {
+		public void receiveUpdateStreamMessage(string messageType, string message) {
 			Debug.Log("Successfully subscribed and got message: " + message);
 		}
 	}

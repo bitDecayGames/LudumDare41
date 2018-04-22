@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Model;
+using Network.Messages;
 using UnityEngine;
 using UnityEngine.Networking;
+using Utils;
 
 namespace Network {
     /// <summary>
@@ -14,12 +15,6 @@ namespace Network {
     /// <code>StartCoroutine(WebAPI.RequestNewLobby(...))</code>
     /// </summary>
     public class WebApi {
-        public static string host = "http://localhost:8080";
-        public static Player me = null;
-        public static Lobby lobby = null;
-        public static GameState state = null;
-        public static ProcessedTurn processedTurn = null;
-        public static int currentTick = 0;
 
         private WebApi() { }
 
@@ -56,8 +51,8 @@ namespace Network {
         /// <param name="failure"></param>
         public static IEnumerator Ping(Action success, Action<string, int> failure) {
             return httpPost(new MyRequest()
-                .Url(host + "/api/v1/ping")
-                .Body(" ")
+                .Url(State.host + "/api/v1/ping")
+                .Body("{\"gameName\":\"test\"}")
                 .Success(body => success())
                 .Failure(failure));
         }
@@ -68,24 +63,52 @@ namespace Network {
         /// <param name="success">the lobby code to join</param>
         /// <param name="failure"></param>
         public static IEnumerator RequestNewLobby(Action<string> success, Action<string, int> failure) {
-            return httpGet(new MyRequest()
-                .Url(host + "/api/v1/lobby/new")
-                .Success(success)
+            return httpPost(new MyRequest()
+                .Url(State.host + "/api/v1/lobby")
+                .Body(" ")
+                .Success((body) => {
+                    var resp = JsonUtility.FromJson<NewLobbyResponse>(body);
+                    State.lobby = new Lobby();
+                    State.lobby.code = resp.name;
+                    success(resp.name);
+                })
                 .Failure(failure));
         }
-
+        
         /// <summary>
-        /// Request to join the lobby, success means you have joined
+        /// Join a lobby with your name
         /// </summary>
-        /// <param name="lobbyCode">the lobby code to join</param>
-        /// <param name="success">the lobby you have joined</param>
+        /// <param name="success">the lobby code you have joined</param>
         /// <param name="failure"></param>
-        public static IEnumerator JoinLobby(string lobbyCode, Action<Lobby> success, Action<string, int> failure) {
-            return httpGet(new MyRequest()
-                .Url(host + "/api/v1/lobby/join/" + lobbyCode)
-                .Success(body => {
-                    lobby = JsonUtility.FromJson<Lobby>(body);
-                    success(lobby);
+        public static IEnumerator JoinLobby(string name, Action<string> success, Action<string, int> failure) {
+            State.myName = name;
+            return httpPut(new MyRequest()
+                .Url(State.host + "/api/v1/lobby/" + State.lobby.code + "/join")
+                .Body(JsonUtility.ToJson(new JoinLobbyRequest(name)))
+                .Success((body) => {
+                    var resp = JsonUtility.FromJson<JoinLobbyResponse>(body);
+                    State.myName = resp.sanitizedPlayerName;
+                    success(resp.sanitizedPlayerName);
+                })
+                .Failure(failure));
+        }
+        
+        /// <summary>
+        /// Join a lobby with your name and lobby code
+        /// </summary>
+        /// <param name="success">the lobby code you have joined</param>
+        /// <param name="failure"></param>
+        public static IEnumerator JoinLobby(string name, string lobbyCode, Action<string> success, Action<string, int> failure) {
+            State.myName = name;
+            State.lobby = new Lobby();
+            State.lobby.code = lobbyCode;
+            return httpPut(new MyRequest()
+                .Url(State.host + "/api/v1/lobby/" + State.lobby.code + "/join")
+                .Body(JsonUtility.ToJson(new JoinLobbyRequest(name)))
+                .Success((body) => {
+                    var resp = JsonUtility.FromJson<JoinLobbyResponse>(body);
+                    State.myName = resp.sanitizedPlayerName;
+                    success(resp.sanitizedPlayerName);
                 })
                 .Failure(failure));
         }
@@ -97,10 +120,59 @@ namespace Network {
         /// <param name="failure"></param>
         public static IEnumerator RefreshCurrentLobby(Action<Lobby> success, Action<string, int> failure) {
             return httpGet(new MyRequest()
-                .Url(host + "/api/v1/lobby/" + lobby.code)
+                .Url(State.host + "/api/v1/lobby/" + State.lobby.code + "/players")
                 .Success(body => {
-                    lobby = JsonUtility.FromJson<Lobby>(body);
-                    success(lobby);
+                    var resp = JsonUtility.FromJson<LobbyPlayersResponse>(body);
+                    State.lobby.players = resp.players.ConvertAll(playerName => {
+                        var p = new Player();
+                        p.name = playerName;
+                        return p;
+                    });
+                    success(State.lobby);
+                })
+                .Failure(failure));
+        }
+        
+        /// <summary>
+        /// Update the server with your connection id
+        /// </summary>
+        /// <param name="success">status 200</param>
+        /// <param name="failure"></param>
+        public static IEnumerator BroadcastConnectionId(Action success, Action<string, int> failure) {
+            return httpPut(new MyRequest()
+                .Url(State.host + "/api/v1/pubsub/connection/" + State.connectionId)
+                .Body(JsonUtility.ToJson(new ConnectionIdRequest(State.lobby.code, State.myName)))
+                .Success((body) => { success(); })
+                .Failure(failure));
+        }
+        
+        /// <summary>
+        /// Notify everyone that the game has started
+        /// </summary>
+        /// <param name="success">status 200</param>
+        /// <param name="failure"></param>
+        /// <returns></returns>
+        public static IEnumerator StartGame(Action success, Action<string, int> failure) {
+            return httpPut(new MyRequest()
+                .Url(State.host + "/api/v1/lobby/" + State.lobby.code + "/start")
+                .Body(" ")
+                .Success(body => { success(); })
+                .Failure(failure));
+        }
+        
+        /// <summary>
+        /// Gets the current game's tick
+        /// </summary>
+        /// <param name="success">the current tick for the game</param>
+        /// <param name="failure"></param>
+        /// <returns></returns>
+        public static IEnumerator CurrentGameTick(Action<int> success, Action<string, int> failure) {
+            return httpGet(new MyRequest()
+                .Url(State.host + "/api/v1/game/" + State.lobby.code + "/tick")
+                .Success(body => {
+                    var resp = JsonUtility.FromJson<TickResponse>(body);
+                    State.currentTick = resp.tick;
+                    success(resp.tick);
                 })
                 .Failure(failure));
         }
@@ -113,17 +185,16 @@ namespace Network {
         /// <returns></returns>
         public static IEnumerator RefreshGameState(Action<ProcessedTurn> success, Action<string, int> failure) {
             return httpGet(new MyRequest()
-                .Url(host + "/api/v1/game/" + lobby.code + "/state/" + (state == null ? currentTick : state.tick))
+                .Url(State.host + "/api/v1/game/" + State.lobby.code + "/tick/" + (State.state == null ? State.currentTick : State.state.tick) + "/player/" + State.myName)
                 .Success(body => {
-                    processedTurn = JsonUtility.FromJson<ProcessedTurn>(body);
-                    state = processedTurn.start;
-                    success(processedTurn);
+                    // TODO: handle a processed turn here
+                    //success(null);
                 })
                 .Failure((msg, status) => {
                     if (status == 400) {
                         var err = JsonUtility.FromJson<ServerError>(msg);
-                        if (err.tick >= 0 && err.tick != currentTick) {
-                            currentTick = err.tick;
+                        if (err.tick >= 0 && err.tick != State.currentTick) {
+                            State.currentTick = err.tick;
                         }
                     }
 
@@ -138,10 +209,10 @@ namespace Network {
         /// <param name="success">status 200</param>
         /// <param name="failure"></param>
         public static IEnumerator SubmitCardChoices(List<Card> cards, Action success, Action<string, int> failure) {
-            return httpPost(new MyRequest()
-                .Url(host + "/api/v1/game/" + lobby.code + "/input/" + state.tick)
+            return httpPut(new MyRequest()
+                .Url(State.host + "/api/v1/game/" + State.lobby.code + "/tick/" + State.state.tick + "/player/" + State.myName + "/cards")
                 .Header("Content-Type", "application/json")
-                .Body(JsonUtility.ToJson(cards))
+                .Body(JsonUtility.ToJson(new SubmitCardsRequest(cards)))
                 .Success(body => success())
                 .Failure(failure));
         }

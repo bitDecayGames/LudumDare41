@@ -3,6 +3,7 @@ package lobby
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"sync"
 
 	"github.com/satori/go.uuid"
@@ -20,11 +21,12 @@ var mutex = &sync.Mutex{}
 type LobbyService interface {
 	NewLobby() (*Lobby, error)
 	GetLobbies() []*Lobby
+	GetLobby(name string) (*Lobby, error)
 }
 
 type lobbyService struct {
 	lobbies []*Lobby
-	hashId  *hashids.HashID
+	hashID  *hashids.HashID
 }
 
 type Lobby struct {
@@ -42,7 +44,11 @@ func (ls *lobbyService) NewLobby() (*Lobby, error) {
 		Name:    lobbyName,
 		Players: []string{},
 	}
+
+	mutex.Lock()
 	ls.lobbies = append(ls.lobbies, lobby)
+	mutex.Unlock()
+
 	return lobby, nil
 }
 
@@ -50,33 +56,52 @@ func (ls *lobbyService) GetLobbies() []*Lobby {
 	return ls.lobbies
 }
 
+func (ls *lobbyService) GetLobby(name string) (*Lobby, error) {
+	for _, lobby := range ls.lobbies {
+		if lobby.Name == name {
+			return lobby, nil
+		}
+	}
+
+	return nil, fmt.Errorf("no lobby found with name %s", name)
+}
+
 func NewLobbyService() LobbyService {
 	hd := hashids.NewData()
 	hd.Alphabet = defaultAlphabet
 	hd.MinLength = lobbyNameMinLength
 	hd.Salt = uuid.NewV4().String()
-	hashId := hashids.NewWithData(hd)
+	hashID := hashids.NewWithData(hd)
 
 	return &lobbyService{
 		lobbies: []*Lobby{},
-		hashId:  hashId,
+		hashID:  hashID,
 	}
 }
 
-func (l *Lobby) AddPlayer(name string) error {
+func (l *Lobby) AddPlayer(name string) (string, error) {
+	sanitizedName := strings.TrimSpace(name)
+
 	// Check for exisiting player
 	for _, n := range l.Players {
-		if name == n {
-			return fmt.Errorf("Player with name %s already exists", name)
+		if sanitizedName == n {
+			return "", fmt.Errorf("Player with name %s already exists", sanitizedName)
 		}
 	}
 
+	mutex.Lock()
 	l.Players = append(l.Players, name)
-	fmt.Println(l.Players)
-	return nil
+	mutex.Unlock()
+
+	return sanitizedName, nil
+}
+
+func (l *Lobby) GetPlayers() []string {
+	return l.Players
 }
 
 func (ls *lobbyService) genLobbyName() (string, error) {
-	lobbyName, err := ls.hashId.Encode([]int{rand.Intn(randRange)})
+	lobbyName, err := ls.hashID.Encode([]int{rand.Intn(randRange)})
+	lobbyName = strings.ToLower(lobbyName)
 	return lobbyName, err
 }

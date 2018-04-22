@@ -1,32 +1,22 @@
 package game
 
 import (
+	"sync"
+
 	"github.com/bitDecayGames/LudumDare41/server/cards"
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
 	"github.com/bitDecayGames/LudumDare41/server/lobby"
+	"github.com/bitDecayGames/LudumDare41/server/state"
 )
+
+var mutex = &sync.Mutex{}
 
 type GameService interface {
 	NewGame(*lobby.Lobby, gameboard.GameBoard, cards.CardSet) *Game
 }
 
-type Vector struct {
-	X int
-	Y int
-}
-
-type Player struct {
-	Name    string
-	Deck    []cards.Card
-	Discard []cards.Card
-	Hand    []cards.Card
-
-	Pos    Vector
-	Facing Vector
-}
-
 type gameService struct {
-	activeGames []Game
+	activeGames []*Game
 }
 
 func NewGameService() GameService {
@@ -34,12 +24,21 @@ func NewGameService() GameService {
 }
 
 func (gs *gameService) NewGame(lobby *lobby.Lobby, board gameboard.GameBoard, cardSet cards.CardSet) *Game {
-	players := make(map[string]*Player)
+	players := make(map[string]*state.Player)
 	for _, player := range lobby.Players {
-		players[player] = &Player{
-			Name: player,
-			Hand: make([]cards.Card, 0),
+		players[player] = &state.Player{
+			Name:    player,
+			Hand:    make([]cards.Card, 0),
+			Discard: make([]cards.Card, 0),
+			Deck:    make([]cards.Card, 0),
 		}
 	}
-	return newGame(players, board, cardSet)
+
+	game := newGame(players, board, cardSet, lobby.Name)
+
+	mutex.Lock()
+	gs.activeGames = append(gs.activeGames, game)
+	mutex.Unlock()
+
+	return game
 }

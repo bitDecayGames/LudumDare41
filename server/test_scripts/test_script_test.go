@@ -32,9 +32,7 @@ func TestFullRun(t *testing.T) {
 		t.Fatal("Not all players are in game")
 	}
 
-	g.DealCards()
-
-	for _, player := range g.Players {
+	for _, player := range g.CurrentState.Players {
 		fmt.Println(fmt.Sprintf("Player %v cards: %v", player.Name, player.Hand))
 		err := g.SubmitCards(player.Name, player.Hand[0:3])
 		if err != nil {
@@ -52,5 +50,11 @@ func TestFullRun(t *testing.T) {
 		lastValue = card.Priority
 	}
 
-	//g.ExecuteTurn()
+	g.ExecuteTurn()
+
+	for _, p := range g.CurrentState.Players {
+		if len(p.Hand) != 5 {
+			t.Fatal("Cards were not replenished")
+		}
+	}
 }
