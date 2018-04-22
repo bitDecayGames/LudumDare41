@@ -24,10 +24,9 @@ import (
 
 const (
 	// Networking
-	port       = 8080
-	apiv1      = "/api/v1"
-	lobbyRoute = apiv1 + "/lobby"
-	gameRoute  = apiv1 + "/game"
+	port      = 8080
+	apiv1     = "/api/v1"
+	gameRoute = apiv1 + "/game"
 
 	// Game
 	minNumPlayers = 2
@@ -48,11 +47,6 @@ func main() {
 	ritz = routes.InitRoutes(r)
 	services = ritz.Services
 
-	// Lobby
-	r.HandleFunc(lobbyRoute, LobbyCreateHandler).Methods("POST")
-	r.HandleFunc(lobbyRoute+"/{lobbyName}/join", LobbyJoinHandler).Methods("PUT")
-	r.HandleFunc(lobbyRoute+"/{lobbyName}/players", LobbyGetPlayersHandler).Methods("GET")
-	r.HandleFunc(lobbyRoute+"/{lobbyName}/start", LobbyStartHandler).Methods("PUT")
 	// Game
 	r.HandleFunc(gameRoute+"/{gameName}/tick/{tick}/player/{playerName}/cards", CardsSubmitHandler).Methods("PUT")
 	r.HandleFunc(gameRoute+"/{gameName}/tick", GetCurrentTickHandler).Methods("GET")
