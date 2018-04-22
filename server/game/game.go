@@ -37,7 +37,7 @@ func newGame(players map[string]*state.Player, board gameboard.GameBoard, cardSe
 		playerNum += 1
 	}
 
-	currentState := state.NewState(0, players, board)
+	currentState := state.NewState(-1, players, board)
 
 	fmt.Println(fmt.Sprintf("New State: %+v", currentState))
 

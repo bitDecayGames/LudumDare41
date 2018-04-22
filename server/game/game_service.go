@@ -37,10 +37,8 @@ func (gs *gameService) NewGame(lobby *lobby.Lobby, board gameboard.GameBoard, ca
 			Hand:    make([]cards.Card, 0),
 			Discard: make([]cards.Card, 0),
 			Deck:    make([]cards.Card, 0),
-			Pos: utils.Vector{
-				X: 2,
-				Y: 2,
-			},
+			// Game turn cycle will randomly place players
+			Pos: utils.DeadVector,
 			Facing: utils.Vector{
 				X: 0,
 				Y: 1,

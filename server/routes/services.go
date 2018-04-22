@@ -7,8 +7,8 @@ import (
 	"github.com/bitDecayGames/LudumDare41/server/game"
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
 	"github.com/bitDecayGames/LudumDare41/server/lobby"
-	"github.com/bitDecayGames/LudumDare41/server/pubsub"
 	"github.com/bitDecayGames/LudumDare41/server/logic"
+	"github.com/bitDecayGames/LudumDare41/server/pubsub"
 )
 
 const (
@@ -71,6 +71,10 @@ func (s *Services) CreateGame(lobby *lobby.Lobby) []error {
 	// 	err := fmt.Errorf("maximum number of %v players exceeded: %v", maxNumPlayers, game.Players)
 	// 	return []error{err}
 	// }
+
+	// Initiate a fake turn cycle to place players
+	_ = game.AggregateTurn()
+	game.ExecuteTurn()
 
 	msg := pubsub.Message{
 		MessageType: pubsub.GameUpdateMessage,
