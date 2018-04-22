@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/bitDecayGames/LudumDare41/server/logic"
+
 	"github.com/bitDecayGames/LudumDare41/server/cards"
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
 	"github.com/bitDecayGames/LudumDare41/server/lobby"
+	"github.com/bitDecayGames/LudumDare41/server/state"
+	"github.com/bitDecayGames/LudumDare41/server/utils"
 )
 
 func GetTestGame() (*Game, error) {
@@ -84,5 +88,30 @@ func TestCardSubmission(t *testing.T) {
 		if err == nil {
 			t.Fatal("Duplicate submission allowed")
 		}
+	}
+}
+
+func TestRespawn(t *testing.T) {
+	p := state.Player{
+		Pos: utils.DeadVector,
+	}
+	testState := state.GameState{
+		Players: []state.Player{p},
+		Board: gameboard.GameBoard{
+			Tiles: [][]gameboard.Tile{
+				{gameboard.Tile{TileType: gameboard.Empty_tile}},
+			},
+		},
+	}
+
+	step, newState := respawnDeadPlayer(testState)
+	if !utils.VecEquals(newState.Players[0].Pos, utils.Vector{X: 0, Y: 0}) {
+		t.Fatal("Player not respawned as expected")
+	}
+
+	if len(step.Actions) != 1 || step.Actions[0].GetActionType() != logic.Action_spawn {
+		t.Errorf("Spawn action didn't return, got: %+v", step)
+		t.Errorf("Length of actions: %v", len(step.Actions))
+		t.Fatalf("Action Type %v", step.Actions[0].GetActionType())
 	}
 }

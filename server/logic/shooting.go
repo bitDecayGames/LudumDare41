@@ -5,24 +5,25 @@ import (
 	"github.com/bitDecayGames/LudumDare41/server/utils"
 )
 
-func shootMainGun(affectedPlayer *state.Player, stepSeq *StepSequence, g state.GameState) (*StepSequence, state.GameState) {
+func shootMainGun(affectedPlayer *state.Player, stepSeq []Step, g state.GameState) ([]Step, state.GameState) {
 	// see what direction the player is facing
 	found, target := findFirstObstacleInDirection(affectedPlayer, g)
 
-	stepSeq.steps = append(stepSeq.steps,
+	stepSeq = append(stepSeq,
 		Step{
-			actions: []Action{
+			Actions: []Action{
 				GetShootAction(affectedPlayer.Name),
 			},
 		})
 	// if player, kill it. If wall, do nothing? (Maybe report what wall was hit?)
 	if found && target != nil {
-		stepSeq.steps = append(stepSeq.steps,
+		stepSeq = append(stepSeq,
 			Step{
-				actions: []Action{
+				Actions: []Action{
 					GetDeathAction(target.Name),
 				},
 			})
+		target.DiscardEntireHand()
 		target.Pos = utils.Vector{X: -1, Y: -1}
 	}
 	// sequence will always include the player shooting

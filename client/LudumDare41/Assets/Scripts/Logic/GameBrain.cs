@@ -49,44 +49,44 @@ namespace Logic {
             camera.transform.eulerAngles = new Vector3(55, 0, 0);
         }
 
-        void Update() {
-            if (Input.GetKeyDown(KeyCode.Space) ||
-                Input.GetKeyDown(KeyCode.KeypadEnter) ||
-                Input.GetKeyDown(KeyCode.Return) || 
-                Input.GetKeyDown(KeyCode.I)) {
-                ApplyTurn(TurnDebugger.GenerateTurn());
-            }
-        }
+//        void Update() {
+//            if (Input.GetKeyDown(KeyCode.Space) ||
+//                Input.GetKeyDown(KeyCode.KeypadEnter) ||
+//                Input.GetKeyDown(KeyCode.Return) || 
+//                Input.GetKeyDown(KeyCode.I)) {
+//                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { });
+//            }
+//        }
 
         /// <summary>
         /// Called by Network code to process each turn as it comes in from the server
         /// </summary>
         /// <param name="turn">the current processed turn</param>
-        public void ApplyTurn(ProcessedTurn turn) {
+        public void ApplyTurn(ProcessedTurn turn, Action<List<Card>> onSelected) {
             // based on turn start board, create the tile layout
             DestroyTiles();
             DestroyPlayers();
-            GenerateTiles(turn.start.board.tiles);
+            GenerateTiles(turn.start.gameBoard.tiles);
             GeneratePlayers(turn.start.players);
-            SetupCamera(turn.start.board.width);
+            SetupCamera(turn.start.gameBoard.width);
 
             // TODO: based on the turn steps, create sequences of actions
             // TODO: all of these methods will eventually need to become asynchronous to handle the animation delays
             
-            // TODO: based on turn end board, recreate the tile layout
-            // DestroyTiles();
-            // DestroyPlayers();
-            //GenerateTiles(turn.end.board.tiles); // TODO: uncomment this
-            //GeneratePlayers(turn.end.players); // TODO: uncomment this
-            //var nextHand = turn.end.players.Find(p => p.name == State.myName).hand; // TODO: uncomment this
-            var nextHand = turn.end.players[0].hand;
-            hud.ShowHand(nextHand, 3, (selected) => {
-                // TODO: uncomment this
-//                WebApi.SubmitCardChoices(selected, () => { }, (err, status) => {
-//                    Debug.LogError("Failed to send card choices(" + status + "): " + err);
-//                });
-                hud.LowerCards();
-            });
+            // based on turn end board, recreate the tile layout
+            DestroyTiles();
+            DestroyPlayers();
+            GenerateTiles(turn.end.gameBoard.tiles);
+            GeneratePlayers(turn.end.players);
+            var myPlayer = turn.end.players.Find(p => p.name == State.myName);
+            if (myPlayer != null) {
+                hud.ShowHand(myPlayer.hand, 3, (selected) => {
+                    onSelected(selected);
+                    hud.LowerCards();
+                });
+            } else {
+                Debug.LogError("Failed to find my next hand of cards");
+            }
         }
 
         private void GenerateTiles(List<Tile> tileData) {
@@ -94,8 +94,8 @@ namespace Logic {
                 var obj = Instantiate(TilePrefab, transform);
                 tiles.Add(obj);
                 var pos = obj.transform.localPosition;
-                pos.x = t.x;
-                pos.z = t.y;
+                pos.x = t.pos.x;
+                pos.z = t.pos.y;
                 pos.y = 0;
                 obj.transform.localPosition = pos;
                 var mesh = obj.GetComponentInChildren<MeshRenderer>();
@@ -113,8 +113,8 @@ namespace Logic {
                 var obj = Instantiate(PlayerPrefab, transform);
                 players.Add(obj);
                 var pos = obj.transform.localPosition;
-                pos.x = p.x;
-                pos.z = p.y;
+                pos.x = p.pos.x;
+                pos.z = p.pos.y;
                 pos.y = 0;
                 obj.transform.localPosition = pos;
             });

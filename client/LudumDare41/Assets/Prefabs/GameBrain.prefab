@@ -61,9 +61,9 @@ MonoBehaviour:
   tileMaterials:
   - name: Dirt
     material: {fileID: 2100000, guid: ec928633413555d4c9fc47a012293f7d, type: 2}
-  - name: Grass
+  - name: empty
     material: {fileID: 2100000, guid: 3c9a26b85e377d340b77f5783d99842b, type: 2}
-  - name: Fire
+  - name: wall
     material: {fileID: 2100000, guid: 2ff1ebc81eab55b49af7a7b8238eb35a, type: 2}
   - name: Mountain
     material: {fileID: 2100000, guid: 452cfcb01b9c8a64bb5b1549cbada8d6, type: 2}

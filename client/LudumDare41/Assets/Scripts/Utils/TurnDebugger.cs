@@ -7,8 +7,8 @@ namespace Utils {
         private static Random rnd = new Random();
         private static string[] tileTypes = new string[]{"Water", "Grass", "Mountain", "Fire", "Dirt"};
         private static string[] cardTypes = new string[]{"MoveForward1", "MoveBackward1"};
-        private static int boardWidth = 10;
-        private static int boardHeight = 10;
+        private static int boardWidth = 3;
+        private static int boardHeight = 3;
             
         
         public static ProcessedTurn GenerateTurn() {
@@ -26,7 +26,7 @@ namespace Utils {
         public static GameState GenerateGameState() {
             var state = new GameState();
             state.tick = rnd.Next(10);
-            state.board = GenerateGameBoard();
+            state.gameBoard = GenerateGameBoard();
             state.players = new List<Player>();
             for (int i = 0; i < 4; i++) state.players.Add(GeneratePlayer());
             return state;
@@ -41,8 +41,7 @@ namespace Utils {
                 for (int y = 0; y < b.height; y++) {
                     var t = new Tile();
                     t.id = rnd.Next(100000);
-                    t.x = x;
-                    t.y = y;
+                    t.pos = new Vector(x, y);
                     t.tileType = tileTypes[rnd.Next(tileTypes.Length)];
                     b.tiles.Add(t);
                 }
@@ -54,8 +53,12 @@ namespace Utils {
             var p = new Player();
             p.id = rnd.Next(10);
             p.name = "" + rnd.Next(10000);
-            p.x = rnd.Next(boardWidth);
-            p.y = rnd.Next(boardHeight);
+            p.pos = new Vector();
+            p.pos.x = rnd.Next(boardWidth);
+            p.pos.y = rnd.Next(boardHeight);
+            p.facing = new Vector();
+            p.facing.x = rnd.Next(3) - 1;
+            p.facing.y = rnd.Next(3) - 1;
             p.hand = new List<Card>();
             for (int i = 0; i < 5; i++) p.hand.Add(GenerateCard());
             return p;

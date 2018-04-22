@@ -7,15 +7,16 @@ import (
 	"github.com/bitDecayGames/LudumDare41/server/utils"
 )
 
-func attemptMoveForward(player *state.Player, stepSeq *StepSequence, g state.GameState) (*StepSequence, state.GameState) {
+func attemptMoveForward(player *state.Player, stepSeq []Step, g state.GameState) ([]Step, state.GameState) {
 	return attemptMove(player, player.Facing, stepSeq, g)
 }
 
-func attemptMoveBackwards(player *state.Player, stepSeq *StepSequence, g state.GameState) (*StepSequence, state.GameState) {
+func attemptMoveBackwards(player *state.Player, stepSeq []Step, g state.GameState) ([]Step, state.GameState) {
 	return attemptMove(player, utils.VecScale(player.Facing, -1), stepSeq, g)
 }
 
-func attemptMove(player *state.Player, direction utils.Vector, stepSeq *StepSequence, g state.GameState) (*StepSequence, state.GameState) {
+// TODO: after a movement, we need to check for collecting a crate
+func attemptMove(player *state.Player, direction utils.Vector, stepSeq []Step, g state.GameState) ([]Step, state.GameState) {
 	targetPos := utils.VecAdd(player.Pos, direction)
 	if isEmptyTile(targetPos, g) {
 		// check if another player is there
@@ -29,25 +30,25 @@ func attemptMove(player *state.Player, direction utils.Vector, stepSeq *StepSequ
 				otherMove := FacingToMoveAction(direction, otherPlayer.Name)
 				playermove := FacingToMoveAction(direction, player.Name)
 				step := Step{
-					actions: []Action{
+					Actions: []Action{
 						otherMove,
 						playermove,
 					},
 				}
 				otherPlayer.Pos = utils.VecAdd(otherPlayer.Pos, direction)
 				player.Pos = utils.VecAdd(player.Pos, direction)
-				stepSeq.steps = append(stepSeq.steps, step)
+				stepSeq = append(stepSeq, step)
 			}
 		} else {
 			// free to move
 			playermove := FacingToMoveAction(direction, player.Name)
 			step := Step{
-				actions: []Action{
+				Actions: []Action{
 					playermove,
 				},
 			}
 			player.Pos = utils.VecAdd(player.Pos, direction)
-			stepSeq.steps = append(stepSeq.steps, step)
+			stepSeq = append(stepSeq, step)
 		}
 	}
 	return stepSeq, g

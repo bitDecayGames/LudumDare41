@@ -2,11 +2,13 @@ package state
 
 import (
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
+	"github.com/bitDecayGames/LudumDare41/server/utils"
 )
 
 type GameState struct {
-	Tick    int
-	Players []Player
+	Tick    int                 `json:"tick"`
+	Players []Player            `json:"players"`
+	Crate   utils.Vector        `json:"crate"`
 	Board   gameboard.GameBoard `json:"gameBoard"`
 }
 

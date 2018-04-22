@@ -1,8 +1,10 @@
 package utils
 
+var DeadVector = Vector{X: -1, Y: -1}
+
 type Vector struct {
-	X int
-	Y int
+	X int `json:"x"`
+	Y int `json:"y"`
 }
 
 func VecAdd(v1 Vector, v2 Vector) Vector {
