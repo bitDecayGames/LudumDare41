@@ -82,6 +82,10 @@ func (l *Lobby) AddPlayer(name string) error {
 	return nil
 }
 
+func (l *Lobby) GetPlayers() []string {
+	return l.Players
+}
+
 func (ls *lobbyService) genLobbyName() (string, error) {
 	lobbyName, err := ls.hashID.Encode([]int{rand.Intn(randRange)})
 	return lobbyName, err

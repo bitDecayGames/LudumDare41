@@ -10,6 +10,8 @@ import (
 	"net/http/httputil"
 	"time"
 
+	"github.com/bitDecayGames/LudumDare41/server/lobby"
+
 	"github.com/bitDecayGames/LudumDare41/server/pubsub"
 	"github.com/gorilla/mux"
 )
@@ -21,6 +23,7 @@ const (
 )
 
 var pubSubService pubsub.PubSubService
+var lobbyService lobby.LobbyService
 
 func main() {
 	host := fmt.Sprintf(":%v", port)
@@ -29,6 +32,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	pubSubService = pubsub.NewPubSubService()
+	lobbyService = lobby.NewLobbyService()
 
 	r := mux.NewRouter()
 	r.Use(loggingMiddleware)
@@ -40,6 +44,7 @@ func main() {
 	// Lobby
 	r.HandleFunc(lobbyRoute, LobbyCreateHandler).Methods("POST")
 	r.HandleFunc(lobbyRoute+"{lobbyName}/join", LobbyJoinHandler).Methods("POST")
+	r.HandleFunc(lobbyRoute+"{lobbyName}/players", LobbyJoinHandler).Methods("GET")
 	r.HandleFunc(lobbyRoute+"{lobbyName}/start", LobbyStartHandler).Methods("PUT")
 
 	log.Printf("Server started on %s", host)
@@ -153,8 +158,27 @@ func UpdatePubSubConnectionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func LobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
+type newLobbyResBody struct {
+	Name string `json:"name"`
+}
 
+func LobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
+	lobby, err := lobbyService.NewLobby()
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	resBody := newLobbyResBody{
+		Name: lobby.Name,
+	}
+	err = json.NewEncoder(w).Encode(&resBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 type joinLobbyBody struct {
@@ -162,6 +186,10 @@ type joinLobbyBody struct {
 }
 
 func LobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
+	// vars := mux.Vars(r)
+}
+
+func LobbyGetPlayersHandler(w http.ResponseWriter, r *http.Request) {
 	// vars := mux.Vars(r)
 }
 
