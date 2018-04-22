@@ -14,7 +14,8 @@ type Tile struct {
 }
 
 type GameBoard struct {
-	Tiles [][]Tile `json:"tiles"`
+	Tiles          [][]Tile
+	FlattenedTiles []Tile `json:"tiles"`
 }
 
 func LoadBoard(name string) GameBoard {
@@ -24,6 +25,7 @@ func LoadBoard(name string) GameBoard {
 			{Tile{TileType: Empty_tile}},
 			{Tile{TileType: Empty_tile}},
 		},
+		FlattenedTiles: []Tile{},
 	}
 
 	// Assign x/y values
@@ -34,6 +36,8 @@ func LoadBoard(name string) GameBoard {
 				Y: y,
 			}
 			board.Tiles[x][y] = tile
+			// Flatten tiles
+			board.FlattenedTiles = append(board.FlattenedTiles, tile)
 		}
 	}
 

@@ -18,6 +18,8 @@ func TestMapLoading(t *testing.T) {
 		t.Error("Game board has no height")
 	}
 
+	flattendTileCount := 0
+
 	for x, yTiles := range board.Tiles {
 		for y, tile := range yTiles {
 			if tile.Pos.X != x {
@@ -27,6 +29,12 @@ func TestMapLoading(t *testing.T) {
 			if tile.Pos.Y != y {
 				t.Errorf("tile position y: %v does not match y: %v", tile.Pos.Y, y)
 			}
+
+			flattendTileCount++
 		}
+	}
+
+	if len(board.FlattenedTiles) != flattendTileCount {
+		t.Errorf("flattenedTiles length was %v, expected %v", len(board.FlattenedTiles), flattendTileCount)
 	}
 }
