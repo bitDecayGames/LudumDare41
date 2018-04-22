@@ -17,14 +17,19 @@ type CardSet struct {
 	Cards []Card
 }
 
-func LoadSet(name string) CardSet {
+func LoadSet(setDef map[string]int) CardSet {
 	set := CardSet{
 		Cards: []Card{},
 	}
 
-	for i := 0; i < 5; i++ {
-		set.Cards = append(set.Cards, Card{CardType: "moveForward1Card"})
+	for cType, num := range setDef {
+		for ;num > 0;num-- {
+			set.Cards = append(set.Cards, Card{
+				CardType:cType,
+			})
+		}
 	}
+
 	return set
 }
 
