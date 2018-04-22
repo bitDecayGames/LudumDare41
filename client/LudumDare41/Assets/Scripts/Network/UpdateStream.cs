@@ -8,18 +8,18 @@ namespace Network {
         public static string host = "ws://localhost:8080/api/v1/pubsub";
 //        public static string host = "ws://echo.websocket.org"; // for debugging websockets
 
-        private WebSocket webSocket;
-        private bool started = false;
+        private static WebSocket webSocket;
+        private static bool started = false;
         private List<IUpdateStreamSubscriber> subscribers = new List<IUpdateStreamSubscriber>();
 
 
         /// <summary>
         /// Requires you to wait for a bit before you can actually send messages
         /// </summary>
-        public void StartListening() {
+        public void StartListening(Action onSuccess) {
             if (!started) {
-                StartCoroutine(startWebsocket());
-            }
+                StartCoroutine(startWebsocket(onSuccess));
+            } else onSuccess.Invoke();
         }
 
         public void StopListening() {
@@ -42,11 +42,12 @@ namespace Network {
             else Debug.LogError("Failed to send message because Websocket was still initializing");
         }
 
-        private IEnumerator startWebsocket() {
+        private IEnumerator startWebsocket(Action onSuccess) {
             var ws = new WebSocket(new Uri(host));
             yield return StartCoroutine(ws.Connect());
             started = true;
             webSocket = ws;
+            onSuccess.Invoke();
             Debug.Log("Websocket now listening");
             while (started) {
                 string msg = webSocket.RecvString();
