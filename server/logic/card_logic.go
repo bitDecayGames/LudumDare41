@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"fmt"
+
 	"github.com/bitDecayGames/LudumDare41/server/cards"
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
 	"github.com/bitDecayGames/LudumDare41/server/state"
@@ -29,6 +31,9 @@ func ApplyCard(c cards.Card, g state.GameState) (StepSequence, state.GameState) 
 				}
 			}
 		}
+	}
+	if affectedPlayer == nil {
+		fmt.Println("THE PLAYER WAS MUFFUGGIN NIL")
 	}
 
 	stepSeq := &StepSequence{}

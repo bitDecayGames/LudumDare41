@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/http/httputil"
+	"strconv"
 	"strings"
 	"time"
 
@@ -60,10 +61,7 @@ func main() {
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/join", LobbyJoinHandler).Methods("PUT")
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/players", LobbyGetPlayersHandler).Methods("GET")
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/start", LobbyStartHandler).Methods("PUT")
-	// TODO Below
 	// Game
-	// Cards are list on ints, need tick as well
-	// Trigger next round once all submitted
 	r.HandleFunc(gameRoute+"/{gameName}/tick/{tick}/player/{playerName}/cards", CardsSubmitHandler).Methods("PUT")
 	// Get current tick
 	r.HandleFunc(gameRoute+"/{gameName}/tick", GetCurrentTickHandler).Methods("GET")
@@ -338,10 +336,49 @@ func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
+type submitCardsReqBody struct {
+	CardIds []int `json:"cardIds"`
 }
 
+// Cards are list on ints, need tick as well
+// Trigger next round once all submitted
+func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	gameName := vars["gameName"]
+	playerName := vars["playerName"]
+	tick, err := strconv.Atoi(vars["tick"])
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var reqBody submitCardsReqBody
+	err = json.NewDecoder(r.Body).Decode(&reqBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	game, err := gameService.GetGame(gameName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	err = game.SubmitCards(playerName, tick, reqBody.CardIds)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Check for advance to next turn
+}
+
+// Return tick in json
 func GetCurrentTickHandler(w http.ResponseWriter, r *http.Request) {
 	// vars := mux.Vars(r)
 }
