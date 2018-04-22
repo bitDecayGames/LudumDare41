@@ -8,6 +8,7 @@ import (
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
 	"github.com/bitDecayGames/LudumDare41/server/lobby"
 	"github.com/bitDecayGames/LudumDare41/server/pubsub"
+	"github.com/bitDecayGames/LudumDare41/server/logic"
 )
 
 const (
@@ -57,7 +58,7 @@ func (s *Services) SubmitCards(gameName, playerName string, tick int, cardIds []
 func (s *Services) CreateGame(lobby *lobby.Lobby) []error {
 	// TODO Allow different boards and card sets.
 	board := gameboard.LoadBoard("default")
-	cardSet := cards.LoadSet("default")
+	cardSet := cards.LoadSet(logic.CardSetMap["debug"])
 	game := s.Game.NewGame(lobby, board, cardSet)
 
 	// TODO Fix

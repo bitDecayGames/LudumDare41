@@ -123,16 +123,23 @@ func (g *Game) SubmitCards(playerName string, tick int, cardIds []int) error {
 }
 
 func (g *Game) AggregateTurn() []cards.Card {
-	cardOrder := make([]cards.Card, 0)
-	for playerName, pendingCards := range g.pendingSubmissions {
-		log.Printf("Pending submissions for player %s: %v", playerName, pendingCards)
-		cardOrder = append(cardOrder, pendingCards...)
+	g.pendingSequence = make([]cards.Card, 0)
+	cardsAdded := true
+	for cardsAdded {
+		cardsAdded = false
+		cardOrder := make([]cards.Card, 0)
+		for name, pendingCards := range g.pendingSubmissions {
+			if len(pendingCards) == 0 {
+				continue
+			}
+			cardOrder = append(cardOrder, pendingCards[0])
+			g.pendingSubmissions[name] = pendingCards[1:]
+			cardsAdded = true
+		}
+		sort.Slice(cardOrder, func(i, j int) bool { return cardOrder[i].Priority > cardOrder[j].Priority })
+		g.pendingSequence = append(g.pendingSequence, cardOrder...)
 	}
-	g.pendingSubmissions = make(map[string][]cards.Card)
-
-	sort.Slice(cardOrder, func(i, j int) bool { return cardOrder[i].Priority > cardOrder[j].Priority })
-	g.pendingSequence = cardOrder
-	return cardOrder
+	return g.pendingSequence
 }
 
 func (g *Game) ExecuteTurn() {
@@ -160,6 +167,7 @@ func (g *Game) ExecuteTurn() {
 	// 3. Update clients with these things:
 	fmt.Println(startState)
 	fmt.Println(stepSequence)
+	fmt.Println(fmt.Sprintf("Pending Seq %+v", g.pendingSequence))
 	intermState.Tick += 1
 	g.CurrentState = intermState
 }
