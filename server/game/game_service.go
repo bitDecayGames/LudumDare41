@@ -37,7 +37,10 @@ func (gs *gameService) NewGame(lobby *lobby.Lobby, board gameboard.GameBoard, ca
 			Hand:    make([]cards.Card, 0),
 			Discard: make([]cards.Card, 0),
 			Deck:    make([]cards.Card, 0),
-			Pos:     utils.Vector{},
+			Pos: utils.Vector{
+				X: 2,
+				Y: 2,
+			},
 			Facing: utils.Vector{
 				X: 0,
 				Y: 1,

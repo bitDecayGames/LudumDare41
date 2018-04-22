@@ -72,8 +72,7 @@ func DealCards(inState state.GameState) state.GameState {
 func (g *Game) AreSubmissionsComplete() bool {
 	numSubmissons := len(g.pendingSubmissions)
 	log.Printf("%v/%v player submissions are pending", numSubmissons, len(g.Players))
-	return numSubmissons == len(g.pendingSubmissions) &&
-		numSubmissons == len(g.Players)
+	return numSubmissons == len(g.Players)
 }
 
 func (g *Game) GetPlayer(name string) (*state.Player, error) {
