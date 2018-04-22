@@ -118,6 +118,7 @@ func (g *Game) SubmitCards(playerName string, tick int, cardIds []int) error {
 func (g *Game) AggregateTurn() []cards.Card {
 	cardOrder := make([]cards.Card, 0)
 	for _, pendingCards := range g.pendingSubmissions {
+		log.Printf("Adding %v cards to the pending list to be played", len(pendingCards))
 		cardOrder = append(cardOrder, pendingCards...)
 	}
 	g.pendingSubmissions = make(map[string][]cards.Card)
@@ -152,6 +153,7 @@ func (g *Game) ExecuteTurn() {
 	// 3. Update clients with these things:
 	fmt.Println(startState)
 	fmt.Println(stepSequence)
+	fmt.Println(fmt.Sprintf("Pending Seq %+v", g.pendingSequence))
 	intermState.Tick += 1
 	g.CurrentState = intermState
 }
