@@ -114,6 +114,19 @@ namespace Network {
         }
         
         /// <summary>
+        /// Update the server with your connection id
+        /// </summary>
+        /// <param name="success">status 200</param>
+        /// <param name="failure"></param>
+        public static IEnumerator BroadcastConnectionId(Action success, Action<string, int> failure) {
+            return httpPut(new MyRequest()
+                .Url(State.host + "/api/v1/pubsub/connection/" + State.connectionId)
+                .Body(JsonUtility.ToJson(new ConnectionIdRequest(State.lobby.code, State.myName)))
+                .Success((body) => { success(); })
+                .Failure(failure));
+        }
+        
+        /// <summary>
         /// Refresh the current game state and get the current processed turn
         /// </summary>
         /// <param name="success">the current processed turn</param>
