@@ -6,10 +6,10 @@ import (
 
 // Card represents a single unique playing card
 type Card struct {
-	ID       int
-	Priority int
-	Owner    string
-	CardType string
+	ID       int    `json:"id"`
+	Priority int    `json:"priority"`
+	Owner    string `json:"owner"`
+	CardType string `json:"cardType"`
 }
 
 // CardSet is an instance of a set of cards

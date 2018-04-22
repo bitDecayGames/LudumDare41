@@ -111,14 +111,7 @@ func (g *Game) SubmitCards(playerName string, tick int, cardIds []int) error {
 		}
 	}
 
-	log.Println("!!!!!!!! Start")
-	log.Println(g.AreSubmissionsComplete())
-	log.Println(playerName, submission)
-
 	g.pendingSubmissions[playerName] = submission
-
-	log.Println(g.AreSubmissionsComplete())
-	log.Println("!!!!!!!! End")
 
 	return nil
 }
