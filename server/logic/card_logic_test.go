@@ -193,3 +193,52 @@ func TestApplyingCardRotate(t *testing.T) {
 		t.Fatalf("Player was not properly rotated. Expected %v, got %v", expected, newState.Players[0].Facing)
 	}
 }
+
+func TestShootingPlayer(t *testing.T) {
+	testCard := CardTypeMap[Card_shoot_main_turret]
+	testCard.Owner = "player1"
+	testPlayer := state.Player{
+		Name:    "player1",
+		Discard: make([]cards.Card, 0),
+		Hand:    []cards.Card{testCard},
+		Pos:     utils.Vector{X: 0, Y: 0},
+		Facing:  utils.Vector{X: 0, Y: 1},
+	}
+	testPlayerTwo := state.Player{
+		Name:    "player2",
+		Discard: make([]cards.Card, 0),
+		Hand:    []cards.Card{testCard},
+		Pos:     utils.Vector{X: 0, Y: 4},
+		Facing:  utils.Vector{X: 1, Y: 0},
+	}
+
+	gs := state.GameState{
+		Players: []state.Player{testPlayer, testPlayerTwo},
+		Board: gameboard.GameBoard{
+			Tiles: [][]gameboard.Tile{
+				[]gameboard.Tile{
+					gameboard.Tile{TileType: gameboard.Empty_tile},
+					gameboard.Tile{TileType: gameboard.Empty_tile},
+					gameboard.Tile{TileType: gameboard.Empty_tile},
+					gameboard.Tile{TileType: gameboard.Empty_tile},
+					gameboard.Tile{TileType: gameboard.Empty_tile},
+					gameboard.Tile{TileType: gameboard.Empty_tile},
+				},
+			},
+		},
+	}
+
+	seq, newState := ApplyCard(testCard, gs)
+	if len(newState.Players[0].Hand) != 0 {
+		t.Fatal("Card was not discarded after use")
+	}
+
+	if len(seq.steps) != 2 {
+		// expecting shoot, die
+		t.Fatalf("Sequence not proper: %v", seq)
+	}
+
+	if newState.Players[1].Pos.X != -1 && newState.Players[1].Pos.Y != -1 {
+		t.Fatal("Player  two was not properly killed")
+	}
+}
