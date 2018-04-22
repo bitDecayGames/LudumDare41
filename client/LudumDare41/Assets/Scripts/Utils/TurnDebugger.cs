@@ -7,8 +7,8 @@ namespace Utils {
         private static Random rnd = new Random();
         private static string[] tileTypes = new string[]{"Water", "Grass", "Mountain", "Fire", "Dirt"};
         private static string[] cardTypes = new string[]{"MoveForward1", "MoveBackward1"};
-        private static int boardWidth = 10;
-        private static int boardHeight = 10;
+        private static int boardWidth = 3;
+        private static int boardHeight = 3;
             
         
         public static ProcessedTurn GenerateTurn() {
