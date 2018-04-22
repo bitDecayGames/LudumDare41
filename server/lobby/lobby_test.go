@@ -18,16 +18,16 @@ func TestLobbyPlayerAdd(t *testing.T) {
 		t.Error("lobby name is too short")
 	}
 
-	err = lobby.AddPlayer("Jacque")
+	_, err = lobby.AddPlayer("Jacque")
 	if err != nil {
 		t.Error(err)
 	}
-	err = lobby.AddPlayer("Monday")
+	_, err = lobby.AddPlayer("Monday")
 	if err != nil {
 		t.Error(err)
 	}
 
-	err = lobby.AddPlayer("Monday")
+	_, err = lobby.AddPlayer("Monday")
 	if err == nil {
 		t.Error("Allowed duplicate player names")
 	}

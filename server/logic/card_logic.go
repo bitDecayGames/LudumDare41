@@ -45,9 +45,40 @@ func ApplyCard(c cards.Card, g state.GameState) (StepSequence, state.GameState) 
 		stepSeq, g = attemptMoveForward(affectedPlayer, stepSeq, g)
 	case Card_move_backward_1:
 		stepSeq, g = attemptMoveBackwards(affectedPlayer, stepSeq, g)
+	case Card_rotate_clockwise:
+		stepSeq, g = rotate(affectedPlayer, 90, stepSeq, g)
 	}
 
 	return *stepSeq, g
+}
+
+func rotate(player *state.Player, degrees int, stepSeq *StepSequence, g state.GameState) (*StepSequence, state.GameState) {
+	var newX int
+	var newY int
+
+	switch degrees {
+	case 90:
+		newX = player.Facing.Y
+		newY = player.Facing.X * -1
+	case -90:
+		newX = player.Facing.Y * -1
+		newY = player.Facing.X
+	case 180:
+		newX = player.Facing.X * -1
+		newY = player.Facing.Y * -1
+	}
+
+	player.Facing.X = newX
+	player.Facing.Y = newY
+
+	step := Step{
+		actions: []Action{
+			DegreesToRotateAction(degrees, player.Name),
+		},
+	}
+	stepSeq.steps = append(stepSeq.steps, step)
+
+	return stepSeq, g
 }
 
 func attemptMoveForward(player *state.Player, stepSeq *StepSequence, g state.GameState) (*StepSequence, state.GameState) {

@@ -161,3 +161,35 @@ func TestPushingPlayer(t *testing.T) {
 		t.Fatal("Player  two was not properly moved forward")
 	}
 }
+
+func TestApplyingCardRotate(t *testing.T) {
+	testCard := CardTypeMap[Card_rotate_clockwise]
+	testCard.Owner = "player1"
+	testPlayer := state.Player{
+		Name:    "player1",
+		Discard: make([]cards.Card, 0),
+		Hand:    []cards.Card{testCard},
+		Pos:     utils.Vector{X: 0, Y: 0},
+		Facing:  utils.Vector{X: 0, Y: 1},
+	}
+	gs := state.GameState{
+		Players: []state.Player{testPlayer},
+		// Board: gameboard.GameBoard{
+		// 	Tiles: [][]gameboard.Tile{[]gameboard.Tile{gameboard.Tile{TileType: gameboard.Empty_tile}, gameboard.Tile{TileType: gameboard.Empty_tile}}},
+		// },
+	}
+
+	seq, newState := ApplyCard(testCard, gs)
+	if len(newState.Players[0].Hand) != 0 {
+		t.Fatal("Card was not discarded after use")
+	}
+
+	if len(seq.steps) != 1 {
+		t.Fatalf("Sequence not proper: %v", seq)
+	}
+
+	expected := utils.Vector{X: 1, Y: 0}
+	if !(utils.VecEquals(newState.Players[0].Facing, expected)) {
+		t.Fatalf("Player was not properly rotated. Expected %v, got %v", expected, newState.Players[0].Facing)
+	}
+}
