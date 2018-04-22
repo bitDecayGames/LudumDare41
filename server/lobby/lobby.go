@@ -24,7 +24,7 @@ type LobbyService interface {
 
 type lobbyService struct {
 	lobbies []*Lobby
-	hashId  *hashids.HashID
+	hashID  *hashids.HashID
 }
 
 type Lobby struct {
@@ -42,7 +42,11 @@ func (ls *lobbyService) NewLobby() (*Lobby, error) {
 		Name:    lobbyName,
 		Players: []string{},
 	}
+
+	mutex.Lock()
 	ls.lobbies = append(ls.lobbies, lobby)
+	mutex.Unlock()
+
 	return lobby, nil
 }
 
@@ -55,11 +59,11 @@ func NewLobbyService() LobbyService {
 	hd.Alphabet = defaultAlphabet
 	hd.MinLength = lobbyNameMinLength
 	hd.Salt = uuid.NewV4().String()
-	hashId := hashids.NewWithData(hd)
+	hashID := hashids.NewWithData(hd)
 
 	return &lobbyService{
 		lobbies: []*Lobby{},
-		hashId:  hashId,
+		hashID:  hashID,
 	}
 }
 
@@ -71,12 +75,14 @@ func (l *Lobby) AddPlayer(name string) error {
 		}
 	}
 
+	mutex.Lock()
 	l.Players = append(l.Players, name)
-	fmt.Println(l.Players)
+	mutex.Unlock()
+
 	return nil
 }
 
 func (ls *lobbyService) genLobbyName() (string, error) {
-	lobbyName, err := ls.hashId.Encode([]int{rand.Intn(randRange)})
+	lobbyName, err := ls.hashID.Encode([]int{rand.Intn(randRange)})
 	return lobbyName, err
 }
