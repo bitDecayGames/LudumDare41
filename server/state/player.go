@@ -6,13 +6,13 @@ import (
 )
 
 type Player struct {
-	Name    string ``
+	Name    string `json:"name"`
 	Deck    []cards.Card
 	Discard []cards.Card
-	Hand    []cards.Card ``
+	Hand    []cards.Card `json:"hand"`
 
-	Pos    utils.Vector ``
-	Facing utils.Vector ``
+	Pos    utils.Vector `json:"pos"`
+	Facing utils.Vector `json:"facing"`
 }
 
 func (p *Player) DiscardCard(c cards.Card) {

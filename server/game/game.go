@@ -21,7 +21,8 @@ type Game struct {
 	Board   gameboard.GameBoard
 	CardSet cards.CardSet
 
-	CurrentState state.GameState
+	CurrentState  state.GameState
+	PreviousState state.GameState
 
 	pendingSubmissions map[string][]cards.Card // Player submissions
 	pendingSequence    []cards.Card            // Ordered list of all player cards
@@ -44,6 +45,7 @@ func newGame(players map[string]*state.Player, board gameboard.GameBoard, cardSe
 		Players:            players,
 		Board:              board,
 		CardSet:            cardSet,
+		PreviousState:      currentState,
 		CurrentState:       DealCards(currentState),
 		pendingSubmissions: make(map[string][]cards.Card),
 	}
@@ -133,6 +135,8 @@ func (g *Game) AggregateTurn() []cards.Card {
 func (g *Game) ExecuteTurn() {
 	// This should carry out the full step sequence (cards) and calculate all actions that fall out
 
+	// 0. Set previous state
+	g.PreviousState = g.CurrentState
 	// 1. Get starting state
 	startState := g.CurrentState
 	// 2. Execute all cards

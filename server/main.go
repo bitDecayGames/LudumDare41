@@ -12,10 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bitDecayGames/LudumDare41/server/routes"
 	"github.com/bitDecayGames/LudumDare41/server/state"
 
-	"github.com/bitDecayGames/LudumDare41/server/cards"
+	"github.com/bitDecayGames/LudumDare41/server/routes"
 
 	"github.com/bitDecayGames/LudumDare41/server/pubsub"
 	"github.com/gorilla/mux"
@@ -291,14 +290,16 @@ func GetCurrentTickHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 type gameStateResBody struct {
-	PlayersHand  []cards.Card    `json:"playersHand"`
-	CurrentState state.GameState `json:"currentState"`
+	Tick  int             `json:"tick"`
+	Start state.GameState `json:"start"`
+	End   state.GameState `json:"end"`
+	// PlayersHand  []cards.Card    `json:"playersHand"`
 }
 
 func GetGameStateHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	gameName := vars["gameName"]
-	playerName := vars["playerName"]
+	// playerName := vars["playerName"]
 	tick, err := strconv.Atoi(vars["tick"])
 	if err != nil {
 		log.Println(err)
@@ -320,16 +321,19 @@ func GetGameStateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	player, err := game.GetPlayer(playerName)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	// TODO Implement player's hand only
+	// player, err := game.GetPlayer(playerName)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
 
 	resBody := gameStateResBody{
-		PlayersHand:  player.Hand,
-		CurrentState: game.CurrentState,
+		// Note: Tick is for previous turn
+		Tick:  game.PreviousState.Tick,
+		Start: game.PreviousState,
+		End:   game.CurrentState,
 	}
 	err = json.NewEncoder(w).Encode(&resBody)
 	if err != nil {
