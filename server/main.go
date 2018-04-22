@@ -119,7 +119,7 @@ func PingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	msg := pubsub.Message{
-		Type: pubsub.PingMessage,
+		MessageType: pubsub.PingMessage,
 	}
 
 	// TODO Change game name passed in?
@@ -235,8 +235,8 @@ func LobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	msg := pubsub.Message{
-		Type: pubsub.PlayerJoinMessage,
-		ID:   sanitizedPlayerName,
+		MessageType: pubsub.PlayerJoinMessage,
+		ID:          sanitizedPlayerName,
 	}
 	errors := pubSubService.SendMessage(lobbyName, msg)
 	if len(errors) > 0 {
