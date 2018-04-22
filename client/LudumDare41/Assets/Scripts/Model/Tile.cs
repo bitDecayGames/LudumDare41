@@ -10,7 +10,6 @@ namespace Model {
     {
         public int id;
         public string tileType;
-        public int x;
-        public int y;
+        public Vector pos;
     }
 }

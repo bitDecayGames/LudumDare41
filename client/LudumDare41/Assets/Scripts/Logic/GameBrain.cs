@@ -71,8 +71,8 @@ namespace Logic {
             // based on turn end board, recreate the tile layout
             DestroyTiles();
             DestroyPlayers();
-            GenerateTiles(turn.end.board.tiles); // TODO: uncomment this
-            GeneratePlayers(turn.end.players); // TODO: uncomment this
+            GenerateTiles(turn.end.board.tiles);
+            GeneratePlayers(turn.end.players);
             var myPlayer = turn.end.players.Find(p => p.name == State.myName);
             if (myPlayer != null) {
                 hud.ShowHand(myPlayer.hand, 3, (selected) => {
@@ -89,8 +89,8 @@ namespace Logic {
                 var obj = Instantiate(TilePrefab, transform);
                 tiles.Add(obj);
                 var pos = obj.transform.localPosition;
-                pos.x = t.x;
-                pos.z = t.y;
+                pos.x = t.pos.x;
+                pos.z = t.pos.y;
                 pos.y = 0;
                 obj.transform.localPosition = pos;
                 var mesh = obj.GetComponentInChildren<MeshRenderer>();
@@ -108,8 +108,8 @@ namespace Logic {
                 var obj = Instantiate(PlayerPrefab, transform);
                 players.Add(obj);
                 var pos = obj.transform.localPosition;
-                pos.x = p.x;
-                pos.z = p.y;
+                pos.x = p.pos.x;
+                pos.z = p.pos.y;
                 pos.y = 0;
                 obj.transform.localPosition = pos;
             });

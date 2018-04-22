@@ -1,35 +1,23 @@
-﻿using Network;
+﻿using Model;
+using Network;
 using UnityEngine;
 using Utils;
 
 namespace Scenes {
 	public class MwDebugBehaviour : MonoBehaviour , IUpdateStreamSubscriber {
 
-		// Use this for initialization
 		void Start () {
-			var updater = GetComponent<UpdateStream>();
-			updater.StartListening(() => {});
-			updater.Subscribe(this);
-		}
-	
-		// Update is called once per frame
-		void Update () {
-		
-		}
-
-		public void CheckServer() {
-			Debug.Log("Attempting Ping...");
-			StartCoroutine(WebApi.Ping(() => {
-				Debug.Log("Server is up and running");
-			}, (msg, status) => {
-				Debug.Log("Error response(" + status + "): " + msg);
-			}));
+			var a = TurnDebugger.GenerateTurn();
+			var str = JsonUtility.ToJson(a);
+			var b = JsonUtility.FromJson<ProcessedTurn>(str);
 			
-			GetComponent<UpdateStream>().Send("Hello ping");
+			Debug.Log(str);
+			Debug.Log(a.start.board.tiles.Count);
+			Debug.Log(b.start.board.tiles.Count);
 		}
 
 		public void receiveUpdateStreamMessage(string messageType, string message) {
-			Debug.Log("Successfully subscribed and got message: " + message);
+			
 		}
 	}
 }
