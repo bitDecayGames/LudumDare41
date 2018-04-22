@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/http/httputil"
+	"strings"
 	"time"
 
 	"github.com/bitDecayGames/LudumDare41/server/cards"
@@ -22,10 +23,11 @@ import (
 
 const (
 	// Networking
-	port       = 8080
-	apiv1      = "/api/v1"
-	lobbyRoute = apiv1 + "/lobby"
-	gameRoute  = apiv1 + "/game"
+	port        = 8080
+	apiv1       = "/api/v1"
+	pubsubRoute = apiv1 + "/pubsub"
+	lobbyRoute  = apiv1 + "/lobby"
+	gameRoute   = apiv1 + "/game"
 
 	// Game
 	minNumPlayers = 2
@@ -51,8 +53,8 @@ func main() {
 	// Test ping
 	r.HandleFunc(apiv1+"/ping", PingHandler).Methods("POST")
 	// PubSub
-	r.HandleFunc(apiv1+"/pubsub", PubSubHandler)
-	r.HandleFunc(apiv1+"/pubsub/connection/{connectionID}", UpdatePubSubConnectionHandler).Methods("PUT")
+	r.HandleFunc(pubsubRoute, PubSubHandler)
+	r.HandleFunc(pubsubRoute+"/connection/{connectionID}", UpdatePubSubConnectionHandler).Methods("PUT")
 	// Lobby
 	r.HandleFunc(lobbyRoute, LobbyCreateHandler).Methods("POST")
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/join", LobbyJoinHandler).Methods("PUT")
@@ -75,6 +77,14 @@ func main() {
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Ignore websocket route.
+		reqUri := strings.Split(r.RequestURI, "?")[0]
+		if reqUri == pubsubRoute {
+			log.Println("Skipping logging for %s", pubsubRoute)
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		// Save a copy of this request for debugging.
 		requestDump, err := httputil.DumpRequest(r, true)
 		if err != nil {
