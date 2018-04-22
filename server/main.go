@@ -10,6 +10,8 @@ import (
 	"net/http/httputil"
 	"time"
 
+	"github.com/bitDecayGames/LudumDare41/server/lobby"
+
 	"github.com/bitDecayGames/LudumDare41/server/pubsub"
 	"github.com/gorilla/mux"
 )
@@ -18,9 +20,11 @@ const (
 	port       = 8080
 	apiv1      = "/api/v1"
 	lobbyRoute = apiv1 + "/lobby"
+	gameRoute  = apiv1 + "/game"
 )
 
 var pubSubService pubsub.PubSubService
+var lobbyService lobby.LobbyService
 
 func main() {
 	host := fmt.Sprintf(":%v", port)
@@ -29,6 +33,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	pubSubService = pubsub.NewPubSubService()
+	lobbyService = lobby.NewLobbyService()
 
 	r := mux.NewRouter()
 	r.Use(loggingMiddleware)
@@ -39,8 +44,19 @@ func main() {
 	r.HandleFunc(apiv1+"/pubsub/connection/{connectionID}", UpdatePubSubConnectionHandler).Methods("PUT")
 	// Lobby
 	r.HandleFunc(lobbyRoute, LobbyCreateHandler).Methods("POST")
-	r.HandleFunc(lobbyRoute+"{lobbyName}/join", LobbyJoinHandler).Methods("POST")
-	r.HandleFunc(lobbyRoute+"{lobbyName}/start", LobbyStartHandler).Methods("PUT")
+	r.HandleFunc(lobbyRoute+"/{lobbyName}/join", LobbyJoinHandler).Methods("POST")
+	r.HandleFunc(lobbyRoute+"/{lobbyName}/players", LobbyGetPlayersHandler).Methods("GET")
+	// Don't return anything
+	r.HandleFunc(lobbyRoute+"/{lobbyName}/start", LobbyStartHandler).Methods("PUT")
+	// TODO Below
+	// Game
+	// Cards are list on ints, need tick as well
+	// Trigger next round once all submitted
+	r.HandleFunc(lobbyRoute+"/{gameName}/tick/{tick}/player/{playerName}/cards", CardsSubmitHandler).Methods("PUT")
+	// Get current tick
+	r.HandleFunc(lobbyRoute+"/{gameName}/tick", GetCurrentTickHandler).Methods("GET")
+	// Game state + players cards for a tick
+	r.HandleFunc(lobbyRoute+"/{gameName}/tick/{tick}/player/{playerName}", GetGameStateHandler).Methods("GET")
 
 	log.Printf("Server started on %s", host)
 
@@ -67,6 +83,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 		}
 
 		// we copy the captured response headers to our new response
+		w.WriteHeader(rec.Code)
 		for k, v := range rec.Header() {
 			w.Header()[k] = v
 		}
@@ -97,9 +114,10 @@ func PingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	msg := pubsub.Message{
-		Type: "ping",
+		Type: pubsub.PingMessage,
 	}
 
+	// TODO Change game name passed in?
 	errors := pubSubService.SendMessage("test", msg)
 	if len(errors) > 0 {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -135,6 +153,8 @@ type updateSubBody struct {
 
 func UpdatePubSubConnectionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+	connectionID := vars["connectionID"]
+
 	var body updateSubBody
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
@@ -142,8 +162,6 @@ func UpdatePubSubConnectionHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
-	connectionID := vars["connectionID"]
 
 	err = pubSubService.UpdateSubscription(connectionID, body.GameName, body.PlayerName)
 	if err != nil {
@@ -153,18 +171,123 @@ func UpdatePubSubConnectionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func LobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
-
+type newLobbyResBody struct {
+	Name string `json:"name"`
 }
 
-type joinLobbyBody struct {
+func LobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
+	lobby, err := lobbyService.NewLobby()
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	resBody := newLobbyResBody{
+		Name: lobby.Name,
+	}
+	err = json.NewEncoder(w).Encode(&resBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+type joinLobbyReqBody struct {
 	PlayerName string `json:"playerName"`
 }
 
+type joinLobbyResBody struct {
+	SanitizedPlayerName string `json:"sanitizedPlayerName"`
+}
+
+// Require a valid name, otherwise reject. return santizied version
 func LobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
-	// vars := mux.Vars(r)
+	vars := mux.Vars(r)
+	lobbyName := vars["lobbyName"]
+
+	var reqBody joinLobbyReqBody
+	err := json.NewDecoder(r.Body).Decode(&reqBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	lobby, err := lobbyService.GetLobby(lobbyName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	sanitizedPlayerName, err := lobby.AddPlayer(reqBody.PlayerName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	msg := pubsub.Message{
+		Type: pubsub.PlayerJoinMessage,
+		ID:   sanitizedPlayerName,
+	}
+	errors := pubSubService.SendMessage(lobbyName, msg)
+	if len(errors) > 0 {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	resBody := joinLobbyResBody{
+		SanitizedPlayerName: sanitizedPlayerName,
+	}
+	err = json.NewEncoder(w).Encode(&resBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+type getPlayersResBody struct {
+	Players []string `json:"players"`
+}
+
+func LobbyGetPlayersHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	lobbyName := vars["lobbyName"]
+
+	lobby, err := lobbyService.GetLobby(lobbyName)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	resBody := getPlayersResBody{
+		Players: lobby.GetPlayers(),
+	}
+	err = json.NewEncoder(w).Encode(&resBody)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
+	// vars := mux.Vars(r)
+}
+
+func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
+	// vars := mux.Vars(r)
+}
+
+func GetCurrentTickHandler(w http.ResponseWriter, r *http.Request) {
+	// vars := mux.Vars(r)
+}
+
+func GetGameStateHandler(w http.ResponseWriter, r *http.Request) {
 	// vars := mux.Vars(r)
 }

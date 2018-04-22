@@ -11,8 +11,14 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+const (
+	PingMessage       = "ping"
+	PlayerJoinMessage = "playerJoin"
+)
+
 type Message struct {
 	Type string `json:"type"`
+	ID   string `json:"id"`
 }
 
 var upgrader = websocket.Upgrader{
