@@ -12,3 +12,4 @@ const Action_rotate_180 = "rotate180Action"
 const Action_shoot_main_gun = "shootMainGunAction"
 
 const Action_death = "deathAction"
+const Action_spawn = "spawnAction"

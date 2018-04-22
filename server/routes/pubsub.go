@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	pubsubRoute = apiv1 + "/pubsub"
+	PubSubRoute = apiv1 + "/pubsub"
 )
 
 type PubSubRoutes struct {
@@ -17,8 +17,8 @@ type PubSubRoutes struct {
 }
 
 func (psr *PubSubRoutes) AddRoutes(r *mux.Router) {
-	r.HandleFunc(pubsubRoute, psr.pubSubHandler)
-	r.HandleFunc(pubsubRoute+"/connection/{connectionID}", psr.updatePubSubConnectionHandler).Methods("PUT")
+	r.HandleFunc(PubSubRoute, psr.pubSubHandler)
+	r.HandleFunc(PubSubRoute+"/connection/{connectionID}", psr.updatePubSubConnectionHandler).Methods("PUT")
 }
 
 func (psr *PubSubRoutes) pubSubHandler(w http.ResponseWriter, r *http.Request) {

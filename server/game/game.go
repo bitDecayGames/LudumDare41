@@ -21,7 +21,8 @@ type Game struct {
 	Board   gameboard.GameBoard
 	CardSet cards.CardSet
 
-	CurrentState state.GameState
+	CurrentState  state.GameState
+	PreviousState state.GameState
 
 	pendingSubmissions map[string][]cards.Card // Player submissions
 	pendingSequence    []cards.Card            // Ordered list of all player cards
@@ -44,6 +45,7 @@ func newGame(players map[string]*state.Player, board gameboard.GameBoard, cardSe
 		Players:            players,
 		Board:              board,
 		CardSet:            cardSet,
+		PreviousState:      currentState,
 		CurrentState:       DealCards(currentState),
 		pendingSubmissions: make(map[string][]cards.Card),
 	}
@@ -133,20 +135,23 @@ func (g *Game) AggregateTurn() []cards.Card {
 func (g *Game) ExecuteTurn() {
 	// This should carry out the full step sequence (cards) and calculate all actions that fall out
 
+	// 0. Set previous state
+	g.PreviousState = g.CurrentState
 	// 1. Get starting state
 	startState := g.CurrentState
 	// 2. Execute all cards
 	intermState := g.CurrentState
-	stepSequence := make([]logic.StepSequence, 0)
+	stepSequence := logic.StepSequence{}
 	for _, c := range g.pendingSequence {
 		fmt.Println(fmt.Sprintf("%+v", c))
-		seq, newState := logic.ApplyCard(c, intermState)
-		stepSequence = append(stepSequence, seq)
+		newSteps, newState := logic.ApplyCard(c, intermState)
+		stepSequence.Steps = append(stepSequence.Steps, newSteps...)
 		intermState = newState
 	}
 
 	// respawn any dead players.  This assumes zero downtime -- you die, you respawn instantly
-	intermState = respawnDeadPlayer(intermState)
+	step, intermState := respawnDeadPlayer(intermState)
+	stepSequence.Steps = append(stepSequence.Steps, step)
 
 	intermState = DealCards(intermState)
 	// 3. Update clients with these things:
@@ -156,13 +161,15 @@ func (g *Game) ExecuteTurn() {
 	g.CurrentState = intermState
 }
 
-func respawnDeadPlayer(g state.GameState) state.GameState {
+func respawnDeadPlayer(g state.GameState) (logic.Step, state.GameState) {
+	step := logic.Step{}
 	for i, p := range g.Players {
 		if utils.VecEquals(p.Pos, utils.DeadVector) {
 			g.Players[i].Pos = getEmptyTile(g)
+			step.Actions = append(step.Actions, logic.GetSpawnAction(p.Name))
 		}
 	}
-	return g
+	return step, g
 }
 
 func getEmptyTile(g state.GameState) utils.Vector {

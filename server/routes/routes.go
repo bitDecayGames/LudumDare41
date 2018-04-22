@@ -11,15 +11,10 @@ const (
 	apiv1 = "/api/v1"
 )
 
-type Services struct {
-	PubSub pubsub.PubSubService
-	Lobby  lobby.LobbyService
-	Game   game.GameService
-}
-
 type Routes struct {
 	Services     *Services
 	pubSubRoutes *PubSubRoutes
+	lobbyRoutes  *LobbyRoutes
 }
 
 func InitRoutes(r *mux.Router) *Routes {
@@ -32,8 +27,12 @@ func InitRoutes(r *mux.Router) *Routes {
 	pubSubRoutes := NewPubSubRoutes(services)
 	pubSubRoutes.AddRoutes(r)
 
+	lobbyRoutes := NewLobbyRoutes(services)
+	lobbyRoutes.AddRoutes(r)
+
 	return &Routes{
 		Services:     services,
 		pubSubRoutes: pubSubRoutes,
+		lobbyRoutes:  lobbyRoutes,
 	}
 }

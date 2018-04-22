@@ -6,9 +6,9 @@ import (
 )
 
 type GameState struct {
-	Tick    int
-	Players []Player
-	Crate   utils.Vector
+	Tick    int                 `json:"tick"`
+	Players []Player            `json:"players"`
+	Crate   utils.Vector        `json:"crate"`
 	Board   gameboard.GameBoard `json:"gameBoard"`
 }
 
