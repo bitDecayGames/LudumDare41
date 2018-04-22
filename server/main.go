@@ -12,10 +12,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bitDecayGames/LudumDare41/server/game"
 	"github.com/bitDecayGames/LudumDare41/server/state"
 
 	"github.com/bitDecayGames/LudumDare41/server/cards"
-	"github.com/bitDecayGames/LudumDare41/server/game"
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
 
 	"github.com/bitDecayGames/LudumDare41/server/lobby"
@@ -40,9 +40,21 @@ const (
 	maxNumPlayers = 4
 )
 
-var pubSubService pubsub.PubSubService
-var lobbyService lobby.LobbyService
-var gameService game.GameService
+type Services struct {
+	pubsub pubsub.PubSubService
+	lobby  lobby.LobbyService
+	game   game.GameService
+}
+
+func NewServices() *Services {
+	return &Services{
+		pubsub: pubsub.NewPubSubService(),
+		lobby:  lobby.NewLobbyService(),
+		game:   game.NewGameService(),
+	}
+}
+
+var services *Services
 
 func main() {
 	host := fmt.Sprintf(":%v", port)
@@ -50,9 +62,7 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	pubSubService = pubsub.NewPubSubService()
-	lobbyService = lobby.NewLobbyService()
-	gameService = game.NewGameService()
+	services = NewServices()
 
 	r := mux.NewRouter()
 	r.Use(loggingMiddleware)
@@ -141,7 +151,7 @@ func TestPingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO Change game name passed in?
-	errors := pubSubService.SendMessage("test", msg)
+	errors := services.pubsub.SendMessage("test", msg)
 	if len(errors) > 0 {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -176,7 +186,7 @@ func TestCreateGameHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobby, err := lobbyService.NewLobby()
+	lobby, err := services.lobby.NewLobby()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -210,7 +220,7 @@ func TestSubmitHandHandler(w http.ResponseWriter, r *http.Request) {
 	gameName := vars["gameName"]
 	playerName := vars["playerName"]
 
-	game, err := gameService.GetGame(gameName)
+	game, err := services.game.GetGame(gameName)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -241,7 +251,7 @@ func TestSubmitHandHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func PubSubHandler(w http.ResponseWriter, r *http.Request) {
-	connectionID, err := pubSubService.AddSubscription(w, r)
+	connectionID, err := services.pubsub.AddSubscription(w, r)
 	if err != nil {
 		log.Println(err)
 		return
@@ -266,7 +276,7 @@ func UpdatePubSubConnectionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = pubSubService.UpdateSubscription(connectionID, body.GameName, body.PlayerName)
+	err = services.pubsub.UpdateSubscription(connectionID, body.GameName, body.PlayerName)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -279,7 +289,7 @@ type newLobbyResBody struct {
 }
 
 func LobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
-	lobby, err := lobbyService.NewLobby()
+	lobby, err := services.lobby.NewLobby()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -318,7 +328,7 @@ func LobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lobby, err := lobbyService.GetLobby(lobbyName)
+	lobby, err := services.lobby.GetLobby(lobbyName)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -336,7 +346,7 @@ func LobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
 		MessageType: pubsub.PlayerJoinMessage,
 		ID:          sanitizedPlayerName,
 	}
-	errors := pubSubService.SendMessage(lobbyName, msg)
+	errors := services.pubsub.SendMessage(lobbyName, msg)
 	if len(errors) > 0 {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -361,7 +371,7 @@ func LobbyGetPlayersHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	lobbyName := vars["lobbyName"]
 
-	lobby, err := lobbyService.GetLobby(lobbyName)
+	lobby, err := services.lobby.GetLobby(lobbyName)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -383,7 +393,7 @@ func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	lobbyName := vars["lobbyName"]
 
-	lobby, err := lobbyService.GetLobby(lobbyName)
+	lobby, err := services.lobby.GetLobby(lobbyName)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -404,7 +414,7 @@ func CreateGame(lobby *lobby.Lobby) []error {
 	// TODO Allow different boards and card sets.
 	board := gameboard.LoadBoard("default")
 	cardSet := cards.LoadSet("default")
-	game := gameService.NewGame(lobby, board, cardSet)
+	game := services.game.NewGame(lobby, board, cardSet)
 
 	// TODO Fix
 	// if len(game.Players) < minNumPlayers {
@@ -422,7 +432,7 @@ func CreateGame(lobby *lobby.Lobby) []error {
 		ID:          game.Name,
 		Tick:        game.CurrentState.Tick,
 	}
-	return pubSubService.SendMessage(game.Name, msg)
+	return services.pubsub.SendMessage(game.Name, msg)
 }
 
 type submitCardsReqBody struct {
@@ -459,7 +469,7 @@ func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SubmitCards(gameName, playerName string, tick int, cardIds []int) []error {
-	game, err := gameService.GetGame(gameName)
+	game, err := services.game.GetGame(gameName)
 	if err != nil {
 		return []error{err}
 	}
@@ -483,7 +493,7 @@ func SubmitCards(gameName, playerName string, tick int, cardIds []int) []error {
 			ID:          game.Name,
 			Tick:        game.CurrentState.Tick,
 		}
-		return pubSubService.SendMessage(game.Name, msg)
+		return services.pubsub.SendMessage(game.Name, msg)
 	}
 
 	return []error{}
@@ -497,7 +507,7 @@ func GetCurrentTickHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	gameName := vars["gameName"]
 
-	game, err := gameService.GetGame(gameName)
+	game, err := services.game.GetGame(gameName)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -531,7 +541,7 @@ func GetGameStateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	game, err := gameService.GetGame(gameName)
+	game, err := services.game.GetGame(gameName)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
