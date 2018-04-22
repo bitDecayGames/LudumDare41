@@ -46,9 +46,9 @@ func main() {
 	r.HandleFunc(lobbyRoute, LobbyCreateHandler).Methods("POST")
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/join", LobbyJoinHandler).Methods("POST")
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/players", LobbyGetPlayersHandler).Methods("GET")
-	// TODO Below
 	// Don't return anything
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/start", LobbyStartHandler).Methods("PUT")
+	// TODO Below
 	// Game
 	// Cards are list on ints, need tick as well
 	// Trigger next round once all submitted
@@ -114,9 +114,10 @@ func PingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	msg := pubsub.Message{
-		Type: "ping",
+		Type: pubsub.PingMessage,
 	}
 
+	// TODO Change game name passed in?
 	errors := pubSubService.SendMessage("test", msg)
 	if len(errors) > 0 {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -225,6 +226,16 @@ func LobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	msg := pubsub.Message{
+		Type: pubsub.PlayerJoinMessage,
+		ID:   sanitizedPlayerName,
+	}
+	errors := pubSubService.SendMessage(lobbyName, msg)
+	if len(errors) > 0 {
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
