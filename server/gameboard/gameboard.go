@@ -21,8 +21,8 @@ type Tile struct {
 type GameBoard struct {
 	Tiles          [][]Tile
 	FlattenedTiles []Tile `json:"tiles"`
-	Width          int    `json:width`
-	Height         int    `json:height`
+	Width          int    `json:"width"`
+	Height         int    `json:"height"`
 }
 
 func LoadBoard(name string) GameBoard {
