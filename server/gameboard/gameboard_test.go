@@ -1,6 +1,8 @@
 package gameboard
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestMapLoading(t *testing.T) {
 	board := LoadBoard("default")
@@ -14,5 +16,17 @@ func TestMapLoading(t *testing.T) {
 
 	if len(board.Tiles[0]) <= 0 {
 		t.Error("Game board has no height")
+	}
+
+	for x, yTiles := range board.Tiles {
+		for y, tile := range yTiles {
+			if tile.Pos.X != x {
+				t.Errorf("tile position x: %v does not match x: %v", tile.Pos.X, x)
+			}
+
+			if tile.Pos.Y != y {
+				t.Errorf("tile position y: %v does not match y: %v", tile.Pos.Y, y)
+			}
+		}
 	}
 }

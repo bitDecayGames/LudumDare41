@@ -33,6 +33,7 @@ func LoadBoard(name string) GameBoard {
 				X: x,
 				Y: y,
 			}
+			board.Tiles[x][y] = tile
 		}
 	}
 
