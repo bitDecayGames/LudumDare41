@@ -3,11 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Network.Messages;
 using UnityEngine;
+using Utils;
 
 namespace Network {
     public class UpdateStream : MonoBehaviour {
-        public static string host = "ws://localhost:8080/api/v1/pubsub";
-//        public static string host = "ws://echo.websocket.org"; // for debugging websockets
 
         private static WebSocket webSocket;
         private static bool started = false;
@@ -43,7 +42,8 @@ namespace Network {
         }
 
         private IEnumerator startWebsocket(Action onSuccess) {
-            var ws = new WebSocket(new Uri(host));
+            Debug.Log("Attempt to connect to websocket: " + State.socketHost + "/api/v1/pubsub");
+            var ws = new WebSocket(new Uri(State.socketHost + "/api/v1/pubsub"));
             yield return StartCoroutine(ws.Connect());
             started = true;
             webSocket = ws;

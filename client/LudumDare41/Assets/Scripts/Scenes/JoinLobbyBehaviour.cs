@@ -11,8 +11,14 @@ public class JoinLobbyBehaviour : MonoBehaviour {
 	public InputField code;
 
 	public void JoinLobby() {
-		StartCoroutine(WebApi.JoinLobby(name.text, (lobby) => {
-			SceneManager.LoadScene("Lobby");
+		Debug.Log("Attempt to join lobby(" + code.text + ") as " + name.text);
+		StartCoroutine(WebApi.JoinLobby(name.text, code.text, (lobby) => {
+			Debug.Log("Joined lobby: " + lobby);
+			StartCoroutine(WebApi.RefreshCurrentLobby((newestLobby) => {
+				SceneManager.LoadScene("Lobby");
+			}, (err, status) => {
+				Debug.LogError("Failed to get newest lobby(" + status + "): " + err);
+			}));
 		}, (err, status) => {
 			Debug.LogError("Failed to join the newly created lobby(" + status + "): " + err);
 		}));

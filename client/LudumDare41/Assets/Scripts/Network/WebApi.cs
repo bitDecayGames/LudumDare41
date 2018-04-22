@@ -52,7 +52,7 @@ namespace Network {
         public static IEnumerator Ping(Action success, Action<string, int> failure) {
             return httpPost(new MyRequest()
                 .Url(State.host + "/api/v1/ping")
-                .Body(" ")
+                .Body("{\"gameName\":\"test\"}")
                 .Success(body => success())
                 .Failure(failure));
         }
@@ -78,10 +78,30 @@ namespace Network {
         /// <summary>
         /// Join a lobby with your name
         /// </summary>
-        /// <param name="success">the lobby code to join</param>
+        /// <param name="success">the lobby code you have joined</param>
         /// <param name="failure"></param>
         public static IEnumerator JoinLobby(string name, Action<string> success, Action<string, int> failure) {
             State.myName = name;
+            return httpPut(new MyRequest()
+                .Url(State.host + "/api/v1/lobby/" + State.lobby.code + "/join")
+                .Body(JsonUtility.ToJson(new JoinLobbyRequest(name)))
+                .Success((body) => {
+                    var resp = JsonUtility.FromJson<JoinLobbyResponse>(body);
+                    State.myName = resp.sanitizedPlayerName;
+                    success(resp.sanitizedPlayerName);
+                })
+                .Failure(failure));
+        }
+        
+        /// <summary>
+        /// Join a lobby with your name and lobby code
+        /// </summary>
+        /// <param name="success">the lobby code you have joined</param>
+        /// <param name="failure"></param>
+        public static IEnumerator JoinLobby(string name, string lobbyCode, Action<string> success, Action<string, int> failure) {
+            State.myName = name;
+            State.lobby = new Lobby();
+            State.lobby.code = lobbyCode;
             return httpPut(new MyRequest()
                 .Url(State.host + "/api/v1/lobby/" + State.lobby.code + "/join")
                 .Body(JsonUtility.ToJson(new JoinLobbyRequest(name)))
