@@ -5,6 +5,8 @@ import (
 	"log"
 	"sort"
 
+	"github.com/bitDecayGames/LudumDare41/server/utils"
+
 	"github.com/bitDecayGames/LudumDare41/server/cards"
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
 	"github.com/bitDecayGames/LudumDare41/server/logic"
@@ -143,10 +145,33 @@ func (g *Game) ExecuteTurn() {
 		intermState = newState
 	}
 
+	// respawn any dead players.  This assumes zero downtime -- you die, you respawn instantly
+	intermState = respawnDeadPlayer(intermState)
+
 	intermState = DealCards(intermState)
 	// 3. Update clients with these things:
 	fmt.Println(startState)
 	fmt.Println(stepSequence)
 	intermState.Tick += 1
 	g.CurrentState = intermState
+}
+
+func respawnDeadPlayer(g state.GameState) state.GameState {
+	for i, p := range g.Players {
+		if utils.VecEquals(p.Pos, utils.DeadVector) {
+			g.Players[i].Pos = getEmptyTile(g)
+		}
+	}
+	return g
+}
+
+func getEmptyTile(g state.GameState) utils.Vector {
+	for x, col := range g.Board.Tiles {
+		for y, t := range col {
+			if t.TileType == gameboard.Empty_tile {
+				return utils.Vector{X: x, Y: y}
+			}
+		}
+	}
+	return utils.DeadVector
 }
