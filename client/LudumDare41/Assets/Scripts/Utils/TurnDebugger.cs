@@ -5,7 +5,7 @@ using Model;
 namespace Utils {
     public static class TurnDebugger {
         private static Random rnd = new Random();
-        private static string[] tileTypes = new string[]{"Water", "Grass", "Mountain", "Fire", "Dirt"};
+        private static string[] tileTypes = new string[]{"empty", "wall"};
         private static string[] cardTypes = new string[]{"MoveForward1", "MoveBackward1"};
         private static int boardWidth = 3;
         private static int boardHeight = 3;
