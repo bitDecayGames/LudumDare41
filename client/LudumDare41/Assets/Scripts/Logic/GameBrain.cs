@@ -36,7 +36,6 @@ namespace Logic {
         private 
 
         void Start() {
-            Debug.Log("Start game brain");
             camera = Camera.main;
             hud = Instantiate(HudPrefab);
             Instantiate(HudEventSystemPrefab);
@@ -81,14 +80,16 @@ namespace Logic {
             camera.transform.eulerAngles = new Vector3(55, 0, 0);
         }
 
-//        void Update() {
-//            if (Input.GetKeyDown(KeyCode.Space) ||
-//                Input.GetKeyDown(KeyCode.KeypadEnter) ||
-//                Input.GetKeyDown(KeyCode.Return) || 
-//                Input.GetKeyDown(KeyCode.I)) {
-//                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { });
-//            }
-//        }
+        void Update() {
+            if (Input.GetKeyDown(KeyCode.Space) ||
+                Input.GetKeyDown(KeyCode.KeypadEnter) ||
+                Input.GetKeyDown(KeyCode.Return) || 
+                Input.GetKeyDown(KeyCode.I)) {
+                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => {
+                    s.ForEach(c => Debug.Log("C:" + c.id));
+                });
+            }
+        }
 
         /// <summary>
         /// Called by Network code to process each turn as it comes in from the server
@@ -112,7 +113,9 @@ namespace Logic {
             GenerateTiles(turn.end.gameBoard.tiles);
             GeneratePlayers(turn.end.players);
             var myPlayer = turn.end.players.Find(p => p.name == State.myName);
+            //if (myPlayer == null) myPlayer = turn.end.players[0]; // DEBUGGING ONLY
             if (myPlayer != null) {
+                Debug.Log("Player: " + JsonUtility.ToJson(myPlayer, true));
                 hud.ShowHand(myPlayer.hand, 3, (selected) => {
                     onSelected(selected);
                     hud.LowerCards();

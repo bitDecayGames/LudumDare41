@@ -16,7 +16,8 @@ import (
 const HAND_SIZE = 5
 
 type Game struct {
-	Name    string
+	Name string
+	// WARNING This is only initial state, do not read
 	Players map[string]*state.Player
 	Board   gameboard.GameBoard
 	CardSet cards.CardSet
@@ -70,28 +71,24 @@ func DealCards(inState state.GameState) state.GameState {
 }
 
 func (g *Game) AreSubmissionsComplete() bool {
-	numSubmissons := 0
-	for _, p := range g.Players {
-		if len(g.pendingSubmissions[p.Name]) > 0 {
-			numSubmissons++
-		}
-	}
-	log.Printf("%v/%v player submissions pending", numSubmissons, len(g.Players))
-	return numSubmissons == len(g.pendingSubmissions) &&
-		numSubmissons == len(g.Players)
+	numSubmissons := len(g.pendingSubmissions)
+	log.Printf("%v/%v player submissions are pending", numSubmissons, len(g.Players))
+	return numSubmissons == len(g.Players)
 }
 
-func (g *Game) GetPlayer(name string) (*state.Player, error) {
-	for _, p := range g.Players {
+func (g *Game) GetPlayer(name string) (state.Player, error) {
+	for _, p := range g.CurrentState.Players {
 		if p.Name == name {
 			return p, nil
 		}
 	}
 
-	return nil, fmt.Errorf("player not fround with name %s", name)
+	return state.Player{}, fmt.Errorf("player not fround with name %s", name)
 }
 
 func (g *Game) SubmitCards(playerName string, tick int, cardIds []int) error {
+	log.Printf("Player %s is submiiting card IDs %+v for tick %v", playerName, cardIds, tick)
+
 	if g.CurrentState.Tick != tick {
 		return fmt.Errorf("expected tick of %v, not %v", g.CurrentState.Tick, tick)
 	}
@@ -106,23 +103,29 @@ func (g *Game) SubmitCards(playerName string, tick int, cardIds []int) error {
 		return err
 	}
 
+	log.Printf("Player %s's current hand: %+v", playerName, player.Hand)
+
 	// Find cards
 	submission := []cards.Card{}
 	for _, id := range cardIds {
 		for _, card := range player.Hand {
 			if card.ID == id {
+				log.Printf("Found matching card for id %v: %+v", id, card)
 				submission = append(submission, card)
 			}
 		}
 	}
 
 	g.pendingSubmissions[playerName] = submission
+	log.Printf("Player %s submitted cards: %+v", playerName, submission)
+
 	return nil
 }
 
 func (g *Game) AggregateTurn() []cards.Card {
 	cardOrder := make([]cards.Card, 0)
-	for _, pendingCards := range g.pendingSubmissions {
+	for playerName, pendingCards := range g.pendingSubmissions {
+		log.Printf("Pending submissions for player %s: %v", playerName, pendingCards)
 		cardOrder = append(cardOrder, pendingCards...)
 	}
 	g.pendingSubmissions = make(map[string][]cards.Card)

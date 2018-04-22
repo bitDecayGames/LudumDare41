@@ -13,8 +13,10 @@ const (
 
 type Routes struct {
 	Services     *Services
+	testRoutes   *TestRoutes
 	pubSubRoutes *PubSubRoutes
 	lobbyRoutes  *LobbyRoutes
+	gameRoutes   *GameRoutes
 }
 
 func InitRoutes(r *mux.Router) *Routes {
@@ -24,11 +26,17 @@ func InitRoutes(r *mux.Router) *Routes {
 		Game:   game.NewGameService(),
 	}
 
+	testRoutes := NewTestRoutes(services)
+	testRoutes.AddRoutes(r)
+
 	pubSubRoutes := NewPubSubRoutes(services)
 	pubSubRoutes.AddRoutes(r)
 
 	lobbyRoutes := NewLobbyRoutes(services)
 	lobbyRoutes.AddRoutes(r)
+
+	gameRoutes := NewGameRoutes(services)
+	gameRoutes.AddRoutes(r)
 
 	return &Routes{
 		Services:     services,

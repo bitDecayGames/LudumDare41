@@ -10,6 +10,12 @@ import (
 	"github.com/bitDecayGames/LudumDare41/server/pubsub"
 )
 
+const (
+	// Game
+	minNumPlayers = 2
+	maxNumPlayers = 4
+)
+
 type Services struct {
 	PubSub pubsub.PubSubService
 	Lobby  lobby.LobbyService
@@ -31,7 +37,8 @@ func (s *Services) SubmitCards(gameName, playerName string, tick int, cardIds []
 	if game.AreSubmissionsComplete() {
 		log.Printf("Starting next turn for game %s at tick %v", game.Name, game.CurrentState.Tick)
 
-		_ = game.AggregateTurn()
+		orderedCards := game.AggregateTurn()
+		log.Printf("Ordered cards: %+v", orderedCards)
 		game.ExecuteTurn()
 
 		log.Printf("Turn complete for game %s at tick %v", game.Name, game.CurrentState.Tick)
