@@ -53,8 +53,8 @@ func TestFullRun(t *testing.T) {
 	g.ExecuteTurn()
 
 	for _, p := range g.CurrentState.Players {
-		if len(p.Hand) != 2 {
-			t.Fatal("Cards were not removed from players hand")
+		if len(p.Hand) != 5 {
+			t.Fatal("Cards were not replenished")
 		}
 	}
 }
