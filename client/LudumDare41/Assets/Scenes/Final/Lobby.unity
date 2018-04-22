@@ -125,6 +125,7 @@ GameObject:
   - component: {fileID: 418794102}
   - component: {fileID: 418794101}
   - component: {fileID: 418794105}
+  - component: {fileID: 418794106}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -212,6 +213,17 @@ MonoBehaviour:
   lobbyMemberPrefab: {fileID: 114159363725452772, guid: ae84ea7b864d44a479e98e5d6e7b8383,
     type: 2}
   startBtn: {fileID: 1651872057}
+--- !u!114 &418794106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 418794100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34271bd70e4f4ab8b972e69a2778526e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &616706640
 GameObject:
   m_ObjectHideFlags: 0

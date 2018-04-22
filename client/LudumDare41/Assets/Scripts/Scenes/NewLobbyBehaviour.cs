@@ -13,7 +13,11 @@ public class NewLobbyBehaviour : MonoBehaviour {
 		Debug.Log("Request new lobby");
 		StartCoroutine(WebApi.RequestNewLobby((code) => {
 			StartCoroutine(WebApi.JoinLobby(name.text, (lobby) => {
-				SceneManager.LoadScene("Lobby");
+				StartCoroutine(WebApi.RefreshCurrentLobby((newestLobby) => {
+					SceneManager.LoadScene("Lobby");
+				}, (err, status) => {
+					Debug.LogError("Failed to get newest lobby(" + status + "): " + err);
+				}));
 			}, (err, status) => {
 				Debug.LogError("Failed to join the newly created lobby(" + status + "): " + err);
 			}));

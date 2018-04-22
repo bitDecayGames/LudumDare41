@@ -18,15 +18,14 @@ type CardSet struct {
 }
 
 func LoadSet(name string) CardSet {
-	return CardSet{
-		Cards: []Card{
-			Card{ID: 1},
-			Card{ID: 2},
-			Card{ID: 3},
-			Card{ID: 4},
-			Card{ID: 5},
-		},
+	set := CardSet{
+		Cards: []Card{},
 	}
+
+	for i := 0; i < 5; i++ {
+		set.Cards = append(set.Cards, Card{CardType: "moveForward1Card"})
+	}
+	return set
 }
 
 // NewDeckFromSet will generate a new deck of cards with a unique priority assuming only a `playerCount` number of decks are generated and with a unique set of `playerNumber`

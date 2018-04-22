@@ -27,7 +27,7 @@ namespace Scenes {
 			GetComponent<UpdateStream>().Send("Hello ping");
 		}
 
-		public void receiveUpdateStreamMessage(string message) {
+		public void receiveUpdateStreamMessage(string messageType, string message) {
 			Debug.Log("Successfully subscribed and got message: " + message);
 		}
 	}

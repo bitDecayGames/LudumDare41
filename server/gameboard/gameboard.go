@@ -1,7 +1,7 @@
 package gameboard
 
-const empty_tile = "empty"
-const wall_tile = "wall"
+const Empty_tile = "empty"
+const Wall_tile = "wall"
 
 type Tile struct {
 	ID       int
@@ -9,15 +9,15 @@ type Tile struct {
 }
 
 type GameBoard struct {
-	tiles [][]Tile
+	Tiles [][]Tile
 }
 
 func LoadBoard(name string) GameBoard {
 	// TODO: Load this from file / config
 	return GameBoard{
-		tiles: [][]Tile{
-			{Tile{TileType: empty_tile}},
-			{Tile{TileType: empty_tile}},
+		Tiles: [][]Tile{
+			{Tile{TileType: Empty_tile}},
+			{Tile{TileType: Empty_tile}},
 		},
 	}
 }

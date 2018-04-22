@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Network.Messages;
 using UnityEngine;
 
 namespace Network {
@@ -11,8 +12,7 @@ namespace Network {
         private static WebSocket webSocket;
         private static bool started = false;
         private List<IUpdateStreamSubscriber> subscribers = new List<IUpdateStreamSubscriber>();
-
-
+        
         /// <summary>
         /// Requires you to wait for a bit before you can actually send messages
         /// </summary>
@@ -52,7 +52,8 @@ namespace Network {
             while (started) {
                 string msg = webSocket.RecvString();
                 if (msg != null) {
-                    subscribers.ForEach(s => s.receiveUpdateStreamMessage(msg));
+                    var json = JsonUtility.FromJson<GenericUpdateStreamMessage>(msg);
+                    subscribers.ForEach(s => s.receiveUpdateStreamMessage(json.messageType, msg));
                 }
 
                 if (webSocket.error != null) {
@@ -68,6 +69,6 @@ namespace Network {
     }
 
     public interface IUpdateStreamSubscriber {
-        void receiveUpdateStreamMessage(string message);
+        void receiveUpdateStreamMessage(string messageType, string message);
     }
 }

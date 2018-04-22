@@ -1,5 +1,6 @@
 ﻿using System;
 using Network;
+using Network.Messages;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -27,7 +28,9 @@ public class LobbyBehaviour : MonoBehaviour, IUpdateStreamSubscriber {
 		RefreshLobbyMembers();
 
 		if (isFirstPlayer) startBtn.enabled = false;
-		GetComponent<UpdateStream>().StartListening(() => { startBtn.enabled = true; });
+		var updater = GetComponent<UpdateStream>();
+		updater.Subscribe(this);
+		updater.StartListening(() => { startBtn.enabled = true; });
 	}
 
 	public void RefreshLobbyMembers() {
@@ -46,8 +49,13 @@ public class LobbyBehaviour : MonoBehaviour, IUpdateStreamSubscriber {
 		// TODO: send a start game request
 	}
 
-	public void receiveUpdateStreamMessage(string message) {
+	public void receiveUpdateStreamMessage(string messageType, string message) {
 		Debug.Log("Received update stream message:" + message);
+		var json = JsonUtility.FromJson<GenericUpdateStreamMessage>(message);
+		if (messageType == "") {
+			Debug.Log("Saving connection id: " + json.id);
+			State.connectionId = json.id;
+		}
 		// TODO: if message is something like: "RefreshLobbyMembers" then refresh
 		// TODO: if message is something like: "RequestTick0" then move to game board?
 	}
