@@ -104,7 +104,7 @@ func (ps *pubSubService) SendMessage(gameName string, msg Message) []error {
 				log.Printf("%s, %v, %v", gameName, msg, err)
 				errors = append(errors, err)
 			}
-			log.Printf("Sent message %+v to game %s", gameName)
+			log.Printf("Sent message %+v to game %s", msg, gameName)
 		}
 	}
 
