@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Model;
+using Network.Messages;
 using UnityEngine;
 using UnityEngine.Networking;
 using Utils;
@@ -61,26 +62,33 @@ namespace Network {
         /// </summary>
         /// <param name="success">the lobby code to join</param>
         /// <param name="failure"></param>
-        public static IEnumerator RequestNewLobby(string name, Action<string> success, Action<string, int> failure) {
-            State.myName = name;
-            return httpGet(new MyRequest()
-                .Url(State.host + "/api/v1/lobby/new/" + name)
-                .Success(success)
+        public static IEnumerator RequestNewLobby(Action<string> success, Action<string, int> failure) {
+            return httpPost(new MyRequest()
+                .Url(State.host + "/api/v1/lobby")
+                .Body(" ")
+                .Success((body) => {
+                    var resp = JsonUtility.FromJson<NewLobbyResponse>(body);
+                    State.lobby = new Lobby();
+                    State.lobby.code = resp.name;
+                    success(resp.name);
+                })
                 .Failure(failure));
         }
-
+        
         /// <summary>
-        /// Request to join the lobby, success means you have joined
+        /// Join a lobby with your name
         /// </summary>
-        /// <param name="lobbyCode">the lobby code to join</param>
-        /// <param name="success">the lobby you have joined</param>
+        /// <param name="success">the lobby code to join</param>
         /// <param name="failure"></param>
-        public static IEnumerator JoinLobby(string lobbyCode, string name, Action<Lobby> success, Action<string, int> failure) {
-            return httpGet(new MyRequest()
-                .Url(State.host + "/api/v1/lobby/join/" + lobbyCode + "/" + name)
-                .Success(body => {
-                    State.lobby = JsonUtility.FromJson<Lobby>(body);
-                    success(State.lobby);
+        public static IEnumerator JoinLobby(string name, Action<string> success, Action<string, int> failure) {
+            State.myName = name;
+            return httpPut(new MyRequest()
+                .Url(State.host + "/api/v1/lobby/" + State.lobby.code + "/join")
+                .Body(JsonUtility.ToJson(new JoinLobbyRequest(name)))
+                .Success((body) => {
+                    var resp = JsonUtility.FromJson<JoinLobbyResponse>(body);
+                    State.myName = resp.sanitizedPlayerName;
+                    success(resp.sanitizedPlayerName);
                 })
                 .Failure(failure));
         }
@@ -92,9 +100,14 @@ namespace Network {
         /// <param name="failure"></param>
         public static IEnumerator RefreshCurrentLobby(Action<Lobby> success, Action<string, int> failure) {
             return httpGet(new MyRequest()
-                .Url(State.host + "/api/v1/lobby/" + State.lobby.code)
+                .Url(State.host + "/api/v1/lobby/" + State.lobby.code + "/players")
                 .Success(body => {
-                    State.lobby = JsonUtility.FromJson<Lobby>(body);
+                    var resp = JsonUtility.FromJson<LobbyPlayersResponse>(body);
+                    State.lobby.players = resp.players.ConvertAll(playerName => {
+                        var p = new Player();
+                        p.name = playerName;
+                        return p;
+                    });
                     success(State.lobby);
                 })
                 .Failure(failure));

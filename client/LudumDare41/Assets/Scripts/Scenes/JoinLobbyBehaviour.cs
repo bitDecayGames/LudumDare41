@@ -11,10 +11,10 @@ public class JoinLobbyBehaviour : MonoBehaviour {
 	public InputField code;
 
 	public void JoinLobby() {
-		WebApi.JoinLobby(code.text, name.text, (lobby) => {
+		StartCoroutine(WebApi.JoinLobby(name.text, (lobby) => {
 			SceneManager.LoadScene("Lobby");
 		}, (err, status) => {
 			Debug.LogError("Failed to join the newly created lobby(" + status + "): " + err);
-		});
+		}));
 	}
 }
