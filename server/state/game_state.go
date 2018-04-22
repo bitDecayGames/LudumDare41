@@ -7,7 +7,7 @@ import (
 type GameState struct {
 	Tick    int
 	Players []Player
-	Board   gameboard.GameBoard
+	Board   gameboard.GameBoard `json:"gameBoard"`
 }
 
 func NewState(tick int, players map[string]*Player, board gameboard.GameBoard) GameState {

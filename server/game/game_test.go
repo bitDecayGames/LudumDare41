@@ -50,6 +50,9 @@ func TestCardSubmission(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// TODO Make test case for wrong tick scenario
+	tick := g.CurrentState.Tick
+
 	for _, player := range g.CurrentState.Players {
 		if len(player.Hand) != HAND_SIZE {
 			t.Fatal("Player was not dealt correct hand size")
@@ -61,7 +64,12 @@ func TestCardSubmission(t *testing.T) {
 			}
 		}
 
-		err := g.SubmitCards(player.Name, player.Hand[0:3])
+		cardIds := []int{}
+		for _, card := range player.Hand {
+			cardIds = append(cardIds, card.ID)
+		}
+
+		err := g.SubmitCards(player.Name, tick, cardIds[0:3])
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -72,7 +80,7 @@ func TestCardSubmission(t *testing.T) {
 			}
 		}
 
-		err = g.SubmitCards(player.Name, player.Hand[0:3])
+		err = g.SubmitCards(player.Name, tick, cardIds[0:3])
 		if err == nil {
 			t.Fatal("Duplicate submission allowed")
 		}

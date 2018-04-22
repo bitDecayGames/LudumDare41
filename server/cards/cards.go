@@ -36,7 +36,9 @@ func NewDeckFromSet(cardSet CardSet, playerCount int, playerNumber int) []Card {
 	for i, randIndex := range perm {
 		deck[i] = cardSet.Cards[randIndex]
 		// This should ensure unique priorities across a `playerCount` number of decks
-		deck[i].Priority = (randIndex * playerCount) + (playerNumber - 1)
+		priority := (randIndex * playerCount) + (playerNumber - 1)
+		deck[i].Priority = priority
+		deck[i].ID = priority
 	}
 
 	return deck

@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 223597436356210034}
   - component: {fileID: 114548266408692620}
   - component: {fileID: 114438554195780774}
+  - component: {fileID: 114567668191537996}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -546,6 +547,23 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114567668191537996
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1431292205792462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49e991dd4e6c47dcb98ded7d53279861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ButtonObjects:
+  - {fileID: 114741286857973084}
+  - {fileID: 114561072256721200}
+  - {fileID: 114308237143838258}
+  - {fileID: 114543895750193706}
+  - {fileID: 114446470459751516}
 --- !u!114 &114691964783576512
 MonoBehaviour:
   m_ObjectHideFlags: 1

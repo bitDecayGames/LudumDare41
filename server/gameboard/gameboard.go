@@ -4,12 +4,12 @@ const Empty_tile = "empty"
 const Wall_tile = "wall"
 
 type Tile struct {
-	ID       int
+	ID       int    `json:"id"`
 	TileType string `json:"tileType"`
 }
 
 type GameBoard struct {
-	Tiles [][]Tile
+	Tiles [][]Tile `json:"tiles"`
 }
 
 func LoadBoard(name string) GameBoard {

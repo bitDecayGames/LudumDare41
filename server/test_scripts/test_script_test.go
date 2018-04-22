@@ -34,7 +34,13 @@ func TestFullRun(t *testing.T) {
 
 	for _, player := range g.CurrentState.Players {
 		fmt.Println(fmt.Sprintf("Player %v cards: %v", player.Name, player.Hand))
-		err := g.SubmitCards(player.Name, player.Hand[0:3])
+
+		cardIds := []int{}
+		for _, card := range player.Hand {
+			cardIds = append(cardIds, card.ID)
+		}
+
+		err := g.SubmitCards(player.Name, g.CurrentState.Tick, cardIds[0:3])
 		if err != nil {
 			t.Fatal(err)
 		}
