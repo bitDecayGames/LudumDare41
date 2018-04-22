@@ -10,6 +10,8 @@ import (
 	"net/http/httputil"
 	"time"
 
+	"github.com/bitDecayGames/LudumDare41/server/game"
+
 	"github.com/bitDecayGames/LudumDare41/server/lobby"
 
 	"github.com/bitDecayGames/LudumDare41/server/pubsub"
@@ -25,6 +27,7 @@ const (
 
 var pubSubService pubsub.PubSubService
 var lobbyService lobby.LobbyService
+var gameService game.GameService
 
 func main() {
 	host := fmt.Sprintf(":%v", port)
@@ -34,6 +37,7 @@ func main() {
 
 	pubSubService = pubsub.NewPubSubService()
 	lobbyService = lobby.NewLobbyService()
+	gameService = game.NewGameService()
 
 	r := mux.NewRouter()
 	r.Use(loggingMiddleware)
@@ -44,19 +48,18 @@ func main() {
 	r.HandleFunc(apiv1+"/pubsub/connection/{connectionID}", UpdatePubSubConnectionHandler).Methods("PUT")
 	// Lobby
 	r.HandleFunc(lobbyRoute, LobbyCreateHandler).Methods("POST")
-	r.HandleFunc(lobbyRoute+"/{lobbyName}/join", LobbyJoinHandler).Methods("POST")
+	r.HandleFunc(lobbyRoute+"/{lobbyName}/join", LobbyJoinHandler).Methods("PUT")
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/players", LobbyGetPlayersHandler).Methods("GET")
-	// Don't return anything
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/start", LobbyStartHandler).Methods("PUT")
 	// TODO Below
 	// Game
 	// Cards are list on ints, need tick as well
 	// Trigger next round once all submitted
-	r.HandleFunc(lobbyRoute+"/{gameName}/tick/{tick}/player/{playerName}/cards", CardsSubmitHandler).Methods("PUT")
+	r.HandleFunc(gameRoute+"/{gameName}/tick/{tick}/player/{playerName}/cards", CardsSubmitHandler).Methods("PUT")
 	// Get current tick
-	r.HandleFunc(lobbyRoute+"/{gameName}/tick", GetCurrentTickHandler).Methods("GET")
+	r.HandleFunc(gameRoute+"/{gameName}/tick", GetCurrentTickHandler).Methods("GET")
 	// Game state + players cards for a tick
-	r.HandleFunc(lobbyRoute+"/{gameName}/tick/{tick}/player/{playerName}", GetGameStateHandler).Methods("GET")
+	r.HandleFunc(gameRoute+"/{gameName}/tick/{tick}/player/{playerName}", GetGameStateHandler).Methods("GET")
 
 	log.Printf("Server started on %s", host)
 
@@ -276,8 +279,20 @@ func LobbyGetPlayersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Don't return anything
 func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
 	// vars := mux.Vars(r)
+	// lobbyName := vars["lobbyName"]
+
+	// lobby, err := lobbyService.GetLobby(lobbyName)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	w.WriteHeader(http.StatusNotFound)
+	// 	return
+	// }
+
+	// // TODO Add gameboard
+	// game := gameService.NewGame(lobby)
 }
 
 func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
