@@ -25,9 +25,15 @@
   revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
   version = "v1.2.0"
 
+[[projects]]
+  name = "github.com/speps/go-hashids"
+  packages = ["."]
+  revision = "d1d57a886aa7e3ef6092b70ceab077e35ee8e0ce"
+  version = "v1.0.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "fd2249dbfb18304fef017305dd22af878b4272261609f35bb235ce3c16b22d8d"
+  inputs-digest = "e066bca937dd7a1c840a7d87adab765c26b07102ca42a63c9b9a92731cfdc140"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
+
+	"github.com/satori/go.uuid"
 
 	"github.com/gorilla/websocket"
-	"github.com/satori/go.uuid"
 )
 
 type Message struct {
@@ -20,6 +22,8 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+var mutex = &sync.Mutex{}
+
 type PubSubService interface {
 	AddSubscription(http.ResponseWriter, *http.Request) (string, error)
 	UpdateSubscription(connectionID string, gameName string, playerName string) error
@@ -27,7 +31,7 @@ type PubSubService interface {
 }
 
 type pubSubService struct {
-	subscriptions []subscription
+	subscriptions []*subscription
 }
 
 type subscription struct {
@@ -47,24 +51,24 @@ func (ps *pubSubService) AddSubscription(w http.ResponseWriter, r *http.Request)
 		return "", err
 	}
 
-	sub := subscription{
+	sub := &subscription{
 		connectionID: uuid.NewV4().String(),
 		conn:         conn,
 	}
 
+	mutex.Lock()
 	ps.subscriptions = append(ps.subscriptions, sub)
+	mutex.Unlock()
 
 	body := connectionBody{
 		ConnectionID: sub.connectionID,
 	}
 
-	log.Printf("%+v", body)
-
 	return sub.connectionID, conn.WriteJSON(body)
 }
 
 func (ps *pubSubService) UpdateSubscription(connectionID, gameName, playerName string) error {
-	var curSub subscription
+	var curSub *subscription
 	for _, sub := range ps.subscriptions {
 		if sub.connectionID == connectionID {
 			curSub = sub
@@ -72,12 +76,14 @@ func (ps *pubSubService) UpdateSubscription(connectionID, gameName, playerName s
 		}
 	}
 
-	if curSub.connectionID == "" {
+	if curSub == nil {
 		return fmt.Errorf("subscription not found for connectionID %s", connectionID)
 	}
 
+	mutex.Lock()
 	curSub.gameName = gameName
 	curSub.playerName = playerName
+	mutex.Unlock()
 
 	return nil
 }
@@ -91,6 +97,7 @@ func (ps *pubSubService) SendMessage(gameName string, msg Message) []error {
 				log.Printf("%s, %v, %v", gameName, msg, err)
 				errors = append(errors, err)
 			}
+			log.Printf("Sent message %+v to game %s", gameName)
 		}
 	}
 
@@ -99,6 +106,6 @@ func (ps *pubSubService) SendMessage(gameName string, msg Message) []error {
 
 func NewPubSubService() PubSubService {
 	return &pubSubService{
-		subscriptions: []subscription{},
+		subscriptions: []*subscription{},
 	}
 }
