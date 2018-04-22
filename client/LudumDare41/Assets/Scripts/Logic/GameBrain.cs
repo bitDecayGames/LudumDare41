@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Model;
+using Model.Action.Abstract;
 using Network;
 using Prefabs;
 using UnityEngine;
@@ -24,6 +25,15 @@ namespace Logic {
 
         private List<GameObject> tiles = new List<GameObject>();
         private List<GameObject> players = new List<GameObject>();
+        private List<Step> stepSequence;
+        bool actionInProgress;
+        public bool hasSteps
+        {
+            get { return (stepSequence.Count > 0); }
+        }
+
+
+        private 
 
         void Start() {
             Debug.Log("Start game brain");
@@ -33,6 +43,28 @@ namespace Logic {
 
             SoundPlayer = SoundPlayerObj.GetComponent<SoundsManager>();
             SoundPlayer.playSound(SoundsManager.SFX.TankFiring);
+        }
+
+        private void Update()
+        {
+            if (actionInProgress)
+                return;
+
+            if (hasSteps)
+            {
+                Step step = stepSequence[0];
+                stepSequence.RemoveAt(0);
+
+                foreach(IAction action in step.actions)
+                {
+
+                }
+
+                foreach(GameObject player in players)
+                {
+
+                }
+            }
         }
 
         private void SetupCamera(int boardWidth) {
@@ -70,9 +102,10 @@ namespace Logic {
             GeneratePlayers(turn.start.players);
             SetupCamera(turn.start.gameBoard.width);
 
+            stepSequence = turn.steps;
             // TODO: based on the turn steps, create sequences of actions
             // TODO: all of these methods will eventually need to become asynchronous to handle the animation delays
-            
+
             // based on turn end board, recreate the tile layout
             DestroyTiles();
             DestroyPlayers();
@@ -117,6 +150,8 @@ namespace Logic {
                 pos.z = p.pos.y;
                 pos.y = 0;
                 obj.transform.localPosition = pos;
+                var pData = obj.GetComponent<PlayerData>();
+                pData.id= p.id;
             });
         }
 
