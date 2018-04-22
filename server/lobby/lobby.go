@@ -102,5 +102,6 @@ func (l *Lobby) GetPlayers() []string {
 
 func (ls *lobbyService) genLobbyName() (string, error) {
 	lobbyName, err := ls.hashID.Encode([]int{rand.Intn(randRange)})
+	lobbyName = strings.ToLower(lobbyName)
 	return lobbyName, err
 }

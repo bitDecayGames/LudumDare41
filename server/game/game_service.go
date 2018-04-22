@@ -34,7 +34,7 @@ func (gs *gameService) NewGame(lobby *lobby.Lobby, board gameboard.GameBoard, ca
 		}
 	}
 
-	game := newGame(players, board, cardSet)
+	game := newGame(players, board, cardSet, lobby.Name)
 
 	mutex.Lock()
 	gs.activeGames = append(gs.activeGames, game)

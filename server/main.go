@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/http/httputil"
+	"strings"
 	"time"
 
 	"github.com/bitDecayGames/LudumDare41/server/cards"
@@ -21,10 +22,16 @@ import (
 )
 
 const (
-	port       = 8080
-	apiv1      = "/api/v1"
-	lobbyRoute = apiv1 + "/lobby"
-	gameRoute  = apiv1 + "/game"
+	// Networking
+	port        = 8080
+	apiv1       = "/api/v1"
+	pubsubRoute = apiv1 + "/pubsub"
+	lobbyRoute  = apiv1 + "/lobby"
+	gameRoute   = apiv1 + "/game"
+
+	// Game
+	minNumPlayers = 2
+	maxNumPlayers = 4
 )
 
 var pubSubService pubsub.PubSubService
@@ -46,8 +53,8 @@ func main() {
 	// Test ping
 	r.HandleFunc(apiv1+"/ping", PingHandler).Methods("POST")
 	// PubSub
-	r.HandleFunc(apiv1+"/pubsub", PubSubHandler)
-	r.HandleFunc(apiv1+"/pubsub/connection/{connectionID}", UpdatePubSubConnectionHandler).Methods("PUT")
+	r.HandleFunc(pubsubRoute, PubSubHandler)
+	r.HandleFunc(pubsubRoute+"/connection/{connectionID}", UpdatePubSubConnectionHandler).Methods("PUT")
 	// Lobby
 	r.HandleFunc(lobbyRoute, LobbyCreateHandler).Methods("POST")
 	r.HandleFunc(lobbyRoute+"/{lobbyName}/join", LobbyJoinHandler).Methods("PUT")
@@ -70,6 +77,14 @@ func main() {
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Ignore websocket route.
+		reqUri := strings.Split(r.RequestURI, "?")[0]
+		if reqUri == pubsubRoute {
+			log.Println("Skipping logging for %s", pubsubRoute)
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		// Save a copy of this request for debugging.
 		requestDump, err := httputil.DumpRequest(r, true)
 		if err != nil {
@@ -281,7 +296,6 @@ func LobbyGetPlayersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Don't return anything
 func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	lobbyName := vars["lobbyName"]
@@ -296,7 +310,32 @@ func LobbyStartHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO Allow different boards and card sets.
 	board := gameboard.LoadBoard("default")
 	cardSet := cards.LoadSet("default")
-	_ = gameService.NewGame(lobby, board, cardSet)
+	game := gameService.NewGame(lobby, board, cardSet)
+
+	if len(game.Players) < minNumPlayers {
+		err = fmt.Errorf("minimum number of %v players not met: %v", minNumPlayers, game.Players)
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if len(game.Players) > maxNumPlayers {
+		err = fmt.Errorf("maximum number of %v players exceeded: %v", maxNumPlayers, game.Players)
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	msg := pubsub.Message{
+		MessageType: pubsub.GameUpdateMessage,
+		ID:          game.Name,
+		Tick:        game.CurrentState.Tick,
+	}
+	errors := pubSubService.SendMessage(game.Name, msg)
+	if len(errors) > 0 {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
