@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"log"
 	"sort"
 
 	"github.com/bitDecayGames/LudumDare41/server/cards"
@@ -62,6 +63,18 @@ func DealCards(inState state.GameState) state.GameState {
 		}
 	}
 	return inState
+}
+
+func (g *Game) AreSubmissionsComplete() bool {
+	numSubmissons := 0
+	for _, p := range g.Players {
+		if len(g.pendingSubmissions[p.Name]) > 0 {
+			numSubmissons++
+		}
+	}
+	log.Printf("%v/%v player submissions pending", numSubmissons, len(g.Players))
+	return numSubmissons == len(g.pendingSubmissions) &&
+		numSubmissons == len(g.Players)
 }
 
 func (g *Game) SubmitCards(playerName string, tick int, cardIds []int) error {

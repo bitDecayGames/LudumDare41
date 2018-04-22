@@ -6,11 +6,11 @@ import (
 )
 
 type Player struct {
-	Name    string
+	Name    string ``
 	Deck    []cards.Card
 	Discard []cards.Card
-	Hand    []cards.Card
+	Hand    []cards.Card ``
 
-	Pos    utils.Vector
-	Facing utils.Vector
+	Pos    utils.Vector ``
+	Facing utils.Vector ``
 }

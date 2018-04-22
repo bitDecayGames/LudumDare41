@@ -22,6 +22,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// TODO configurable game quickstart endpoint
+// TODO take random turn for player, make usable for turn timeout
+
 const (
 	// Networking
 	port        = 8080
@@ -340,8 +343,6 @@ type submitCardsReqBody struct {
 	CardIds []int `json:"cardIds"`
 }
 
-// Cards are list on ints, need tick as well
-// Trigger next round once all submitted
 func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	gameName := vars["gameName"]
@@ -376,6 +377,25 @@ func CardsSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check for advance to next turn
+	if game.AreSubmissionsComplete() {
+		log.Printf("Starting next turn for game %s at tick %v", game.Name, game.CurrentState.Tick)
+
+		_ = game.AggregateTurn()
+		game.ExecuteTurn()
+
+		log.Printf("Turn complete for game %s at tick %v", game.Name, game.CurrentState.Tick)
+
+		msg := pubsub.Message{
+			MessageType: pubsub.GameUpdateMessage,
+			ID:          game.Name,
+			Tick:        game.CurrentState.Tick,
+		}
+		errors := pubSubService.SendMessage(game.Name, msg)
+		if len(errors) > 0 {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
 }
 
 // Return tick in json
@@ -385,4 +405,8 @@ func GetCurrentTickHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetGameStateHandler(w http.ResponseWriter, r *http.Request) {
 	// vars := mux.Vars(r)
+
+	/*
+
+	 */
 }
