@@ -78,9 +78,9 @@ func main() {
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Ignore websocket route.
-		reqUri := strings.Split(r.RequestURI, "?")[0]
-		if reqUri == pubsubRoute {
-			log.Println("Skipping logging for %s", pubsubRoute)
+		reqURI := strings.Split(r.RequestURI, "?")[0]
+		if reqURI == pubsubRoute {
+			log.Printf("Skipping logging for %s", pubsubRoute)
 			next.ServeHTTP(w, r)
 			return
 		}
