@@ -5,6 +5,7 @@ using Network;
 using Prefabs;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using Utils;
 
 namespace Logic {
@@ -35,6 +36,10 @@ namespace Logic {
             pos.y = transform.position.y + 7;
             pos.z = transform.position.z - 4;
             camera.transform.position = pos;
+            var canvas = hud.GetComponent<Canvas>();
+            canvas.worldCamera = camera;
+            canvas.planeDistance = 3f;
+                
             
             camera.transform.eulerAngles = new Vector3(55, 0, 0);
         }
