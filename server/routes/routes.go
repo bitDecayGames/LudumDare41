@@ -11,12 +11,6 @@ const (
 	apiv1 = "/api/v1"
 )
 
-type Services struct {
-	PubSub pubsub.PubSubService
-	Lobby  lobby.LobbyService
-	Game   game.GameService
-}
-
 type Routes struct {
 	Services     *Services
 	pubSubRoutes *PubSubRoutes
