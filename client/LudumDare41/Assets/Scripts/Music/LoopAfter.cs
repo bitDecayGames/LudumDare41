@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayAfter : MonoBehaviour
+public class LoopAfter : MonoBehaviour
 {
 	public AudioSource FirstAudioSource;
 	private AudioSource _myAudioSource;
@@ -16,6 +16,7 @@ public class PlayAfter : MonoBehaviour
 			if (!FirstAudioSource.isPlaying && !_myAudioSource.isPlaying)
 			{
 				_myAudioSource.Play();
+				_myAudioSource.loop = true;
 			}		
 		}
 	}
