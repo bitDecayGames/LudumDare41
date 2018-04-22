@@ -32,7 +32,7 @@ func TestApplyingCardMoveForward(t *testing.T) {
 		t.Fatal("Card was not discarded after use")
 	}
 
-	if len(seq.steps) != 1 {
+	if len(seq) != 1 {
 		t.Fatalf("Sequence not proper: %v", seq)
 	}
 
@@ -69,7 +69,7 @@ func TestApplyingCardMoveForwardPartialBlock(t *testing.T) {
 		t.Fatal("Card was not discarded after use")
 	}
 
-	if len(seq.steps) != 2 {
+	if len(seq) != 2 {
 		t.Fatalf("Sequence not proper: %v", seq)
 	}
 
@@ -100,7 +100,7 @@ func TestApplyingCardMoveBackward(t *testing.T) {
 		t.Fatal("Card was not discarded after use")
 	}
 
-	if len(seq.steps) != 1 {
+	if len(seq) != 1 {
 		t.Fatalf("Sequence not proper: %v", seq)
 	}
 
@@ -145,11 +145,11 @@ func TestPushingPlayer(t *testing.T) {
 		t.Fatal("Card was not discarded after use")
 	}
 
-	if len(seq.steps) != 1 {
+	if len(seq) != 1 {
 		t.Fatalf("Sequence not proper: %v", seq)
 	}
 
-	if len(seq.steps[0].actions) != 2 {
+	if len(seq[0].Actions) != 2 {
 		t.Fatal("Step did not have two actions")
 	}
 
@@ -184,7 +184,7 @@ func TestApplyingCardRotate(t *testing.T) {
 		t.Fatal("Card was not discarded after use")
 	}
 
-	if len(seq.steps) != 1 {
+	if len(seq) != 1 {
 		t.Fatalf("Sequence not proper: %v", seq)
 	}
 
@@ -233,7 +233,7 @@ func TestShootingPlayer(t *testing.T) {
 		t.Fatal("Card was not discarded after use")
 	}
 
-	if len(seq.steps) != 2 {
+	if len(seq) != 2 {
 		// expecting shoot, die
 		t.Fatalf("Sequence not proper: %v", seq)
 	}
