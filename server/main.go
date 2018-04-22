@@ -24,8 +24,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// TODO configurable game quickstart endpoint
-// TODO take random turn for player, make usable for turn timeout
+// TODO Turn timeout logic
 
 const (
 	// Networking
@@ -407,15 +406,16 @@ func CreateGame(lobby *lobby.Lobby) []error {
 	cardSet := cards.LoadSet("default")
 	game := gameService.NewGame(lobby, board, cardSet)
 
-	if len(game.Players) < minNumPlayers {
-		err := fmt.Errorf("minimum number of %v players not met: %v", minNumPlayers, game.Players)
-		return []error{err}
-	}
+	// TODO Fix
+	// if len(game.Players) < minNumPlayers {
+	// 	err := fmt.Errorf("minimum number of %v players not met: %v", minNumPlayers, game.Players)
+	// 	return []error{err}
+	// }
 
-	if len(game.Players) > maxNumPlayers {
-		err := fmt.Errorf("maximum number of %v players exceeded: %v", maxNumPlayers, game.Players)
-		return []error{err}
-	}
+	// if len(game.Players) > maxNumPlayers {
+	// 	err := fmt.Errorf("maximum number of %v players exceeded: %v", maxNumPlayers, game.Players)
+	// 	return []error{err}
+	// }
 
 	msg := pubsub.Message{
 		MessageType: pubsub.GameUpdateMessage,
