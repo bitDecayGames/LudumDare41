@@ -3,6 +3,7 @@ package lobby
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"sync"
 
 	"github.com/satori/go.uuid"
@@ -20,6 +21,7 @@ var mutex = &sync.Mutex{}
 type LobbyService interface {
 	NewLobby() (*Lobby, error)
 	GetLobbies() []*Lobby
+	GetLobby(name string) (*Lobby, error)
 }
 
 type lobbyService struct {
@@ -54,6 +56,16 @@ func (ls *lobbyService) GetLobbies() []*Lobby {
 	return ls.lobbies
 }
 
+func (ls *lobbyService) GetLobby(name string) (*Lobby, error) {
+	for _, lobby := range ls.lobbies {
+		if lobby.Name == name {
+			return lobby, nil
+		}
+	}
+
+	return nil, fmt.Errorf("no lobby found with name %s", name)
+}
+
 func NewLobbyService() LobbyService {
 	hd := hashids.NewData()
 	hd.Alphabet = defaultAlphabet
@@ -67,11 +79,13 @@ func NewLobbyService() LobbyService {
 	}
 }
 
-func (l *Lobby) AddPlayer(name string) error {
+func (l *Lobby) AddPlayer(name string) (string, error) {
+	sanitizedName := strings.TrimSpace(name)
+
 	// Check for exisiting player
 	for _, n := range l.Players {
-		if name == n {
-			return fmt.Errorf("Player with name %s already exists", name)
+		if sanitizedName == n {
+			return "", fmt.Errorf("Player with name %s already exists", sanitizedName)
 		}
 	}
 
@@ -79,7 +93,7 @@ func (l *Lobby) AddPlayer(name string) error {
 	l.Players = append(l.Players, name)
 	mutex.Unlock()
 
-	return nil
+	return sanitizedName, nil
 }
 
 func (l *Lobby) GetPlayers() []string {
