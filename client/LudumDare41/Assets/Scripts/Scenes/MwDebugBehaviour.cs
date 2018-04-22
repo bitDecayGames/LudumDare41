@@ -7,7 +7,7 @@ namespace Scenes {
 		// Use this for initialization
 		void Start () {
 			var updater = GetComponent<UpdateStream>();
-			updater.StartListening();
+			updater.StartListening(() => {});
 			updater.Subscribe(this);
 		}
 	
