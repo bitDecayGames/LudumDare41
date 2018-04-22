@@ -4,8 +4,13 @@ import (
 	"github.com/bitDecayGames/LudumDare41/server/utils"
 )
 
-const Empty_tile = "empty"
-const Wall_tile = "wall"
+const (
+	Empty_tile = "empty"
+	Wall_tile  = "wall"
+
+	width  = 5
+	height = 6
+)
 
 type Tile struct {
 	ID       int          `json:"id"`
@@ -16,6 +21,8 @@ type Tile struct {
 type GameBoard struct {
 	Tiles          [][]Tile
 	FlattenedTiles []Tile `json:"tiles"`
+	Width          int    `json:width`
+	Height         int    `json:height`
 }
 
 func LoadBoard(name string) GameBoard {
@@ -23,12 +30,14 @@ func LoadBoard(name string) GameBoard {
 	board := GameBoard{
 		Tiles:          [][]Tile{},
 		FlattenedTiles: []Tile{},
+		Width:          width,
+		Height:         height,
 	}
 
-	dim := 5
-	for x := 0; x < dim; x++ {
+	// Generate tiles
+	for x := 0; x < width; x++ {
 		board.Tiles = append(board.Tiles, []Tile{})
-		for y := 0; y < dim; y++ {
+		for y := 0; y < height; y++ {
 			tile := Tile{
 				TileType: Empty_tile,
 			}
