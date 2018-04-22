@@ -74,6 +74,29 @@ func (ps *pubSubService) AddSubscription(w http.ResponseWriter, r *http.Request)
 	return sub.connectionID, conn.WriteJSON(body)
 }
 
+func (ps *pubSubService) removeSubscription(connectionID string) error {
+	removeIdx := -1
+	for i, sub := range ps.subscriptions {
+		if sub.connectionID == connectionID {
+			removeIdx = i
+			break
+		}
+	}
+
+	if removeIdx < 0 {
+		return fmt.Errorf("unable to find subscription with connectionID %s", connectionID)
+	}
+
+	mutex.Lock()
+	ps.subscriptions[removeIdx] = ps.subscriptions[len(ps.subscriptions)-1]
+	ps.subscriptions[len(ps.subscriptions)-1] = nil
+	ps.subscriptions = ps.subscriptions[:len(ps.subscriptions)-1]
+	mutex.Unlock()
+
+	log.Printf("Removed connection with ID %s", connectionID)
+	return nil
+}
+
 func (ps *pubSubService) UpdateSubscription(connectionID, gameName, playerName string) error {
 	var curSub *subscription
 	for _, sub := range ps.subscriptions {
@@ -103,6 +126,11 @@ func (ps *pubSubService) SendMessage(gameName string, msg Message) []error {
 			if err != nil {
 				log.Printf("%s, %v, %v", gameName, msg, err)
 				errors = append(errors, err)
+				err = ps.removeSubscription(sub.connectionID)
+				if err != nil {
+					log.Println(err)
+					errors = append(errors, err)
+				}
 			}
 			log.Printf("Sent message %+v to game %s", msg, gameName)
 		}
