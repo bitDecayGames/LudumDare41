@@ -34,9 +34,9 @@ func rotate(player *state.Player, degrees int, stepSeq []Step, g state.GameState
 func DegreesToRotateAction(degrees int, p *state.Player) Action {
 	switch degrees {
 	case 90:
-		return GetAction(Action_rotate_counter_clockwise, p.Name, p.Pos)
-	case -90:
 		return GetAction(Action_rotate_clockwise, p.Name, p.Pos)
+	case -90:
+		return GetAction(Action_rotate_counter_clockwise, p.Name, p.Pos)
 	case 180:
 		fallthrough
 	default:
