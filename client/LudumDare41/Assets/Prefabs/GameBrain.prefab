@@ -54,6 +54,8 @@ MonoBehaviour:
   TilePrefab: {fileID: 1442746585869998, guid: 09e72db968c040a40b1a46d13d557a3a, type: 2}
   PlayerPrefab: {fileID: 1595927985036772, guid: 829d7cefe4bdd284b8d8a0cc95ecedb3,
     type: 2}
+  PlayerHudPrefab: {fileID: 114914318975029922, guid: b5512700c6c2c4911ae5ac3db814d779,
+    type: 2}
   HudPrefab: {fileID: 114567668191537996, guid: 6876d46eb61345c479c4b423903ababf,
     type: 2}
   HudEventSystemPrefab: {fileID: 114014860272920174, guid: 031855da9c0bd4990b156456042e9adf,
@@ -71,3 +73,4 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 23f9d77e814b01b47a0849e230238dd8, type: 2}
   SoundPlayerPrefab: {fileID: 114605048481221566, guid: a841f66a7a0c1cb4dac71418457c4c4a,
     type: 2}
+  players: []
