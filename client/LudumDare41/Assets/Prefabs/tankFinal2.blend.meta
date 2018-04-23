@@ -1,0 +1,198 @@
+fileFormatVersion: 2
+guid: cbf33742c7806b242aa3b6e47f4ba763
+timeCreated: 1524460022
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: Armature
+    100002: BaseAxelFirst
+    100004: BaseAxelFourth
+    100006: BaseAxelFront
+    100008: BaseAxelRear
+    100010: BaseAxelSecond
+    100012: BaseAxelThird
+    100014: Bone
+    100016: Bone_004
+    100018: Bone_005
+    100020: Bone_007
+    100022: Bone_009
+    100024: Bone_010
+    100026: Bone_011
+    100028: Bone_014
+    100030: Bone_015
+    100032: Bone_016
+    100034: Bone_017
+    100036: Bone_018
+    100038: Bone_019
+    100040: Bone_020
+    100042: Cannon
+    100044: Cube_006
+    100046: FrontMainAxel
+    100048: LargeFlap
+    100050: RearMainAxel
+    100052: SmallFlap
+    100054: //RootNode
+    100056: Turr
+    400000: Armature
+    400002: BaseAxelFirst
+    400004: BaseAxelFourth
+    400006: BaseAxelFront
+    400008: BaseAxelRear
+    400010: BaseAxelSecond
+    400012: BaseAxelThird
+    400014: Bone
+    400016: Bone_004
+    400018: Bone_005
+    400020: Bone_007
+    400022: Bone_009
+    400024: Bone_010
+    400026: Bone_011
+    400028: Bone_014
+    400030: Bone_015
+    400032: Bone_016
+    400034: Bone_017
+    400036: Bone_018
+    400038: Bone_019
+    400040: Bone_020
+    400042: Cannon
+    400044: Cube_006
+    400046: FrontMainAxel
+    400048: LargeFlap
+    400050: RearMainAxel
+    400052: SmallFlap
+    400054: //RootNode
+    400056: Turr
+    2100000: Material_006__treadAnimation_png
+    2100002: Material_006__treads_grey_png
+    2100004: Material_007__cannon_grey_png
+    2100006: Material_001__turret_grey_png
+    2100008: Material_009__belly_grey_png
+    2100010: Material_005
+    2100012: Material_005__belly_grey_png
+    2100014: Material_004__belly_grey_png
+    4300000: Cube_006
+    7400000: Default Take
+    7400002: ArmatureAction
+    9500000: //RootNode
+    13700000: Cube_006
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_001__turret_grey_png
+    second: {fileID: 2100000, guid: 53eca88e465703c488df1e39f1d0e188, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_004__belly_grey_png
+    second: {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_005
+    second: {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_005__belly_grey_png
+    second: {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_006__treadAnimation_png
+    second: {fileID: 2100000, guid: 166bc7220eb1d23458307f4172d5b77c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_006__treads_grey_png
+    second: {fileID: 2100000, guid: 5d08953ce79791641ba13241de869d58, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_007__cannon_grey_png
+    second: {fileID: 2100000, guid: 53eca88e465703c488df1e39f1d0e188, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_009__belly_grey_png
+    second: {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
