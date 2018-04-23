@@ -14,6 +14,7 @@ namespace Logic {
 
         public GameObject TilePrefab;
         public GameObject PlayerPrefab;
+        public PlayerHud PlayerHudPrefab;
         public Hud HudPrefab;
         public EventSystem HudEventSystemPrefab;
         public List<TileMaterial> tileMaterials;
@@ -24,7 +25,7 @@ namespace Logic {
         private SoundsManager SoundPlayer;
 
         private List<GameObject> tiles = new List<GameObject>();
-        private List<GameObject> players = new List<GameObject>();
+        public List<GameObject> players = new List<GameObject>();
         private List<Step> stepSequence;
         bool actionInProgress;
 
@@ -49,10 +50,10 @@ namespace Logic {
         }
 
 
-        private
-            void Start() {
+        private void Start() {
             camera = Camera.main;
             hud = Instantiate(HudPrefab);
+            Instantiate(PlayerHudPrefab, hud.transform).brain = this;
             Instantiate(HudEventSystemPrefab);
             SoundPlayer = Instantiate(SoundPlayerPrefab);
 
@@ -74,12 +75,12 @@ namespace Logic {
         }
 
         void Update() {
-//            if (Input.GetKeyDown(KeyCode.Space) ||
-//                Input.GetKeyDown(KeyCode.KeypadEnter) ||
-//                Input.GetKeyDown(KeyCode.Return) ||
-//                Input.GetKeyDown(KeyCode.I)) {
-//                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
-//            }
+            if (Input.GetKeyDown(KeyCode.Space) ||
+                Input.GetKeyDown(KeyCode.KeypadEnter) ||
+                Input.GetKeyDown(KeyCode.Return) ||
+                Input.GetKeyDown(KeyCode.I)) {
+                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
+            }
 
             if (isActionsComplete) stepCompleted();
         }
