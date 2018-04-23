@@ -35,6 +35,7 @@ namespace Logic {
         private Action<List<Card>> userCardsSubmittion;
         private int actionsThisStep;
         private int stepsIndex;
+        private bool turnOffTiles = false;
 
         public bool isStepsComplete {
             get { return (stepsIndex >= currentTurn.diff.steps.Count); }
@@ -64,7 +65,7 @@ namespace Logic {
 
 
             var mapSkin = map.BuildMap("1stMap");
-            if (mapSkin != null) mapSkin.transform.localPosition = new Vector3(0, 1, 0);
+            if (mapSkin != null) mapSkin.transform.localPosition = new Vector3(0, 0.9f, 0);
         }
 
 
@@ -90,6 +91,12 @@ namespace Logic {
                 ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
             }
 
+            if (Input.GetKeyDown(KeyCode.T)) {
+                turnOffTiles = !turnOffTiles;
+                if (turnOffTiles) DestroyTiles();
+                else if (currentTurn != null) GenerateTiles(currentTurn.start.gameBoard.tiles);
+            }
+
             if (isActionsComplete) stepCompleted();
         }
 
@@ -102,9 +109,11 @@ namespace Logic {
             currentTurn = turn;
             userCardsSubmittion = onSelected;
 
-            DestroyTiles();
+            if (!turnOffTiles) {
+                DestroyTiles();
+                GenerateTiles(turn.start.gameBoard.tiles);
+            }
             DestroyPlayers();
-            GenerateTiles(turn.start.gameBoard.tiles);
             GeneratePlayers(turn.start.players);
             SetupCamera(turn.start.gameBoard.width);
 
@@ -217,6 +226,7 @@ namespace Logic {
         }
 
         private void GenerateTiles(List<Tile> tileData) {
+            Debug.Log("Generate tiles");
             tileData.ForEach(t => {
                 var obj = Instantiate(TilePrefab, transform);
                 tiles.Add(obj);
@@ -231,9 +241,12 @@ namespace Logic {
         }
 
         private void applyEndofTurn() {
-            DestroyTiles();
+            if (!turnOffTiles) {
+                DestroyTiles();
+                GenerateTiles(currentTurn.end.gameBoard.tiles);
+            }
+
             DestroyPlayers();
-            GenerateTiles(currentTurn.end.gameBoard.tiles);
             GeneratePlayers(currentTurn.end.players);
             var myPlayer = currentTurn.end.players.Find(p => p.name == State.myName);
             //if (myPlayer == null) myPlayer = turn.end.players[0]; // DEBUGGING ONLY
@@ -252,6 +265,7 @@ namespace Logic {
         }
         
         private void DestroyTiles() {
+            Debug.Log("Destroy tiles");
             tiles.ForEach(Destroy);
             tiles.Clear();
         }
