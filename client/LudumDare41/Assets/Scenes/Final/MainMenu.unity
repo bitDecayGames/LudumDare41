@@ -357,7 +357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f241c850bd644fda8ab2af67946397e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeOutTexture: {fileID: 2800000, guid: 85473c6e64977ed419a7e41eb36841bb, type: 3}
+  fadeOutTexture: {fileID: 2800000, guid: f19fbd01f35fd3f429eac7cbd7291d30, type: 3}
 --- !u!1 &390547104
 GameObject:
   m_ObjectHideFlags: 0
@@ -484,7 +484,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AspectMode: 0
-  m_AspectRatio: 3.6116107
+  m_AspectRatio: 3.213837
 --- !u!114 &524126379
 MonoBehaviour:
   m_ObjectHideFlags: 0

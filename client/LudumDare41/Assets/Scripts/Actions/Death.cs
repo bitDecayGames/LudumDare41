@@ -4,16 +4,21 @@ using UnityEngine;
 
 public class Death : IActionScript
 {
+	public float duration = 1.5f;
+	private float speed;
 
-	// Use this for initialization
 	void Start () {
-
-        soundPlayer.playSound(SoundsManager.SFX.TankDeath);
-    }
+		speed = 1 / duration;
+        
+	}
 	
-	// Update is called once per frame
 	void Update () {
-        GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
-        Destroy(this);
+		duration -= Time.deltaTime;
+		var scaleDelta = Time.deltaTime * speed;
+		transform.localScale = transform.localScale - new Vector3(scaleDelta, scaleDelta, scaleDelta);
+		if (duration <= 0) {
+			GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
+			Destroy(this);
+		}
 	}
 }

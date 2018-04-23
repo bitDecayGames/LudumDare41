@@ -19,10 +19,12 @@ namespace Logic {
         public EventSystem HudEventSystemPrefab;
         public List<TileMaterial> tileMaterials;
         public SoundsManager SoundPlayerPrefab;
+        public MapFactory MapFactoryPrefab;
 
         private Camera camera;
         private Hud hud;
         private SoundsManager SoundPlayer;
+        private MapFactory map;
 
         private List<GameObject> tiles = new List<GameObject>();
         public List<GameObject> players = new List<GameObject>();
@@ -33,6 +35,7 @@ namespace Logic {
         private Action<List<Card>> userCardsSubmittion;
         private int actionsThisStep;
         private int stepsIndex;
+        private bool turnOffTiles = false;
 
         public bool isStepsComplete {
             get { return (stepsIndex >= currentTurn.diff.steps.Count); }
@@ -55,9 +58,14 @@ namespace Logic {
             hud = Instantiate(HudPrefab);
             Instantiate(PlayerHudPrefab, hud.transform).brain = this;
             Instantiate(HudEventSystemPrefab);
+            map = Instantiate(MapFactoryPrefab, transform);
+            map.transform.localPosition = new Vector3(0, 0, 0);
             SoundPlayer = Instantiate(SoundPlayerPrefab);
-            SoundPlayer.playSoundLoop(SoundsManager.SFX.EngineIdleLoop);
+            SoundPlayer.playSound(SoundsManager.SFX.TankFiring);
 
+
+            var mapSkin = map.BuildMap("1stMap");
+            if (mapSkin != null) mapSkin.transform.localPosition = new Vector3(0, 0.99f, 0);
         }
 
 
@@ -83,6 +91,12 @@ namespace Logic {
                 ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
             }
 
+            if (Input.GetKeyDown(KeyCode.T)) {
+                turnOffTiles = !turnOffTiles;
+                if (turnOffTiles) DestroyTiles();
+                else if (currentTurn != null) GenerateTiles(currentTurn.start.gameBoard.tiles);
+            }
+
             if (isActionsComplete) stepCompleted();
         }
 
@@ -95,9 +109,11 @@ namespace Logic {
             currentTurn = turn;
             userCardsSubmittion = onSelected;
 
-            DestroyTiles();
+            if (!turnOffTiles) {
+                DestroyTiles();
+                GenerateTiles(turn.start.gameBoard.tiles);
+            }
             DestroyPlayers();
-            GenerateTiles(turn.start.gameBoard.tiles);
             GeneratePlayers(turn.start.players);
             SetupCamera(turn.start.gameBoard.width);
 
@@ -237,9 +253,12 @@ namespace Logic {
         }
 
         private void applyEndofTurn() {
-            DestroyTiles();
+            if (!turnOffTiles) {
+                DestroyTiles();
+                GenerateTiles(currentTurn.end.gameBoard.tiles);
+            }
+
             DestroyPlayers();
-            GenerateTiles(currentTurn.end.gameBoard.tiles);
             GeneratePlayers(currentTurn.end.players);
             var myPlayer = currentTurn.end.players.Find(p => p.name == State.myName);
             //if (myPlayer == null) myPlayer = turn.end.players[0]; // DEBUGGING ONLY
