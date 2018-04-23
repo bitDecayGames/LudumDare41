@@ -5,18 +5,20 @@ using UnityEngine;
 public class Rotate : MonoBehaviour {
     public string rotateType;
     public float degrees;
-	// Use this for initialization
-	void Start () {
+    public float time = 1.5f;
+    private float rotation;
+    // Use this for initialization
+    void Start () {
+        rotation = degrees / time;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
-        float rotation = Time.deltaTime*10;
-        degrees -= Time.deltaTime*10;
-        transform.Rotate(0, rotation, 0);
+        
+        time -= Time.deltaTime;
+        transform.Rotate(0, rotation*Time.deltaTime, 0);
         Debug.Log("Rotating");
-        if (degrees <= 0)
+        if (time <= 0)
             Destroy(this);
     }
 }

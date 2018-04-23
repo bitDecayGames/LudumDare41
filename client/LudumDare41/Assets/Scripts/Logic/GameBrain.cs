@@ -88,8 +88,8 @@ namespace Logic {
             GenerateTiles(turn.start.gameBoard.tiles);
             GeneratePlayers(turn.start.players);
             SetupCamera(turn.start.gameBoard.width);
-            players[0].AddComponent<Death>();
-            Debug.LogError("Components duration" + players[0].GetComponent<Move>().duration.ToString());
+            players[0].AddComponent<Move>().direction= new Vector3(1,0,0);
+            //Debug.LogError("Components duration" + players[0].GetComponent<Move>().duration.ToString());
             
             // TODO: based on the turn steps, create sequences of actions
             // TODO: all of these methods will eventually need to become asynchronous to handle the animation delays
@@ -142,7 +142,6 @@ namespace Logic {
                 obj.transform.localPosition = pos;
                 var pData = obj.GetComponent<PlayerData>();
                 pData.name= p.name;
-                pData.pos = p.pos;
 
             });
         }
