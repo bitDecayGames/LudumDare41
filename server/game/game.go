@@ -237,11 +237,12 @@ func respawnObjects(g state.GameState) ([]logic.Step, state.GameState) {
 		}
 	}
 
+	// TODO: uncomment this once client-side crate visuals are implemented
 	// do crate logic before we respawn players since crates coming in might kill players
-	crateSteps, g, emptyTiles := manageCrates(g, emptyTiles)
-	if len(crateSteps) > 0 {
-		steps = append(steps, crateSteps...)
-	}
+	// crateSteps, g, emptyTiles := manageCrates(g, emptyTiles)
+	// if len(crateSteps) > 0 {
+	// 	steps = append(steps, crateSteps...)
+	// }
 
 	spawnPlayerStep, g, emptyTiles := spawnDeadPlayers(g, emptyTiles)
 	if len(spawnPlayerStep.Actions) > 0 {

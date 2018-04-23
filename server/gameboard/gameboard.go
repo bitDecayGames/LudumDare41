@@ -27,6 +27,19 @@ type GameBoard struct {
 	Height         int    `json:"height"`
 }
 
+var gameMap = [][]int{
+	[]int{0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	[]int{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	[]int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	[]int{0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+}
+
 func (gb GameBoard) GetTilesByType(tileType string) []Tile {
 	matchingTiles := []Tile{}
 	for _, tile := range gb.FlattenedTiles {
@@ -52,13 +65,16 @@ func LoadBoard(name string) GameBoard {
 	}
 
 	// Generate tiles
-	for x := 0; x < width; x++ {
+	for col := 0; col < len(gameMap); col++ {
 		board.Tiles = append(board.Tiles, []Tile{})
-		for y := 0; y < height; y++ {
+		for row := 0; row < len(gameMap[col]); row++ {
 			tile := Tile{
 				TileType: Empty_tile,
 			}
-			board.Tiles[x] = append(board.Tiles[x], tile)
+			if gameMap[col][row] == 1 {
+				tile.TileType = Wall_tile
+			}
+			board.Tiles[col] = append(board.Tiles[col], tile)
 		}
 	}
 
