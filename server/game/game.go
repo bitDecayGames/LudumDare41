@@ -25,7 +25,9 @@ type Game struct {
 	Board   gameboard.GameBoard
 	CardSet cards.CardSet
 
-	CurrentState  state.GameState
+	CurrentState state.GameState
+	LastSequence logic.StepSequence
+
 	PreviousState state.GameState
 
 	pendingSubmissions map[string][]cards.Card // Player submissions
@@ -173,6 +175,7 @@ func (g *Game) ExecuteTurn() {
 	fmt.Println(stepSequence)
 	fmt.Println(fmt.Sprintf("Pending Seq %+v", g.pendingSequence))
 	intermState.Tick += 1
+	g.LastSequence = stepSequence
 	g.CurrentState = intermState
 }
 
@@ -205,7 +208,7 @@ func respawnDeadPlayers(g state.GameState) (logic.Step, state.GameState) {
 				if !tile.TempOccupied {
 					log.Printf("Respawning player %s at %+v", p.Name, tile.Pos)
 					g.Players[i].Pos = tile.Pos
-					step.Actions = append(step.Actions, logic.GetSpawnAction(p.Name))
+					step.Actions = append(step.Actions, logic.GetAction(logic.Action_spawn, p.Name))
 
 					tile.TempOccupied = true
 					emptyTiles[k] = tile
