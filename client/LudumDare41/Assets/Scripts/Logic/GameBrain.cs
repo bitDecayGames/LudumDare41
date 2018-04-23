@@ -10,7 +10,7 @@ using Utils;
 
 namespace Logic {
     public class GameBrain : MonoBehaviour {
-        public static int NUM_OF_CARDS_TO_SUBMIT = 1;
+        public static int NUM_OF_CARDS_TO_SUBMIT = 3;
 
         public GameObject TilePrefab;
         public GameObject PlayerPrefab;
@@ -74,12 +74,12 @@ namespace Logic {
         }
 
         void Update() {
-            if (Input.GetKeyDown(KeyCode.Space) ||
-                Input.GetKeyDown(KeyCode.KeypadEnter) ||
-                Input.GetKeyDown(KeyCode.Return) ||
-                Input.GetKeyDown(KeyCode.I)) {
-                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
-            }
+//            if (Input.GetKeyDown(KeyCode.Space) ||
+//                Input.GetKeyDown(KeyCode.KeypadEnter) ||
+//                Input.GetKeyDown(KeyCode.Return) ||
+//                Input.GetKeyDown(KeyCode.I)) {
+//                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
+//            }
 
             if (isActionsComplete) stepCompleted();
         }
