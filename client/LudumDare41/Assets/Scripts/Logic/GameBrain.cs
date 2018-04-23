@@ -175,13 +175,16 @@ namespace Logic {
                                     rotate180Comp.time = 2.5f;
                                     iAction = rotate180Comp;
                                     break;
-                                case "SPAWACTION":
+                                case "SPAWNACTION":
                                     Spawn spawnComp = player.AddComponent<Spawn>();
                                     iAction = spawnComp;
                                     break;
-                                case "SHOOTMAINGUNACTION":
                                 case "DEATHACTION":
-                                default:
+                                    Death deathComp = player.AddComponent<Death>();
+                                    iAction = deathComp;
+                                    break;
+                                case "SHOOTMAINGUNACTION":
+                                    default:
                                         Debug.LogError("Failed to handle action: " + action.actionType);
                                     actionCompleted(action);
                                     break;
