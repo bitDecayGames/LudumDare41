@@ -190,7 +190,7 @@ namespace Logic {
                 var pos = obj.transform.localPosition;
                 pos.x = t.pos.x;
                 pos.z = t.pos.y;
-                pos.y = 0;
+                pos.y = 1;
                 obj.transform.localPosition = pos;
                 var mesh = obj.GetComponentInChildren<MeshRenderer>();
                 mesh.material = tileMaterials.Find(m => m.name == t.tileType).material;
