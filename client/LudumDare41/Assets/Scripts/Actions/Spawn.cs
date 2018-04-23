@@ -4,32 +4,39 @@ using UnityEngine;
 
 public class Spawn : IActionScript
 {	
-	public float duration = 1.5f;
-	private float speed;
+	public float duration = 2.5f;
 	private bool inited = false;
+	private float curY = 0;
 
-	void Start() {
-		speed = .33f / duration;
-	}
+	private static float initialAltitude = 1;
+	private static float fallingAltitude = 10;
+	private static float speed = 0.95f;
 	
 	void Update() {
+		Vector3 pos = transform.localPosition;
 		if (!inited && actionData != null && actionData.position != null) {
-			Vector3 pos = transform.position;
 			if (pos != null) {
 				inited = true;
 				pos.x = actionData.position.x;
-				pos.y = actionData.position.y;
-				transform.position = pos;
-				transform.localScale = new Vector3(0, 0, 0);
+				pos.z = actionData.position.y;
+				pos.y = fallingAltitude;
+				curY = fallingAltitude;
+				transform.localPosition = pos;
 				GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+				transform.localScale = new Vector3(0.33f, 0.33f, 0.33f);
 			}
 		}
 
-		duration -= Time.deltaTime;
-		var scaleDelta = Time.deltaTime * speed;
-		transform.localScale = transform.localScale + new Vector3(scaleDelta, scaleDelta, scaleDelta);
-		if (duration <= 0) {
-			Destroy(this);
+		if (inited) {
+			duration -= Time.deltaTime;
+			curY *= speed;
+			pos.y = curY + initialAltitude;
+			
+			Debug.Log("I'm faaaaallllinnnngggg! " + pos.y);
+			transform.localPosition = pos;
+			if (duration <= 0) {
+				Destroy(this);
+			}
 		}
 	}
 }

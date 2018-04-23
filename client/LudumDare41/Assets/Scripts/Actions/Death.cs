@@ -11,6 +11,7 @@ public class Death : IActionScript
     }
 	
 	void Update () {
+		Debug.Log("I'm melting!!!!");
 		duration -= Time.deltaTime;
 		var scaleDelta = Time.deltaTime * speed;
 		transform.localScale = transform.localScale - new Vector3(scaleDelta, scaleDelta, scaleDelta);
