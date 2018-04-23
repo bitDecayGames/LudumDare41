@@ -5,4 +5,5 @@ using UnityEngine;
 public class PlayerData : MonoBehaviour {
 
     public string name;
+    public Vector pos;
 }

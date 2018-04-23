@@ -88,7 +88,7 @@ namespace Logic {
             GenerateTiles(turn.start.gameBoard.tiles);
             GeneratePlayers(turn.start.players);
             SetupCamera(turn.start.gameBoard.width);
-            players[0].AddComponent<Rotate>().degrees = 90;
+            players[0].AddComponent<Death>();
             Debug.LogError("Components duration" + players[0].GetComponent<Move>().duration.ToString());
             
             // TODO: based on the turn steps, create sequences of actions
@@ -142,6 +142,7 @@ namespace Logic {
                 obj.transform.localPosition = pos;
                 var pData = obj.GetComponent<PlayerData>();
                 pData.name= p.name;
+                pData.pos = p.pos;
 
             });
         }
