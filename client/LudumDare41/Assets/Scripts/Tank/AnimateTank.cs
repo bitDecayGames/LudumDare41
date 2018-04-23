@@ -13,8 +13,10 @@ public class AnimateTank : MonoBehaviour
         var materials = GetComponent<Renderer>().materials;
         foreach (Material m in materials)
         {
+            Debug.Log("Material name: " + m.name);
             if (m.name == "Material_005")
             {
+                Debug.Log("Found the right material!");
                 m.mainTextureOffset = new Vector2(OffsetX, OffsetY);
             }
         }
