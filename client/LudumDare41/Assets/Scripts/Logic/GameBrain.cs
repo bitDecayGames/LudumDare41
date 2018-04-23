@@ -44,27 +44,6 @@ namespace Logic {
             SoundPlayer.playSound(SoundsManager.SFX.TankFiring);
         }
 
-        private void Update()
-        {
-            if (actionInProgress)
-                return;
-
-            if (hasSteps)
-            {
-                Step step = stepSequence[0];
-                stepSequence.RemoveAt(0);
-
-                foreach(IAction action in step.actions)
-                {
-
-                }
-
-                foreach(GameObject player in players)
-                {
-
-                }
-            }
-        }
 
         private void SetupCamera(int boardWidth) {
             var pos = camera.transform.position;
@@ -89,6 +68,13 @@ namespace Logic {
                     s.ForEach(c => Debug.Log("C:" + c.id));
                 });
             }
+
+            if (actionInProgress)
+                return;
+
+            
+             
+            
         }
 
         /// <summary>
@@ -102,7 +88,7 @@ namespace Logic {
             GenerateTiles(turn.start.gameBoard.tiles);
             GeneratePlayers(turn.start.players);
             SetupCamera(turn.start.gameBoard.width);
-
+            players[0].AddComponent<Move>().duration = 5;
             stepSequence = turn.steps;
             // TODO: based on the turn steps, create sequences of actions
             // TODO: all of these methods will eventually need to become asynchronous to handle the animation delays
@@ -155,6 +141,7 @@ namespace Logic {
                 obj.transform.localPosition = pos;
                 var pData = obj.GetComponent<PlayerData>();
                 pData.id= p.id;
+
             });
         }
 
