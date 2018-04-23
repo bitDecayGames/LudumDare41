@@ -17,11 +17,11 @@ namespace Logic {
         public Hud HudPrefab;
         public EventSystem HudEventSystemPrefab;
         public List<TileMaterial> tileMaterials;
-        public GameObject SoundPlayerObj;
-        SoundsManager SoundPlayer;
+        public SoundsManager SoundPlayerPrefab;
 
         private Camera camera;
         private Hud hud;
+        private SoundsManager SoundPlayer;
 
         private List<GameObject> tiles = new List<GameObject>();
         private List<GameObject> players = new List<GameObject>();
@@ -39,8 +39,8 @@ namespace Logic {
             camera = Camera.main;
             hud = Instantiate(HudPrefab);
             Instantiate(HudEventSystemPrefab);
+            SoundPlayer = Instantiate(SoundPlayerPrefab);
 
-            SoundPlayer = SoundPlayerObj.GetComponent<SoundsManager>();
             SoundPlayer.playSound(SoundsManager.SFX.TankFiring);
         }
 
@@ -102,7 +102,7 @@ namespace Logic {
             //if (myPlayer == null) myPlayer = turn.end.players[0]; // DEBUGGING ONLY
             if (myPlayer != null) {
                 Debug.Log("Player: " + JsonUtility.ToJson(myPlayer, true));
-                hud.ShowHand(myPlayer.hand, 3, (selected) => {
+                hud.ShowHand(myPlayer.hand, 1, (selected) => {
                     onSelected(selected);
                     hud.LowerCards();
                 });

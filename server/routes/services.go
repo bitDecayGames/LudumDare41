@@ -7,6 +7,7 @@ import (
 	"github.com/bitDecayGames/LudumDare41/server/game"
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
 	"github.com/bitDecayGames/LudumDare41/server/lobby"
+	"github.com/bitDecayGames/LudumDare41/server/logic"
 	"github.com/bitDecayGames/LudumDare41/server/pubsub"
 )
 
@@ -48,7 +49,8 @@ func (s *Services) SubmitCards(gameName, playerName string, tick int, cardIds []
 			ID:          game.Name,
 			Tick:        game.CurrentState.Tick,
 		}
-		return s.PubSub.SendMessage(game.Name, msg)
+		_ = s.PubSub.SendMessage(game.Name, msg)
+		return []error{}
 	}
 
 	return []error{}
@@ -57,7 +59,7 @@ func (s *Services) SubmitCards(gameName, playerName string, tick int, cardIds []
 func (s *Services) CreateGame(lobby *lobby.Lobby) []error {
 	// TODO Allow different boards and card sets.
 	board := gameboard.LoadBoard("default")
-	cardSet := cards.LoadSet("default")
+	cardSet := cards.LoadSet(logic.CardSetMap["debug"])
 	game := s.Game.NewGame(lobby, board, cardSet)
 
 	// TODO Fix
@@ -71,10 +73,15 @@ func (s *Services) CreateGame(lobby *lobby.Lobby) []error {
 	// 	return []error{err}
 	// }
 
+	// Initiate a fake turn cycle to place players
+	_ = game.AggregateTurn()
+	game.ExecuteTurn()
+
 	msg := pubsub.Message{
 		MessageType: pubsub.GameUpdateMessage,
 		ID:          game.Name,
 		Tick:        game.CurrentState.Tick,
 	}
-	return s.PubSub.SendMessage(game.Name, msg)
+	_ = s.PubSub.SendMessage(game.Name, msg)
+	return []error{}
 }
