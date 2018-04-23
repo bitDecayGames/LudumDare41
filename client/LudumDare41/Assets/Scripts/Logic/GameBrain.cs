@@ -181,7 +181,8 @@ namespace Logic {
                                     //player.AddComponent<Move>().direction = new Vector3(1, 0, 0);
                                     break;
                                 case "spawnAction" :
-                                    //player.AddComponent<Move>().direction = new Vector3(1, 0, 0);
+                                    Spawn spawnComp = player.AddComponent<Spawn>();
+                                    iAction = spawnComp;
                                     break;
                             }
 
