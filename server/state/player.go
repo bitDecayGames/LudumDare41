@@ -7,6 +7,7 @@ import (
 
 type Player struct {
 	Name    string `json:"name"`
+	Team    int    `json:"team"`
 	Deck    []cards.Card
 	Discard []cards.Card
 	Hand    []cards.Card `json:"hand"`
