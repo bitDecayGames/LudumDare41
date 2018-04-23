@@ -9,9 +9,9 @@ public class AnimateTank : MonoBehaviour {
     void Start() {
         var materials = GetComponent<Renderer>().materials;
         foreach (Material m in materials) {
-            Debug.Log("Material name: " + m.name);
+            //Debug.Log("Material name: " + m.name);
             if (m.name == "TreadAnimation (Instance)") {
-                Debug.Log("Found the right material!");
+                //Debug.Log("Found the right material!");
                 correctMaterial = m;
                 break;
             }

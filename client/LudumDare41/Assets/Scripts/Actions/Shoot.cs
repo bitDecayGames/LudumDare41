@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shoot : MonoBehaviour {
+public class Shoot : IActionScript {
     //just an animation
 
 
@@ -13,6 +13,7 @@ public class Shoot : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        // Play the shoot animation, k?
+        Destroy(this);
 	}
 }

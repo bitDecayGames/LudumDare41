@@ -108,7 +108,7 @@ func TestRespawn(t *testing.T) {
 		Board:   gameboard.LoadBoard("foo"),
 	}
 
-	step, newState := respawnDeadPlayers(testState)
+	steps, newState := respawnObjects(testState)
 
 	newP1 := newState.Players[0]
 	newP2 := newState.Players[1]
@@ -121,10 +121,10 @@ func TestRespawn(t *testing.T) {
 		t.Fatal("Player 1 and Player 2 are in the same position")
 	}
 
-	if len(step.Actions) != 1 || step.Actions[0].ActionType != logic.Action_spawn {
-		t.Errorf("Spawn action didn't return, got: %+v", step)
-		t.Errorf("Length of actions: %v", len(step.Actions))
-		t.Fatalf("Action Type %v", step.Actions[0].ActionType)
+	if len(steps) != 1 || steps[0].Actions[0].ActionType != logic.Action_spawn {
+		t.Errorf("Spawn action didn't return, got: %+v", steps[0])
+		t.Errorf("Length of actions: %v", len(steps[0].Actions))
+		t.Fatalf("Action Type %v", steps[0].Actions[0].ActionType)
 	}
 }
 

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spawn : MonoBehaviour {
+public class Spawn : IActionScript
+{
 
+    
     //Todo spawning at end location
 
 	// Use this for initialization
@@ -13,6 +15,11 @@ public class Spawn : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        Vector3 pos = transform.position;
+        pos.x = actionData.position.x;
+        pos.y = actionData.position.y;
+        transform.position = pos;
+        GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        Destroy(this);  
+    }
 }

@@ -9,10 +9,12 @@ func shootMainGun(affectedPlayer *state.Player, stepSeq []Step, g state.GameStat
 	// see what direction the player is facing
 	found, target := findFirstObstacleInDirection(affectedPlayer, g)
 
+	//fmt.Println(fmt.Sprintf("AffectedPlayer: %+v\nTarget: %+v", affectedPlayer, target))
+
 	stepSeq = append(stepSeq,
 		Step{
 			Actions: []Action{
-				GetAction(Action_shoot_main_gun, affectedPlayer.Name),
+				GetAction(Action_shoot_main_gun, affectedPlayer.Name, affectedPlayer.Pos),
 			},
 		})
 	// if player, kill it. If wall, do nothing? (Maybe report what wall was hit?)
@@ -20,7 +22,7 @@ func shootMainGun(affectedPlayer *state.Player, stepSeq []Step, g state.GameStat
 		stepSeq = append(stepSeq,
 			Step{
 				Actions: []Action{
-					GetAction(Action_death, target.Name),
+					GetAction(Action_death, target.Name, target.Pos),
 				},
 			})
 		target.DiscardEntireHand()
@@ -35,11 +37,11 @@ func findFirstObstacleInDirection(player *state.Player, g state.GameState) (bool
 	found := false
 	for !found {
 		targetPos = utils.VecAdd(targetPos, player.Facing)
-		if isPlayerOccupying(targetPos, g) {
+		if IsPlayerOccupying(targetPos, g) {
 			// a hit!
-			return true, getPlayerAtPos(targetPos, g)
+			return true, GetPlayerAtPos(targetPos, g)
 		}
-		if isEmptyTile(targetPos, g) {
+		if IsEmptyTile(targetPos, g) {
 			// round still can travel
 			continue
 		} else {

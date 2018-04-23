@@ -15,5 +15,6 @@
         public int id;
         public string playerId;
         public string actionType;
+        public Vector position;
     }
 }

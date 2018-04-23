@@ -7,6 +7,10 @@ type Vector struct {
 	Y int `json:"y"`
 }
 
+func NewVec(x, y int) Vector {
+	return Vector{X: x, Y: y}
+}
+
 func VecAdd(v1 Vector, v2 Vector) Vector {
 	return Vector{
 		X: v1.X + v2.X,

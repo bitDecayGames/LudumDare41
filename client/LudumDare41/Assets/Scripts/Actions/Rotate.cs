@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Rotate : MonoBehaviour {
-    public string rotateType;
+public class Rotate : IActionScript
+{
     public float degrees;
     public float time = 1.5f;
     private float rotation;
