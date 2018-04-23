@@ -87,6 +87,7 @@ public class LobbyBehaviour : MonoBehaviour, IUpdateStreamSubscriber {
 	public void SetStartButtonForJoiner()
 	{
 		startBtn.interactable = false;
+		startBtn.enabled = false;
 		startBtn.GetComponentInChildren<Text>().text = "Waiting for Player 1 to start the game...";
 	}
 }

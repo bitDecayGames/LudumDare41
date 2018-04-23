@@ -10,7 +10,6 @@ using Utils;
 
 namespace Logic {
     public class GameBrain : MonoBehaviour {
-
         public static int NUM_OF_CARDS_TO_SUBMIT = 1;
 
         public GameObject TilePrefab;
@@ -34,20 +33,24 @@ namespace Logic {
         private int actionsThisStep;
         private int stepsIndex;
 
-        public bool isStepsComplete
-        {
+        public bool isStepsComplete {
             get { return (stepsIndex >= currentTurn.diff.steps.Count); }
         }
 
-        public bool isActionsComplete
-        {
-            get { return (stepsIndex < currentTurn.diff.steps.Count && actionsThisStep >= currentTurn.diff.steps[stepsIndex].actions.Count); }
+        public bool isActionsComplete {
+            get {
+                return currentTurn != null &&
+                       currentTurn.diff != null &&
+                       currentTurn.diff.steps != null && 
+                       stepsIndex < currentTurn.diff.steps.Count &&
+                       currentTurn.diff.steps[stepsIndex].actions != null && 
+                       actionsThisStep >= currentTurn.diff.steps[stepsIndex].actions.Count;
+            }
         }
 
 
-        private 
-
-        void Start() {
+        private
+            void Start() {
             camera = Camera.main;
             hud = Instantiate(HudPrefab);
             Instantiate(HudEventSystemPrefab);
@@ -66,31 +69,19 @@ namespace Logic {
             var canvas = hud.GetComponent<Canvas>();
             canvas.worldCamera = camera;
             canvas.planeDistance = 3f;
-                
-            
+
             camera.transform.eulerAngles = new Vector3(55, 0, 0);
         }
 
         void Update() {
             if (Input.GetKeyDown(KeyCode.Space) ||
                 Input.GetKeyDown(KeyCode.KeypadEnter) ||
-                Input.GetKeyDown(KeyCode.Return) || 
+                Input.GetKeyDown(KeyCode.Return) ||
                 Input.GetKeyDown(KeyCode.I)) {
-                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => {
-                    s.ForEach(c => Debug.Log("C:" + c.id));
-                });
-
-
+                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
             }
 
-
-            if (currentTurn != null && isActionsComplete)
-                stepCompleted();
-                
-
-            
-             
-            
+            if (isActionsComplete) stepCompleted();
         }
 
         /// <summary>
@@ -109,35 +100,26 @@ namespace Logic {
             GeneratePlayers(turn.start.players);
             SetupCamera(turn.start.gameBoard.width);
 
-            if (turn.diff.steps != null && turn.diff.steps.Count > 0)
-            {
+            if (turn.diff != null && turn.diff.steps != null && turn.diff.steps.Count > 0) {
                 stepsIndex = -1;
                 stepCompleted();
             }
-            else
-            {
+            else {
                 applyEndofTurn();
             }
-
         }
 
-        private void stepCompleted()
-        {
+        private void stepCompleted() {
             stepsIndex++;
             actionsThisStep = 0;
-            if (!isStepsComplete)
-            {
+            if (!isStepsComplete) {
                 var step = currentTurn.diff.steps[stepsIndex];
 
-                foreach (ActionData action in step.actions)
-                {
-                    foreach (GameObject player in players)
-                    {
-                        if(action.playerId == player.GetComponent<PlayerData>().name)
-                        {
+                foreach (ActionData action in step.actions) {
+                    foreach (GameObject player in players) {
+                        if (action.playerId == player.GetComponent<PlayerData>().name) {
                             IActionScript iAction = null;
-                            switch (action.actionType)
-                            {
+                            switch (action.actionType) {
                                 case "moveNorthAction":
                                     Move moveNComp = player.AddComponent<Move>();
                                     moveNComp.direction = new Vector3(0, 0, 1);
@@ -180,27 +162,24 @@ namespace Logic {
                                 case "deathAction":
                                     //player.AddComponent<Move>().direction = new Vector3(1, 0, 0);
                                     break;
-                                case "spawnAction" :
+                                case "spawnAction":
                                     Spawn spawnComp = player.AddComponent<Spawn>();
                                     iAction = spawnComp;
                                     break;
                             }
 
-                            if(iAction != null)
-                            {
+                            if (iAction != null) {
                                 iAction.actionData = action;
                                 iAction.onComplete = actionCompleted;
                             }
                         }
-                    } 
+                    }
                 }
             }
         }
 
 
-
-        private void actionCompleted(ActionData data)
-        {
+        private void actionCompleted(ActionData data) {
             actionsThisStep++;
         }
 
@@ -217,27 +196,25 @@ namespace Logic {
                 mesh.material = tileMaterials.Find(m => m.name == t.tileType).material;
             });
         }
-        private void applyEndofTurn()
-        {
+
+        private void applyEndofTurn() {
             DestroyTiles();
             DestroyPlayers();
             GenerateTiles(currentTurn.end.gameBoard.tiles);
             GeneratePlayers(currentTurn.end.players);
             var myPlayer = currentTurn.end.players.Find(p => p.name == State.myName);
             //if (myPlayer == null) myPlayer = turn.end.players[0]; // DEBUGGING ONLY
-            if (myPlayer != null)
-            {
+            if (myPlayer != null) {
                 Debug.Log("Player: " + JsonUtility.ToJson(myPlayer, true));
-                hud.ShowHand(myPlayer.hand, NUM_OF_CARDS_TO_SUBMIT, (selected) =>
-                {
+                hud.ShowHand(myPlayer.hand, NUM_OF_CARDS_TO_SUBMIT, (selected) => {
                     userCardsSubmittion(selected);
                     hud.LowerCards();
                 });
             }
-            else
-            {
+            else {
                 Debug.LogError("Failed to find my next hand of cards");
             }
+
             currentTurn = null;
         }
 
@@ -256,8 +233,7 @@ namespace Logic {
                 pos.y = 1;
                 obj.transform.localPosition = pos;
                 var pData = obj.GetComponent<PlayerData>();
-                pData.name= p.name;
-
+                pData.name = p.name;
             });
         }
 
