@@ -12,7 +12,7 @@ func shootMainGun(affectedPlayer *state.Player, stepSeq []Step, g state.GameStat
 	stepSeq = append(stepSeq,
 		Step{
 			Actions: []Action{
-				GetAction(Action_shoot_main_gun, affectedPlayer.Name),
+				GetAction(Action_shoot_main_gun, affectedPlayer.Name, target.Pos),
 			},
 		})
 	// if player, kill it. If wall, do nothing? (Maybe report what wall was hit?)
@@ -20,7 +20,7 @@ func shootMainGun(affectedPlayer *state.Player, stepSeq []Step, g state.GameStat
 		stepSeq = append(stepSeq,
 			Step{
 				Actions: []Action{
-					GetAction(Action_death, target.Name),
+					GetAction(Action_death, target.Name, target.Pos),
 				},
 			})
 		target.DiscardEntireHand()

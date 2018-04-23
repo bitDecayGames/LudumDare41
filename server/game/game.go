@@ -157,7 +157,9 @@ func (g *Game) ExecuteTurn() {
 	startState := g.CurrentState
 	// 2. Execute all cards
 	intermState := g.CurrentState
-	stepSequence := logic.StepSequence{}
+	stepSequence := logic.StepSequence{
+		Cards: g.pendingSequence,
+	}
 	for _, c := range g.pendingSequence {
 		fmt.Println(fmt.Sprintf("%+v", c))
 		newSteps, newState := logic.ApplyCard(c, intermState)
@@ -208,7 +210,7 @@ func respawnDeadPlayers(g state.GameState) (logic.Step, state.GameState) {
 				if !tile.TempOccupied {
 					log.Printf("Respawning player %s at %+v", p.Name, tile.Pos)
 					g.Players[i].Pos = tile.Pos
-					step.Actions = append(step.Actions, logic.GetAction(logic.Action_spawn, p.Name))
+					step.Actions = append(step.Actions, logic.GetAction(logic.Action_spawn, p.Name, tile.Pos))
 
 					tile.TempOccupied = true
 					emptyTiles[k] = tile

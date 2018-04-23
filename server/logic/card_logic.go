@@ -12,7 +12,8 @@ type Step struct {
 }
 
 type StepSequence struct {
-	Steps []Step `json:"steps"`
+	Cards []cards.Card `json:"cards"`
+	Steps []Step       `json:"steps"`
 }
 
 func ApplyCard(c cards.Card, g state.GameState) ([]Step, state.GameState) {
@@ -28,7 +29,7 @@ func ApplyCard(c cards.Card, g state.GameState) ([]Step, state.GameState) {
 				// player is dead, don't play any more of their cards
 				steps = append(steps, Step{
 					Actions: []Action{
-						GetDisposeNextCardAction(affectedPlayer.Name),
+						GetAction(Action_dispose_next_card, affectedPlayer.Name, affectedPlayer.Pos),
 					},
 				})
 				return steps, g
@@ -36,7 +37,7 @@ func ApplyCard(c cards.Card, g state.GameState) ([]Step, state.GameState) {
 
 			steps = append(steps, Step{
 				Actions: []Action{
-					GetPlayNextCardAction(affectedPlayer.Name),
+					GetAction(Action_play_next_card, affectedPlayer.Name, affectedPlayer.Pos),
 				},
 			})
 			affectedPlayer.DiscardCard(c)
