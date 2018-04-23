@@ -14,7 +14,7 @@ public class AnimateTank : MonoBehaviour
         foreach (Material m in materials)
         {
             Debug.Log("Material name: " + m.name);
-            if (m.name == "TreadAnimation")
+            if (m.name == "TreadAnimation (Instance)")
             {
                 Debug.Log("Found the right material!");
                 m.mainTextureOffset = new Vector2(OffsetX, OffsetY);
