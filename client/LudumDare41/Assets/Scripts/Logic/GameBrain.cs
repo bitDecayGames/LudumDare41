@@ -56,8 +56,8 @@ namespace Logic {
             Instantiate(PlayerHudPrefab, hud.transform).brain = this;
             Instantiate(HudEventSystemPrefab);
             SoundPlayer = Instantiate(SoundPlayerPrefab);
+            SoundPlayer.playSoundLoop(SoundsManager.SFX.EngineIdleLoop);
 
-            SoundPlayer.playSound(SoundsManager.SFX.TankFiring);
         }
 
 
@@ -142,52 +142,65 @@ namespace Logic {
                                 case "MOVENORTHACTION":
                                     Move moveNComp = player.AddComponent<Move>();
                                     moveNComp.direction = new Vector3(0, 0, 1);
+                                    moveNComp.soundPlayer = SoundPlayer;
                                     iAction = moveNComp;
                                     break;
                                 case "MOVESOUTHACTION":
                                     Move moveSComp = player.AddComponent<Move>();
                                     moveSComp.direction = new Vector3(0, 0, -1);
+                                    moveSComp.soundPlayer = SoundPlayer;
                                     iAction = moveSComp;
                                     break;
                                 case "MOVEEASTACTION":
                                     Move moveEComp = player.AddComponent<Move>();
                                     moveEComp.direction = new Vector3(1, 0, 0);
+                                    moveEComp.soundPlayer = SoundPlayer;
                                     iAction = moveEComp;
                                     break;
                                 case "MOVEWESTACTION":
                                     Move moveWComp = player.AddComponent<Move>();
                                     moveWComp.direction = new Vector3(-1, 0, 0);
+                                    moveWComp.soundPlayer = SoundPlayer;
                                     iAction = moveWComp;
                                     break;
                                 case "ROTATECLOCKWISEACTION":
                                     Rotate rotateCWComp = player.AddComponent<Rotate>();
                                     rotateCWComp.degrees = 90f;
+                                    rotateCWComp.soundPlayer = SoundPlayer;
                                     iAction = rotateCWComp;
                                     break;
                                 case "ROTATECOUNTERCLOCKWISEACTION":
                                     Rotate rotateCCWComp = player.AddComponent<Rotate>();
                                     rotateCCWComp.degrees = -90f;
+                                    rotateCCWComp.soundPlayer = SoundPlayer;
                                     iAction = rotateCCWComp;
                                     break;
                                 case "ROTATE180ACTION":
                                     Rotate rotate180Comp = player.AddComponent<Rotate>();
                                     rotate180Comp.degrees = 180f;
                                     rotate180Comp.time = 2.5f;
+                                    rotate180Comp.soundPlayer = SoundPlayer;
                                     iAction = rotate180Comp;
                                     break;
                                 case "SPAWNACTION":
                                     Spawn spawnComp = player.AddComponent<Spawn>();
+                                    spawnComp.soundPlayer = SoundPlayer;
                                     iAction = spawnComp;
                                     break;
                                 case "DEATHACTION":
                                     Death deathComp = player.AddComponent<Death>();
+                                    deathComp.soundPlayer = SoundPlayer;
                                     iAction = deathComp;
                                     break;
                                 case "SHOOTMAINGUNACTION":
-                                    default:
-                                        Debug.LogError("Failed to handle action: " + action.actionType);
-                                    actionCompleted(action);
+                                    Shoot shootComp = player.AddComponent<Shoot>();
+                                    shootComp.soundPlayer = SoundPlayer;
+                                    iAction = shootComp;
                                     break;
+                                default:
+                                    Debug.LogError("Failed to handle action: " + action.actionType);
+                                    actionCompleted(action);
+                                break;
                             }
 
                             if (iAction != null) {
