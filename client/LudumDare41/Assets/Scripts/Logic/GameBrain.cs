@@ -65,7 +65,7 @@ namespace Logic {
 
 
             var mapSkin = map.BuildMap("1stMap");
-            if (mapSkin != null) mapSkin.transform.localPosition = new Vector3(0, 0.9f, 0);
+            if (mapSkin != null) mapSkin.transform.localPosition = new Vector3(0, 0.99f, 0);
         }
 
 
