@@ -10,6 +10,7 @@ const Action_rotate_counter_clockwise = "rotateCounterClockwiseAction"
 const Action_rotate_180 = "rotate180Action"
 
 const Action_shoot_main_gun = "shootMainGunAction"
+const Action_tile_explode = "tileExplodeAction"
 
 const Action_death = "deathAction"
 const Action_spawn = "spawnAction"

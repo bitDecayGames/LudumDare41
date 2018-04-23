@@ -6,7 +6,7 @@ import (
 	"github.com/bitDecayGames/LudumDare41/server/utils"
 )
 
-func isEmptyTile(target utils.Vector, g state.GameState) bool {
+func IsEmptyTile(target utils.Vector, g state.GameState) bool {
 	if target.X < 0 || target.X >= len(g.Board.Tiles) {
 		return false
 	}
@@ -18,7 +18,7 @@ func isEmptyTile(target utils.Vector, g state.GameState) bool {
 	return g.Board.Tiles[target.X][target.Y].TileType == gameboard.Empty_tile
 }
 
-func isPlayerOccupying(target utils.Vector, g state.GameState) bool {
+func IsPlayerOccupying(target utils.Vector, g state.GameState) bool {
 	for _, p := range g.Players {
 		if utils.VecEquals(p.Pos, target) {
 			return true
@@ -27,7 +27,7 @@ func isPlayerOccupying(target utils.Vector, g state.GameState) bool {
 	return false
 }
 
-func getPlayerAtPos(target utils.Vector, g state.GameState) *state.Player {
+func GetPlayerAtPos(target utils.Vector, g state.GameState) *state.Player {
 	for i, p := range g.Players {
 		if utils.VecEquals(p.Pos, target) {
 			return &g.Players[i]

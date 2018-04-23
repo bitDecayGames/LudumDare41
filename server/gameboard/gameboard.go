@@ -37,6 +37,11 @@ func (gb GameBoard) GetTilesByType(tileType string) []Tile {
 	return matchingTiles
 }
 
+func (gb GameBoard) OnBoard(pos utils.Vector) bool {
+	return pos.X >= 0 && pos.X < len(gb.Tiles) &&
+		pos.Y >= 0 && pos.Y < len(gb.Tiles[0])
+}
+
 func LoadBoard(name string) GameBoard {
 	// TODO: Load this from file / config
 	board := GameBoard{

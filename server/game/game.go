@@ -204,8 +204,22 @@ func respawnObjects(g state.GameState) ([]logic.Step, state.GameState) {
 		}
 	}
 
-	spawnPlayerStep := logic.Step{}
-	// Find dead players
+	// do crate logic before we respawn players since crates coming in might kill players
+	crateSteps, g, emptyTiles := manageCrates(g, emptyTiles)
+	if len(crateSteps) > 0 {
+		steps = append(steps, crateSteps...)
+	}
+
+	spawnPlayerStep, g, emptyTiles := spawnDeadPlayers(g, emptyTiles)
+	if len(spawnPlayerStep.Actions) > 0 {
+		steps = append(steps, spawnPlayerStep)
+	}
+
+	return steps, g
+}
+
+func spawnDeadPlayers(g state.GameState, emptyTiles []gameboard.Tile) (logic.Step, state.GameState, []gameboard.Tile) {
+	step := logic.Step{}
 	for i, p := range g.Players {
 		if utils.VecEquals(p.Pos, utils.DeadVector) {
 			// Find tiles to place respawned players on.
@@ -214,7 +228,7 @@ func respawnObjects(g state.GameState) ([]logic.Step, state.GameState) {
 				if !tile.TempOccupied {
 					log.Printf("Respawning player %s at %+v", p.Name, tile.Pos)
 					g.Players[i].Pos = tile.Pos
-					spawnPlayerStep.Actions = append(spawnPlayerStep.Actions, logic.GetAction(logic.Action_spawn, p.Name, tile.Pos))
+					step.Actions = append(step.Actions, logic.GetAction(logic.Action_spawn, p.Name, tile.Pos))
 
 					tile.TempOccupied = true
 					emptyTiles[k] = tile
@@ -224,11 +238,11 @@ func respawnObjects(g state.GameState) ([]logic.Step, state.GameState) {
 			}
 		}
 	}
+	return step, g, emptyTiles
+}
 
-	if len(spawnPlayerStep.Actions) > 0 {
-		steps = append(steps, spawnPlayerStep)
-	}
-
+func manageCrates(g state.GameState, emptyTiles []gameboard.Tile) ([]logic.Step, state.GameState, []gameboard.Tile) {
+	steps := make([]logic.Step, 0)
 	if utils.VecEquals(g.NextCrate, utils.DeadVector) {
 		// first time through. Set this and wait one turn before spawning actual crate
 		for k, tile := range emptyTiles {
@@ -240,10 +254,38 @@ func respawnObjects(g state.GameState) ([]logic.Step, state.GameState) {
 				})
 				tile.TempOccupied = true
 				emptyTiles[k] = tile
-				break
+				return steps, g, emptyTiles
 			}
 		}
-	} else if utils.VecEquals(g.Crate, utils.DeadVector) {
+		panic("No place to put the next crate")
+	}
+
+	if utils.VecEquals(g.Crate, utils.DeadVector) {
+
+		crateBoomStep := logic.Step{}
+		playerKillStep := logic.Step{}
+		for x := g.NextCrate.X - 1; x <= g.NextCrate.X+1; x++ {
+			for y := g.NextCrate.Y - 1; y <= g.NextCrate.Y+1; y++ {
+				tileLoc := utils.NewVec(x, y)
+				if g.Board.OnBoard(tileLoc) {
+					crateBoomStep.Actions = append(crateBoomStep.Actions, logic.GetAction(logic.Action_tile_explode, "gameBoard", tileLoc))
+
+					if logic.IsPlayerOccupying(tileLoc, g) {
+						killP := logic.GetPlayerAtPos(tileLoc, g)
+						playerKillStep.Actions = append(playerKillStep.Actions, logic.GetAction(logic.Action_death, killP.Name, killP.Pos))
+					}
+				}
+			}
+		}
+
+		if len(crateBoomStep.Actions) > 0 {
+			steps = append(steps, crateBoomStep)
+		}
+
+		if len(playerKillStep.Actions) > 0 {
+			steps = append(steps, playerKillStep)
+		}
+
 		g.Crate = g.NextCrate
 		steps = append(steps, logic.Step{
 			Actions: []logic.Action{logic.GetAction(logic.Action_drop_crate, "gameBoard", g.Crate)},
@@ -263,5 +305,5 @@ func respawnObjects(g state.GameState) ([]logic.Step, state.GameState) {
 		}
 	}
 
-	return steps, g
+	return steps, g, emptyTiles
 }
