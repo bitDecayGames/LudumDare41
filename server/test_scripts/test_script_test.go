@@ -1,7 +1,9 @@
 package test_scripts
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"testing"
 
 	"github.com/bitDecayGames/LudumDare41/server/logic"
@@ -33,6 +35,9 @@ func TestFullRun(t *testing.T) {
 		t.Fatal("Not all players are in game")
 	}
 
+	g.AggregateTurn()
+	g.ExecuteTurn()
+
 	for _, player := range g.CurrentState.Players {
 		fmt.Println(fmt.Sprintf("Player %v cards: %v", player.Name, player.Hand))
 
@@ -48,10 +53,11 @@ func TestFullRun(t *testing.T) {
 	}
 
 	g.AggregateTurn()
-
 	g.ExecuteTurn()
 
-	fmt.Println(fmt.Sprintf("Sequence: %+v", g.LastSequence))
+	bytes, err := json.Marshal(g.LastSequence)
+	log.Println(err)
+	fmt.Println(fmt.Sprintf("Dat Json: %v", string(bytes)))
 
 	for _, p := range g.CurrentState.Players {
 		if len(p.Hand) != 5 {

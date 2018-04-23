@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/bitDecayGames/LudumDare41/server/logic"
+
 	"github.com/bitDecayGames/LudumDare41/server/state"
 	"github.com/gorilla/mux"
 )
@@ -85,9 +87,10 @@ func (gr *GameRoutes) getCurrentTickHandler(w http.ResponseWriter, r *http.Reque
 }
 
 type gameStateResBody struct {
-	Tick  int             `json:"tick"`
-	Start state.GameState `json:"start"`
-	End   state.GameState `json:"end"`
+	Tick  int                `json:"tick"`
+	Start state.GameState    `json:"start"`
+	End   state.GameState    `json:"end"`
+	Diff  logic.StepSequence `json:"diff"`
 	// PlayersHand  []cards.Card    `json:"playersHand"`
 }
 
@@ -129,6 +132,7 @@ func (gr *GameRoutes) getGameStateHandler(w http.ResponseWriter, r *http.Request
 		Tick:  game.PreviousState.Tick,
 		Start: game.PreviousState,
 		End:   game.CurrentState,
+		Diff:  game.LastSequence,
 	}
 	err = json.NewEncoder(w).Encode(&resBody)
 	if err != nil {
