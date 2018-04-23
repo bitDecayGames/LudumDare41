@@ -43,6 +43,7 @@ func newGame(players map[string]*state.Player, board gameboard.GameBoard, cardSe
 	}
 
 	currentState := state.NewState(-1, players, board)
+	currentState.Crate = utils.DeadVector
 
 	fmt.Println(fmt.Sprintf("New State: %+v", currentState))
 
@@ -227,7 +228,7 @@ func respawnObjects(g state.GameState) (logic.Step, state.GameState) {
 			if !tile.TempOccupied {
 				log.Printf("Respawning crate at %+v", tile.Pos)
 				g.Crate = tile.Pos
-				step.Actions = append(step.Actions, logic.GetAction(logic.Action_spawn, "gameBoard", tile.Pos))
+				step.Actions = append(step.Actions, logic.GetAction(logic.Action_drop_crate, "gameBoard", tile.Pos))
 				tile.TempOccupied = true
 				emptyTiles[k] = tile
 				break
