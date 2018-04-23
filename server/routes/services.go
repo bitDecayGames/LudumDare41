@@ -49,7 +49,8 @@ func (s *Services) SubmitCards(gameName, playerName string, tick int, cardIds []
 			ID:          game.Name,
 			Tick:        game.CurrentState.Tick,
 		}
-		return s.PubSub.SendMessage(game.Name, msg)
+		_ = s.PubSub.SendMessage(game.Name, msg)
+		return []error{}
 	}
 
 	return []error{}
@@ -81,5 +82,6 @@ func (s *Services) CreateGame(lobby *lobby.Lobby) []error {
 		ID:          game.Name,
 		Tick:        game.CurrentState.Tick,
 	}
-	return s.PubSub.SendMessage(game.Name, msg)
+	_ = s.PubSub.SendMessage(game.Name, msg)
+	return []error{}
 }
