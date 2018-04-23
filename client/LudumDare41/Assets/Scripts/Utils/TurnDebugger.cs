@@ -5,8 +5,6 @@ using Model;
 namespace Utils {
     public static class TurnDebugger {
         private static Random rnd = new Random();
-        private static string[] tileTypes = new string[]{"empty", "wall"};
-        private static string[] cardTypes = new string[]{"MoveForward1", "MoveBackward1"};
         private static int boardWidth = 3;
         private static int boardHeight = 3;
             
@@ -16,10 +14,7 @@ namespace Utils {
             t.start = GenerateGameState();
             t.end = GenerateGameState();
             t.end.tick = t.start.tick + 1;
-            // TODO: need to test steps
-            t.steps = new List<Step>();
-            // TODO: need to test inputs
-            t.inputs = new List<Card>();
+            t.diff = GenerateStepSequence(t.end.players[0].name, ActionData.ACTION_TYPES);
             return t;
         }
 
@@ -42,7 +37,7 @@ namespace Utils {
                     var t = new Tile();
                     t.id = rnd.Next(100000);
                     t.pos = new Vector(x, y);
-                    t.tileType = tileTypes[rnd.Next(tileTypes.Length)];
+                    t.tileType = Tile.TILE_TYPES[rnd.Next(Tile.TILE_TYPES.Length)];
                     b.tiles.Add(t);
                 }
             }
@@ -51,7 +46,6 @@ namespace Utils {
 
         public static Player GeneratePlayer() {
             var p = new Player();
-            p.id = rnd.Next(10);
             p.name = "" + rnd.Next(10000);
             p.pos = new Vector();
             p.pos.x = rnd.Next(boardWidth);
@@ -68,8 +62,44 @@ namespace Utils {
             var c = new Card();
             c.id = rnd.Next(100000);
             c.priority = rnd.Next(1000000);
-            c.cardType = cardTypes[rnd.Next(cardTypes.Length)];
+            c.cardType = Card.CARD_TYPES[rnd.Next(Card.CARD_TYPES.Length)];
             return c;
         }
+
+        public static StepSequence GenerateStepSequence(string playerName, params string[] actions) {
+            var seq = new StepSequence();
+            seq.cards = new List<Card>();
+            for (int i = 0; i < 5; i++) seq.cards.Add(GenerateCard());
+            seq.steps = new List<Step>();
+            for (int i = 0; i + 1 < actions.Length; i += 2) {
+                var first = actions[i];
+                var second = actions[i + 1];
+                if (i % 4 == 0 && i + 2 < actions.Length) seq.steps.Add(GenerateStep(playerName, first, second));
+                else {
+                    seq.steps.Add(GenerateStep(playerName, first));
+                    seq.steps.Add(GenerateStep(playerName, second));
+                }
+            }
+            if (actions.Length % 2 != 0) seq.steps.Add(GenerateStep(playerName, actions[actions.Length - 1]));
+            return seq;
+        }
+
+        public static Step GenerateStep(string playerName, params string[] actions) {
+            var step = new Step();
+            step.actions = new List<ActionData>();
+            foreach (string act in actions) {
+                step.actions.Add(GenerateActionData(playerName, act));
+            }
+            return step;
+        }
+
+        public static ActionData GenerateActionData(string playerName, string actionType) {
+            var action = new ActionData();
+            action.id = rnd.Next(10);
+            action.actionType = actionType;
+            action.playerId = playerName;
+            return action;
+        }
+        
     }
 }

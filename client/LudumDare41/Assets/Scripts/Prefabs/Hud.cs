@@ -7,55 +7,62 @@ using UnityEngine.UI;
 
 namespace Prefabs {
     public class Hud : MonoBehaviour {
-        public List<Button> ButtonObjects;
-
-        private List<ButtonCard> cards = new List<ButtonCard>();
+        public List<ButtonCard> Cards = new List<ButtonCard>();
+        public List<CardImage> CardImages;
         private List<ButtonCard> selected = new List<ButtonCard>();
         private int numberToSelect = -1;
         private Action<List<Card>> onSelectionComplete;
 
         // HACK: this is probably bad...
-        private static float DEFAULT = -230f;
-        private static float LOWERED = -450;
-        private static float RAISED = -210;
-        private static float MAX_DIFF = 40f;
+        private static float DEFAULT = -20f;
+        private static float LOWERED = -200f;
+        private static float RAISED = 10f;
+        private static float MAX_DIFF = 50f;
 
         private static float ANIM_SPEED = 0.1f;
+        private float bottomOfScreenY = 0;
         
         void Start() {
+            bottomOfScreenY = -Screen.height / 2f;
+            
             var i = 0;
-            ButtonObjects.ForEach(b => {
-                var c = new ButtonCard(b, null);
+            Cards.ForEach(c => {
                 var index = i;
-                b.onClick.AddListener(() => {
+                c.button.onClick.AddListener(() => {
                     SelectCard(index);
                 });
-                cards.Add(c);
+                c.desiredHeight = LOWERED;
+                var pos = c.transform.localPosition;
+                pos.y = bottomOfScreenY + c.desiredHeight;
+                c.transform.localPosition = pos;
                 i++;
             });
             LowerCards();
         }
 
         void Update() {
-            cards.ForEach(c => {
-                var pos = c.button.transform.localPosition;
-                pos.y = pos.y + (c.desiredHeight - pos.y) * ANIM_SPEED;
-                c.button.transform.localPosition = pos;
+            Cards.ForEach(c => {
+                var pos = c.transform.localPosition;
+                pos.y = pos.y + (bottomOfScreenY + c.desiredHeight - pos.y) * ANIM_SPEED;
+                c.transform.localPosition = pos;
             });
         }
         
         public void ShowHand(List<Card> inputs, int numberToSelect, Action<List<Card>> onSelectionComplete) {
             if (numberToSelect <= 0) throw new Exception("Number to select cannot be less or equal to zero");
             if (numberToSelect > inputs.Count) throw new Exception("Number to select cannot be more than the number of cards");
-            if (cards.Count != inputs.Count) throw new Exception("Inputs count(" + inputs.Count + ") was different than Card count(" + cards.Count + ")");
+            if (Cards.Count != inputs.Count) throw new Exception("Inputs count(" + inputs.Count + ") was different than Card count(" + Cards.Count + ")");
             
             selected.Clear();
             this.numberToSelect = numberToSelect;
             for (int i = 0; i < inputs.Count; i++) {
-                var card = cards[i];
+                var card = Cards[i];
                 var data = inputs[i];
+                var cardImage = GetCardImageForCardType(data.cardType);
+                if (cardImage != null) card.button.image.sprite = cardImage.sprite;
                 card.card = data;
-                card.text.text = data.id + ": " + data.cardType + " " + data.priority;
+                card.priorityText.text = "" + data.priority;
+                card.debugText.text = data.cardType;
                 card.selected = false;
                 card.desiredHeight = DEFAULT;
                 card.button.enabled = true;
@@ -64,14 +71,14 @@ namespace Prefabs {
         }
 
         public void SelectCard(int index) {
-            var card = cards[index];
+            var card = Cards[index];
             card.selected = !card.selected;
             card.desiredHeight = DEFAULT;
             if (card.selected) selected.Add(card);
             else selected.Remove(card);
             for (int i = 0; i < selected.Count; i++) {
                 var sel = selected[i];
-                sel.desiredHeight = RAISED + (1f - (float)(i + 1 / selected.Count)) * MAX_DIFF;
+                sel.desiredHeight = RAISED + (1f - ((float)i / selected.Count)) * MAX_DIFF;
             }
 
             if (selected != null && onSelectionComplete != null && selected.Count >= numberToSelect) {
@@ -81,27 +88,24 @@ namespace Prefabs {
 
         public void LowerCards() {
             selected.Clear();
-            cards.ForEach(c => {
+            Cards.ForEach(c => {
                 c.desiredHeight = LOWERED;
                 c.selected = false;
                 c.card = null;
-                c.text.text = "";
+                c.priorityText.text = "";
+                c.debugText.text = "";
                 c.button.enabled = false;
             });
         }
+
+        private CardImage GetCardImageForCardType(string cardType) {
+            return CardImages.Find(c => c.cardType == cardType);
+        }
     }
 
-    public class ButtonCard {
-        public Button button;
-        public Text text;
-        public Card card;
-        public bool selected = false;
-        public float desiredHeight = 0;
-
-        public ButtonCard(Button button, Card card) {
-            this.button = button;
-            this.card = card;
-            text = button.GetComponentInChildren<Text>();
-        }
+    [System.Serializable]
+    public class CardImage {
+        public string cardType;
+        public Sprite sprite;
     }
 }
