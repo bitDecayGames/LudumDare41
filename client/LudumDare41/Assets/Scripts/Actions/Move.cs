@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Move : MonoBehaviour {
+public class Move : IActionScript
+{
     public float duration = 1.5f;
     public float distance = 1f;
     private float speed;
     public Vector3 direction;
+
     
     // Use this for initialization
     void Start () {

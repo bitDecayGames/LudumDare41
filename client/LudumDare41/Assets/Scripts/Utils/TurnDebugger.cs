@@ -5,8 +5,8 @@ using Model;
 namespace Utils {
     public static class TurnDebugger {
         private static Random rnd = new Random();
-        private static int boardWidth = 3;
-        private static int boardHeight = 3;
+        private static int boardWidth = 5;
+        private static int boardHeight = 5;
             
         
         public static ProcessedTurn GenerateTurn() {
@@ -14,7 +14,7 @@ namespace Utils {
             t.start = GenerateGameState();
             t.end = GenerateGameState();
             t.end.tick = t.start.tick + 1;
-            t.diff = GenerateStepSequence(t.end.players[0].name, ActionData.ACTION_TYPES);
+            t.diff = GenerateStepSequence(t.start.players[0].name, "moveNorthAction", "moveEastAction", "moveSouthAction");
             return t;
         }
 
