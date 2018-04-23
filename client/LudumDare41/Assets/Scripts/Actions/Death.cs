@@ -11,6 +11,7 @@ public class Death : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
 		
 	}
 }
