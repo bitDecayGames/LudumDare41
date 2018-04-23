@@ -3,7 +3,6 @@
 namespace Model {
     [System.Serializable]
     public class Player {
-        public int id;
         public string name;
         public string color;
         public Vector pos;
