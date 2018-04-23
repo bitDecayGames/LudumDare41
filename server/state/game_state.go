@@ -6,10 +6,11 @@ import (
 )
 
 type GameState struct {
-	Tick    int                 `json:"tick"`
-	Players []Player            `json:"players"`
-	Crate   utils.Vector        `json:"crate"`
-	Board   gameboard.GameBoard `json:"gameBoard"`
+	Tick      int                 `json:"tick"`
+	Players   []Player            `json:"players"`
+	Crate     utils.Vector        `json:"crate"`
+	NextCrate utils.Vector        `json:"nextCrate"`
+	Board     gameboard.GameBoard `json:"gameBoard"`
 }
 
 func NewState(tick int, players map[string]*Player, board gameboard.GameBoard) GameState {
