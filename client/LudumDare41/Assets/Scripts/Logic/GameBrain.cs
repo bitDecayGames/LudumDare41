@@ -78,7 +78,8 @@ namespace Logic {
             if (Input.GetKeyDown(KeyCode.Space) ||
                 Input.GetKeyDown(KeyCode.KeypadEnter) ||
                 Input.GetKeyDown(KeyCode.Return) ||
-                Input.GetKeyDown(KeyCode.I)) {
+                Input.GetKeyDown(KeyCode.I))
+            {
                 ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
             }
 
@@ -94,7 +95,6 @@ namespace Logic {
             currentTurn = turn;
             userCardsSubmittion = onSelected;
 
-            Debug.Log("start of apply turn");
             DestroyTiles();
             DestroyPlayers();
             GenerateTiles(turn.start.gameBoard.tiles);
@@ -115,57 +115,75 @@ namespace Logic {
             actionsThisStep = 0;
             if (!isStepsComplete) {
                 var step = currentTurn.diff.steps[stepsIndex];
-
+                Debug.Log("Actions for this step: " + JsonUtility.ToJson(step, true));
                 foreach (ActionData action in step.actions) {
-                    foreach (GameObject player in players) {
+                    if(action.playerId == "gameBoard")
+                    {
+                        IActionScript iAction = null;
+                        switch (action.actionType)
+                        {
+                            case "setNextCrateAction":
+                            default:
+                                Debug.LogError("Failed to handle action: " + action.actionType);
+                                actionCompleted(action);
+                                break;
+                        }
+                        if (iAction != null)
+                        {
+                            iAction.actionData = action;
+                            iAction.onComplete = actionCompleted;
+                        }
+
+                    }
+                    else foreach (GameObject player in players) {
                         if (action.playerId == player.GetComponent<PlayerData>().name) {
                             IActionScript iAction = null;
-                            switch (action.actionType) {
-                                case "moveNorthAction":
+                            switch (action.actionType.ToUpper()) {
+                                case "MOVENORTHACTION":
                                     Move moveNComp = player.AddComponent<Move>();
                                     moveNComp.direction = new Vector3(0, 0, 1);
                                     iAction = moveNComp;
                                     break;
-                                case "moveSouthAction":
+                                case "MOVESOUTHACTION":
                                     Move moveSComp = player.AddComponent<Move>();
                                     moveSComp.direction = new Vector3(0, 0, -1);
                                     iAction = moveSComp;
                                     break;
-                                case "moveEastAction":
+                                case "MOVEEASTACTION":
                                     Move moveEComp = player.AddComponent<Move>();
                                     moveEComp.direction = new Vector3(1, 0, 0);
                                     iAction = moveEComp;
                                     break;
-                                case "moveWestAction":
+                                case "MOVEWESTACTION":
                                     Move moveWComp = player.AddComponent<Move>();
                                     moveWComp.direction = new Vector3(-1, 0, 0);
                                     iAction = moveWComp;
                                     break;
-                                case "rotateClockwiseAction":
+                                case "ROTATECLOCKWISEACTION":
                                     Rotate rotateCWComp = player.AddComponent<Rotate>();
                                     rotateCWComp.degrees = 90f;
                                     iAction = rotateCWComp;
                                     break;
-                                case "rotateCounterClockwiseAction":
+                                case "ROTATECOUNTERCLOCKWISEACTION":
                                     Rotate rotateCCWComp = player.AddComponent<Rotate>();
                                     rotateCCWComp.degrees = -90f;
                                     iAction = rotateCCWComp;
                                     break;
-                                case "rotate180Action":
+                                case "ROTATE180ACTION":
                                     Rotate rotate180Comp = player.AddComponent<Rotate>();
                                     rotate180Comp.degrees = 180f;
                                     rotate180Comp.time = 2.5f;
                                     iAction = rotate180Comp;
                                     break;
-                                case "shootMainGunAction":
-                                    //player.AddComponent<Move>().direction = new Vector3(1, 0, 0);
-                                    break;
-                                case "deathAction":
-                                    //player.AddComponent<Move>().direction = new Vector3(1, 0, 0);
-                                    break;
-                                case "spawnAction":
+                                case "SPAWACTION":
                                     Spawn spawnComp = player.AddComponent<Spawn>();
                                     iAction = spawnComp;
+                                    break;
+                                case "SHOOTMAINGUNACTION":
+                                case "DEATHACTION":
+                                default:
+                                        Debug.LogError("Failed to handle action: " + action.actionType);
+                                    actionCompleted(action);
                                     break;
                             }
 
@@ -176,6 +194,10 @@ namespace Logic {
                         }
                     }
                 }
+            }
+            else
+            {
+                applyEndofTurn();
             }
         }
 
@@ -206,7 +228,7 @@ namespace Logic {
             var myPlayer = currentTurn.end.players.Find(p => p.name == State.myName);
             //if (myPlayer == null) myPlayer = turn.end.players[0]; // DEBUGGING ONLY
             if (myPlayer != null) {
-                Debug.Log("Player: " + JsonUtility.ToJson(myPlayer, true));
+                Debug.Log("End of turn Player state: " + JsonUtility.ToJson(myPlayer, true));
                 hud.ShowHand(myPlayer.hand, NUM_OF_CARDS_TO_SUBMIT, (selected) => {
                     userCardsSubmittion(selected);
                     hud.LowerCards();
@@ -218,7 +240,7 @@ namespace Logic {
 
             currentTurn = null;
         }
-
+        
         private void DestroyTiles() {
             tiles.ForEach(Destroy);
             tiles.Clear();
@@ -235,6 +257,13 @@ namespace Logic {
                 obj.transform.localPosition = pos;
                 var pData = obj.GetComponent<PlayerData>();
                 pData.name = p.name;
+                var yrot = 0f;
+                if (p.facing.x > 0) yrot = 180;
+                else if (p.facing.x < 0) yrot = 0;
+                else if (p.facing.y > 0) yrot = 90;
+                else if (p.facing.y < 0) yrot = -90;
+                obj.transform.eulerAngles = new Vector3(0,yrot,0);
+                
             });
         }
 
