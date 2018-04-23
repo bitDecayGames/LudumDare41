@@ -11,6 +11,8 @@ using Utils;
 namespace Logic {
     public class GameBrain : MonoBehaviour {
 
+        public static int NUM_OF_CARDS_TO_SUBMIT = 1;
+
         public GameObject TilePrefab;
         public GameObject PlayerPrefab;
         public Hud HudPrefab;
@@ -103,7 +105,7 @@ namespace Logic {
             ////if (myPlayer == null) myPlayer = turn.end.players[0]; // DEBUGGING ONLY
             //if (myPlayer != null) {
             //    Debug.Log("Player: " + JsonUtility.ToJson(myPlayer, true));
-            //    hud.ShowHand(myPlayer.hand, 1, (selected) => {
+            //    hud.ShowHand(myPlayer.hand, NUM_OF_CARDS_TO_SUBMIT, (selected) => {
             //        onSelected(selected);
             //        hud.LowerCards();
             //    });
