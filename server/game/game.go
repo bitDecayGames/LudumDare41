@@ -203,8 +203,17 @@ func getCopy(g state.GameState) state.GameState {
 		Board:     g.Board,
 	}
 
-	for i, _ := range g.Players {
-		newState.Players[i] = g.Players[i]
+	for i, p := range g.Players {
+		newState.Players[i] = state.Player{
+			Name:    p.Name,
+			Team:    p.Team,
+			Deck:    p.Deck,
+			Discard: p.Discard,
+			Hand:    p.Hand,
+			Pos:     p.Pos,
+			Facing:  p.Facing,
+			Points:  p.Points,
+		}
 	}
 
 	return newState
