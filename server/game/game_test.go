@@ -115,3 +115,31 @@ func TestRespawn(t *testing.T) {
 		t.Fatalf("Action Type %v", step.Actions[0].GetActionType())
 	}
 }
+
+func TestCardOrdering(t *testing.T) {
+	g := Game{
+		pendingSubmissions: make(map[string][]cards.Card),
+	}
+
+	g.pendingSubmissions["one"] = []cards.Card{
+		cards.Card{ID: 5, Priority: 5},
+		cards.Card{ID: 1, Priority: 1},
+		cards.Card{ID: 3, Priority: 3},
+	}
+
+	g.pendingSubmissions["two"] = []cards.Card{
+		cards.Card{ID: 2, Priority: 2},
+		cards.Card{ID: 9, Priority: 9},
+		cards.Card{ID: 4, Priority: 4},
+	}
+
+	order := g.AggregateTurn()
+	if order[0].ID != 5 ||
+		order[1].ID != 2 ||
+		order[2].ID != 9 ||
+		order[3].ID != 1 ||
+		order[4].ID != 4 ||
+		order[5].ID != 3 {
+		t.Fatal("Card turn order was not correct")
+	}
+}
