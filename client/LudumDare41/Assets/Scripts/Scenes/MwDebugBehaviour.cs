@@ -12,8 +12,7 @@ namespace Scenes {
 			var b = JsonUtility.FromJson<ProcessedTurn>(str);
 			
 			Debug.Log(str);
-			Debug.Log(a.start.gameBoard.tiles.Count);
-			Debug.Log(b.start.gameBoard.tiles.Count);
+			Debug.Log(JsonUtility.ToJson(b));
 		}
 
 		public void receiveUpdateStreamMessage(string messageType, string message) {

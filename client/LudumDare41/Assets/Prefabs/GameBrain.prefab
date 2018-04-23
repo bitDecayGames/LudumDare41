@@ -69,3 +69,5 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 452cfcb01b9c8a64bb5b1549cbada8d6, type: 2}
   - name: Water
     material: {fileID: 2100000, guid: 23f9d77e814b01b47a0849e230238dd8, type: 2}
+  SoundPlayerPrefab: {fileID: 114605048481221566, guid: a841f66a7a0c1cb4dac71418457c4c4a,
+    type: 2}

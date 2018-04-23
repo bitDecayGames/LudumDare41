@@ -24,7 +24,7 @@ func GetTestGame() (*Game, error) {
 	lobby.AddPlayer("1")
 	lobby.AddPlayer("2")
 	board := gameboard.LoadBoard("default")
-	cardSet := cards.LoadSet("default")
+	cardSet := cards.LoadSet(logic.CardSetMap["debug"])
 	game := gameService.NewGame(lobby, board, cardSet)
 	return game, nil
 }
@@ -40,7 +40,7 @@ func TestGameCreation(t *testing.T) {
 	lobby.AddPlayer("1")
 	lobby.AddPlayer("2")
 	board := gameboard.LoadBoard("default")
-	cardSet := cards.LoadSet("default")
+	cardSet := cards.LoadSet(logic.CardSetMap["debug"])
 	g := gameService.NewGame(lobby, board, cardSet)
 
 	if len(g.Players) != 2 {
