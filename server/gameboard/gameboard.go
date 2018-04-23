@@ -16,6 +16,8 @@ type Tile struct {
 	ID       int          `json:"id"`
 	TileType string       `json:"tileType"`
 	Pos      utils.Vector `json:"pos"`
+	// Used by respawn logic, DO NOT USE unless you know what you're doing
+	TempOccupied bool
 }
 
 type GameBoard struct {
@@ -23,6 +25,16 @@ type GameBoard struct {
 	FlattenedTiles []Tile `json:"tiles"`
 	Width          int    `json:"width"`
 	Height         int    `json:"height"`
+}
+
+func (gb GameBoard) GetTilesByType(tileType string) []Tile {
+	matchingTiles := []Tile{}
+	for _, tile := range gb.FlattenedTiles {
+		if tile.TileType == tileType {
+			matchingTiles = append(matchingTiles, tile)
+		}
+	}
+	return matchingTiles
 }
 
 func LoadBoard(name string) GameBoard {
