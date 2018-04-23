@@ -18,14 +18,14 @@ func attemptMoveBackwards(player *state.Player, stepSeq []Step, g state.GameStat
 // TODO: after a movement, we need to check for collecting a crate
 func attemptMove(player *state.Player, direction utils.Vector, stepSeq []Step, g state.GameState) ([]Step, state.GameState) {
 	targetPos := utils.VecAdd(player.Pos, direction)
-	if isEmptyTile(targetPos, g) {
+	if IsEmptyTile(targetPos, g) {
 		// check if another player is there
-		occupied := isPlayerOccupying(targetPos, g)
+		occupied := IsPlayerOccupying(targetPos, g)
 		if occupied {
 			// Another player is occupying the space we want to go
-			otherPlayer := getPlayerAtPos(targetPos, g)
+			otherPlayer := GetPlayerAtPos(targetPos, g)
 			pushPos := utils.VecAdd(otherPlayer.Pos, direction)
-			if isEmptyTile(pushPos, g) && !isPlayerOccupying(pushPos, g) {
+			if IsEmptyTile(pushPos, g) && !IsPlayerOccupying(pushPos, g) {
 				// we push the other player
 				otherMove := FacingToMoveAction(direction, otherPlayer)
 				playermove := FacingToMoveAction(direction, player)
