@@ -37,11 +37,11 @@ func findFirstObstacleInDirection(player *state.Player, g state.GameState) (bool
 	found := false
 	for !found {
 		targetPos = utils.VecAdd(targetPos, player.Facing)
-		if isPlayerOccupying(targetPos, g) {
+		if IsPlayerOccupying(targetPos, g) {
 			// a hit!
-			return true, getPlayerAtPos(targetPos, g)
+			return true, GetPlayerAtPos(targetPos, g)
 		}
-		if isEmptyTile(targetPos, g) {
+		if IsEmptyTile(targetPos, g) {
 			// round still can travel
 			continue
 		} else {
