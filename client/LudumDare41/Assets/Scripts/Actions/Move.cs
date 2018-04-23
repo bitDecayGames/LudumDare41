@@ -15,7 +15,7 @@ public class Move : MonoBehaviour {
         duration -= Time.deltaTime;
         float translation = Time.deltaTime * 10;
         transform.Translate(0, 0, translation);
-
+        Debug.Log("MOVING");
         if (duration <= 0)
             Destroy(this);
     }
