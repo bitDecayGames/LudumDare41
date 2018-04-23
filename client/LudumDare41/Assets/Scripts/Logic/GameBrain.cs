@@ -226,7 +226,6 @@ namespace Logic {
         }
 
         private void GenerateTiles(List<Tile> tileData) {
-            Debug.Log("Generate tiles");
             tileData.ForEach(t => {
                 var obj = Instantiate(TilePrefab, transform);
                 tiles.Add(obj);
@@ -265,7 +264,6 @@ namespace Logic {
         }
         
         private void DestroyTiles() {
-            Debug.Log("Destroy tiles");
             tiles.ForEach(Destroy);
             tiles.Clear();
         }
