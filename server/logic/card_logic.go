@@ -8,11 +8,11 @@ import (
 )
 
 type Step struct {
-	Actions []Action
+	Actions []Action `json:"actions"`
 }
 
 type StepSequence struct {
-	Steps []Step
+	Steps []Step `json:"steps"`
 }
 
 func ApplyCard(c cards.Card, g state.GameState) ([]Step, state.GameState) {

@@ -5,9 +5,9 @@ import (
 )
 
 type Action struct {
-	ID         string
-	PlayerID   string
-	ActionType string
+	ID         string `json:"id"`
+	PlayerID   string `json:"playerId"`
+	ActionType string `json:"actionType"`
 }
 
 var nextActionId = 0
