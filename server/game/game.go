@@ -166,7 +166,7 @@ func (g *Game) ExecuteTurn() {
 	// 0. Set previous state
 	g.PreviousState = g.CurrentState
 	// 1. Get starting state
-	startState := g.CurrentState
+	startState := getCopy(g.CurrentState)
 	// 2. Execute all cards
 	intermState := g.CurrentState
 	stepSequence := logic.StepSequence{
@@ -192,6 +192,10 @@ func (g *Game) ExecuteTurn() {
 	intermState.Tick += 1
 	g.LastSequence = stepSequence
 	g.CurrentState = intermState
+}
+
+func getCopy(g state.GameState) state.GameState {
+	return g
 }
 
 func respawnObjects(g state.GameState) ([]logic.Step, state.GameState) {
