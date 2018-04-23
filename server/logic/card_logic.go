@@ -58,6 +58,10 @@ func ApplyCard(c cards.Card, g state.GameState) ([]Step, state.GameState) {
 		steps, g = attemptMoveBackwards(affectedPlayer, steps, g)
 	case Card_rotate_clockwise:
 		steps, g = rotate(affectedPlayer, 90, steps, g)
+	case Card_rotate_counterclockwise:
+		steps, g = rotate(affectedPlayer, -90, steps, g)
+	case Card_rotate_180:
+		steps, g = rotate(affectedPlayer, 180, steps, g)
 	case Card_shoot_main_turret:
 		steps, g = shootMainGun(affectedPlayer, steps, g)
 	}

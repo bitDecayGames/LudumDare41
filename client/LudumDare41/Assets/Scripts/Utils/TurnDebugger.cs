@@ -14,7 +14,8 @@ namespace Utils {
             t.start = GenerateGameState();
             t.end = GenerateGameState();
             t.end.tick = t.start.tick + 1;
-            t.diff = GenerateStepSequence(t.start.players[0].name, "rotate180Action");
+            t.diff = GenerateStepSequence(t.start.players[0].name, "spawnAction", "moveEastAction", "moveSouthAction");
+            State.myName = t.start.players[0].name;
             return t;
         }
 

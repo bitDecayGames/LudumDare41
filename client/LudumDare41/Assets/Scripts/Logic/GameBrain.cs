@@ -14,6 +14,7 @@ namespace Logic {
 
         public GameObject TilePrefab;
         public GameObject PlayerPrefab;
+        public PlayerHud PlayerHudPrefab;
         public Hud HudPrefab;
         public EventSystem HudEventSystemPrefab;
         public List<TileMaterial> tileMaterials;
@@ -24,7 +25,7 @@ namespace Logic {
         private SoundsManager SoundPlayer;
 
         private List<GameObject> tiles = new List<GameObject>();
-        private List<GameObject> players = new List<GameObject>();
+        public List<GameObject> players = new List<GameObject>();
         private List<Step> stepSequence;
         bool actionInProgress;
 
@@ -49,10 +50,10 @@ namespace Logic {
         }
 
 
-        private
-            void Start() {
+        private void Start() {
             camera = Camera.main;
             hud = Instantiate(HudPrefab);
+            Instantiate(PlayerHudPrefab, hud.transform).brain = this;
             Instantiate(HudEventSystemPrefab);
             SoundPlayer = Instantiate(SoundPlayerPrefab);
 
@@ -212,7 +213,7 @@ namespace Logic {
                 var pos = obj.transform.localPosition;
                 pos.x = t.pos.x;
                 pos.z = t.pos.y;
-                pos.y = 0;
+                pos.y = 1;
                 obj.transform.localPosition = pos;
                 var mesh = obj.GetComponentInChildren<MeshRenderer>();
                 mesh.material = tileMaterials.Find(m => m.name == t.tileType).material;
