@@ -141,7 +141,7 @@ namespace Logic {
                 pos.y = 1;
                 obj.transform.localPosition = pos;
                 var pData = obj.GetComponent<PlayerData>();
-                pData.id= p.id;
+                pData.name= p.name;
 
             });
         }

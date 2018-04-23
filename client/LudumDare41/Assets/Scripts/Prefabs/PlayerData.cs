@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class PlayerData : MonoBehaviour {
 
-    public int id;
+    public string name;
 }
