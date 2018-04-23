@@ -61,7 +61,7 @@ namespace Logic {
             map = Instantiate(MapFactoryPrefab, transform);
             map.transform.localPosition = new Vector3(0, 0, 0);
             SoundPlayer = Instantiate(SoundPlayerPrefab);
-            SoundPlayer.playSound(SoundsManager.SFX.TankFiring);
+            SoundPlayer.playSoundLoop(SoundsManager.SFX.EngineIdleLoop);
 
 
             var mapSkin = map.BuildMap("1stMap");

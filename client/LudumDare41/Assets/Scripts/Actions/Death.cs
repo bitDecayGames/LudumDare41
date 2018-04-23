@@ -9,8 +9,9 @@ public class Death : IActionScript
 
 	void Start () {
 		speed = 1 / duration;
-        
-	}
+        soundPlayer.playSound(SoundsManager.SFX.TankDeath);
+
+    }
 	
 	void Update () {
 		duration -= Time.deltaTime;
