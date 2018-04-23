@@ -195,7 +195,19 @@ func (g *Game) ExecuteTurn() {
 }
 
 func getCopy(g state.GameState) state.GameState {
-	return g
+	newState := state.GameState{
+		Tick:      g.Tick,
+		Players:   make([]state.Player, len(g.Players)),
+		Crate:     g.Crate,
+		NextCrate: g.NextCrate,
+		Board:     g.Board,
+	}
+
+	for i, _ := range g.Players {
+		newState.Players[i] = g.Players[i]
+	}
+
+	return newState
 }
 
 func respawnObjects(g state.GameState) ([]logic.Step, state.GameState) {
