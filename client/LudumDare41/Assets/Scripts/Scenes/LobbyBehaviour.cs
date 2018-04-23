@@ -75,6 +75,7 @@ public class LobbyBehaviour : MonoBehaviour, IUpdateStreamSubscriber {
 			Debug.Log("Game is starting");
 			State.currentTick = json.tick;
 			GetComponent<UpdateStream>().StopListening();
+			Destroy(GameObject.Find("TitleSong"));
 			SceneManager.LoadScene("Game");
 		}
 	}
