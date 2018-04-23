@@ -109,10 +109,10 @@ func TestRespawn(t *testing.T) {
 		t.Fatal("Player not respawned as expected")
 	}
 
-	if len(step.Actions) != 1 || step.Actions[0].GetActionType() != logic.Action_spawn {
+	if len(step.Actions) != 1 || step.Actions[0].ActionType != logic.Action_spawn {
 		t.Errorf("Spawn action didn't return, got: %+v", step)
 		t.Errorf("Length of actions: %v", len(step.Actions))
-		t.Fatalf("Action Type %v", step.Actions[0].GetActionType())
+		t.Fatalf("Action Type %v", step.Actions[0].ActionType)
 	}
 }
 

@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"fmt"
+	"github.com/bitDecayGames/LudumDare41/server/utils"
 
 	"github.com/bitDecayGames/LudumDare41/server/cards"
 	"github.com/bitDecayGames/LudumDare41/server/state"
@@ -16,19 +16,32 @@ type StepSequence struct {
 }
 
 func ApplyCard(c cards.Card, g state.GameState) ([]Step, state.GameState) {
+	steps := make([]Step, 0)
 	// Find and remove card from the player hand
+
 	var affectedPlayer *state.Player
 	for i, p := range g.Players {
 		if c.Owner == p.Name {
 			affectedPlayer = &g.Players[i]
+
+			if utils.VecEquals(affectedPlayer.Pos, utils.DeadVector) {
+				// player is dead, don't play any more of their cards
+				steps = append(steps, Step{
+					Actions: []Action{
+						GetDisposeNextCardAction(affectedPlayer.Name),
+					},
+				})
+				return steps, g
+			}
+
+			steps = append(steps, Step{
+				Actions: []Action{
+					GetPlayNextCardAction(affectedPlayer.Name),
+				},
+			})
 			affectedPlayer.DiscardCard(c)
 		}
 	}
-	if affectedPlayer == nil {
-		fmt.Println("THE PLAYER WAS MUFFUGGIN NIL")
-	}
-
-	steps := make([]Step, 0)
 
 	switch c.CardType {
 	case Card_move_forward_1:
