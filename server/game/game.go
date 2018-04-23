@@ -164,9 +164,7 @@ func (g *Game) ExecuteTurn() {
 	// This should carry out the full step sequence (cards) and calculate all actions that fall out
 
 	// 0. Set previous state
-	g.PreviousState = g.CurrentState
-	// 1. Get starting state
-	startState := getCopy(g.CurrentState)
+	g.PreviousState = getCopy(g.CurrentState)
 	// 2. Execute all cards
 	intermState := g.CurrentState
 	stepSequence := logic.StepSequence{
@@ -186,7 +184,7 @@ func (g *Game) ExecuteTurn() {
 
 	intermState = DealCards(intermState)
 	// 3. Update clients with these things:
-	fmt.Println(startState)
+	fmt.Println(g.PreviousState)
 	fmt.Println(stepSequence)
 	fmt.Println(fmt.Sprintf("Pending Seq %+v", g.pendingSequence))
 	intermState.Tick += 1
