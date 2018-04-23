@@ -112,6 +112,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Material_004__belly_grey_png
+    second: {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Material_005
     second: {fileID: 2100000, guid: 658f00a371c44614e9be3881a5e40ef8, type: 2}
   - first:
