@@ -54,3 +54,5 @@ MonoBehaviour:
   Maps:
   - name: DebugMap
     map: {fileID: 1397315116862568, guid: 0949642b7f814487290b9c235368d531, type: 2}
+  - name: 1stMap
+    map: {fileID: 1783416620019012, guid: 8bd873f7135ba0a41a3f82afb08bc668, type: 2}

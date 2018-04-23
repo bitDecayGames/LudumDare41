@@ -19,10 +19,12 @@ namespace Logic {
         public EventSystem HudEventSystemPrefab;
         public List<TileMaterial> tileMaterials;
         public SoundsManager SoundPlayerPrefab;
+        public MapFactory MapFactoryPrefab;
 
         private Camera camera;
         private Hud hud;
         private SoundsManager SoundPlayer;
+        private MapFactory map;
 
         private List<GameObject> tiles = new List<GameObject>();
         public List<GameObject> players = new List<GameObject>();
@@ -55,9 +57,14 @@ namespace Logic {
             hud = Instantiate(HudPrefab);
             Instantiate(PlayerHudPrefab, hud.transform).brain = this;
             Instantiate(HudEventSystemPrefab);
+            map = Instantiate(MapFactoryPrefab, transform);
+            map.transform.localPosition = new Vector3(0, 0, 0);
             SoundPlayer = Instantiate(SoundPlayerPrefab);
-
             SoundPlayer.playSound(SoundsManager.SFX.TankFiring);
+
+
+            var mapSkin = map.BuildMap("1stMap");
+            if (mapSkin != null) mapSkin.transform.localPosition = new Vector3(0, 1, 0);
         }
 
 
