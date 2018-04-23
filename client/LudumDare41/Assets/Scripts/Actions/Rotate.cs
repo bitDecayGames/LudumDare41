@@ -12,8 +12,8 @@ public class Rotate : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        float rotation = Time.deltaTime;
-        degrees -= Time.deltaTime;
+        float rotation = Time.deltaTime*10;
+        degrees -= Time.deltaTime*10;
         transform.Rotate(0, rotation, 0);
         Debug.Log("Rotating");
         if (degrees <= 0)
