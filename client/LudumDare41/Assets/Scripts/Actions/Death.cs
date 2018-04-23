@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Death : MonoBehaviour {
+public class Death : IActionScript
+{
 
 	// Use this for initialization
 	void Start () {
