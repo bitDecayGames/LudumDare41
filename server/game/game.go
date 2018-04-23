@@ -15,8 +15,17 @@ import (
 )
 
 const (
-	HAND_SIZE = 5
+	HAND_SIZE     = 5
+	PLAYER_COLORS = 4
 )
+
+var NextPlayerColor = 0
+
+func GetNextPlayerTeam() int {
+	next := NextPlayerColor
+	NextPlayerColor = (NextPlayerColor + 1) % PLAYER_COLORS
+	return next
+}
 
 type Game struct {
 	Name string
@@ -39,6 +48,7 @@ func newGame(players map[string]*state.Player, board gameboard.GameBoard, cardSe
 	playerNum := 1
 	for _, player := range players {
 		player.Deck = cards.NewDeckFromSet(cardSet, len(players), playerNum)
+		player.Team = GetNextPlayerTeam()
 		playerNum += 1
 	}
 
