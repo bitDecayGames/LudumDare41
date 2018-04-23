@@ -16,5 +16,6 @@
         public int id;
         public string cardType;
         public int priority;
+        public string owner;
     }
 }

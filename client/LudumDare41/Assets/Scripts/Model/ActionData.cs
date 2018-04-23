@@ -1,4 +1,7 @@
-﻿namespace Model {
+﻿using System;
+
+namespace Model {
+    [Serializable]
     public class ActionData {
         public static string[] ACTION_TYPES = new string[] {
             "moveNorthAction",

@@ -20,8 +20,7 @@ public class Move : IActionScript
 	void Update () {
 
         duration -= Time.deltaTime;
-        transform.Translate(direction * Time.deltaTime * speed);
-        Debug.Log("Rotating");
+        transform.position = transform.position + (direction * Time.deltaTime * speed);
         if (duration <= 0)
             Destroy(this);
     }

@@ -16,8 +16,7 @@ public class Rotate : IActionScript
 	void Update () {
         
         time -= Time.deltaTime;
-        transform.Rotate(0, rotation*Time.deltaTime, 0);
-        Debug.Log("Rotating");
+        transform.eulerAngles = transform.eulerAngles + new Vector3(0, rotation * Time.deltaTime, 0);
         if (time <= 0)
             Destroy(this);
     }
