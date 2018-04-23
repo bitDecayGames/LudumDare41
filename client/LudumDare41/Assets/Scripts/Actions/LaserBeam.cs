@@ -12,6 +12,7 @@ public class LaserBeam : IActionScript
     void Start ()
     {
 	    _localLaserBeam = Instantiate(GetComponent<LaserBeamHolder>().LaserBeam, parent.position, parent.rotation);
+	    soundPlayer.playSound(SoundsManager.SFX.TankFiring);
     }
 	
 	// Update is called once per frame

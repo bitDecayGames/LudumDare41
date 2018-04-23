@@ -3,27 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Spawn : IActionScript
-{
+{	
+	public float duration = 1.5f;
+	private float speed;
+	private bool inited = false;
 
-    
-    //Todo spawning at end location
-
-	// Use this for initialization
-	void Start () {
-		
+	void Start() {
+		speed = .33f / duration;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		if (actionData != null && actionData.position != null) {
+	void Update() {
+		if (!inited && actionData != null && actionData.position != null) {
 			Vector3 pos = transform.position;
 			if (pos != null) {
+				inited = true;
 				pos.x = actionData.position.x;
 				pos.y = actionData.position.y;
 				transform.position = pos;
+				transform.localScale = new Vector3(0, 0, 0);
 				GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
-				Destroy(this);
 			}
+		}
+
+		duration -= Time.deltaTime;
+		var scaleDelta = Time.deltaTime * speed;
+		transform.localScale = transform.localScale + new Vector3(scaleDelta, scaleDelta, scaleDelta);
+		if (duration <= 0) {
+			Destroy(this);
 		}
 	}
 }

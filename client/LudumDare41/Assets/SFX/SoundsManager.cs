@@ -29,6 +29,22 @@ public class SoundsManager : MonoBehaviour {
 		
 	}
 
+    public void playSoundLoop(SFX sound)
+    {
+        foreach (AudioClip clip in SoundsList)
+        {
+            if (clip.name == sound.ToString())
+            {
+                Debug.Log("clip name: " + clip.name);
+                Debug.Log("sound enum: " + sound);
+                audioSource.clip = clip;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+        }
+
+    }
+
     public void playSound(SFX sound){
         foreach(AudioClip clip in SoundsList)
         {
@@ -37,6 +53,7 @@ public class SoundsManager : MonoBehaviour {
                 Debug.Log("clip name: " + clip.name);
                 Debug.Log("sound enum: " + sound);
                 audioSource.clip = clip;
+                audioSource.loop = false;
                 audioSource.Play();
             }
         }

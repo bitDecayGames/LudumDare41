@@ -13,8 +13,9 @@ public class Move : IActionScript
     // Use this for initialization
     void Start () {
         speed = distance / duration;
-        
-	}
+        soundPlayer.playSound(SoundsManager.SFX.EngineRev);
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
