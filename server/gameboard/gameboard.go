@@ -8,8 +8,8 @@ const (
 	Empty_tile = "empty"
 	Wall_tile  = "wall"
 
-	width  = 5
-	height = 6
+	width  = 10
+	height = 10
 )
 
 type Tile struct {
