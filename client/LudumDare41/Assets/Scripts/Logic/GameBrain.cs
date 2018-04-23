@@ -24,6 +24,15 @@ namespace Logic {
 
         private List<GameObject> tiles = new List<GameObject>();
         private List<GameObject> players = new List<GameObject>();
+        private List<Step> stepSequence;
+        bool actionInProgress;
+        public bool hasSteps
+        {
+            get { return (stepSequence.Count > 0); }
+        }
+
+
+        private 
 
         void Start() {
             camera = Camera.main;
@@ -33,6 +42,7 @@ namespace Logic {
 
             SoundPlayer.playSound(SoundsManager.SFX.TankFiring);
         }
+
 
         private void SetupCamera(int boardWidth) {
             var pos = camera.transform.position;
@@ -57,6 +67,13 @@ namespace Logic {
                     s.ForEach(c => Debug.Log("C:" + c.id));
                 });
             }
+
+            //if (actionInProgress)
+            //    return;
+
+            
+             
+            
         }
 
         /// <summary>
@@ -65,31 +82,34 @@ namespace Logic {
         /// <param name="turn">the current processed turn</param>
         public void ApplyTurn(ProcessedTurn turn, Action<List<Card>> onSelected) {
             // based on turn start board, create the tile layout
+            Debug.Log("start of apply turn");
             DestroyTiles();
             DestroyPlayers();
             GenerateTiles(turn.start.gameBoard.tiles);
             GeneratePlayers(turn.start.players);
             SetupCamera(turn.start.gameBoard.width);
-
+            players[0].AddComponent<Move>().direction= new Vector3(1,0,0);
+            //Debug.LogError("Components duration" + players[0].GetComponent<Move>().duration.ToString());
+            
             // TODO: based on the turn steps, create sequences of actions
             // TODO: all of these methods will eventually need to become asynchronous to handle the animation delays
-            
+
             // based on turn end board, recreate the tile layout
-            DestroyTiles();
-            DestroyPlayers();
-            GenerateTiles(turn.end.gameBoard.tiles);
-            GeneratePlayers(turn.end.players);
-            var myPlayer = turn.end.players.Find(p => p.name == State.myName);
-            //if (myPlayer == null) myPlayer = turn.end.players[0]; // DEBUGGING ONLY
-            if (myPlayer != null) {
-                Debug.Log("Player: " + JsonUtility.ToJson(myPlayer, true));
-                hud.ShowHand(myPlayer.hand, 1, (selected) => {
-                    onSelected(selected);
-                    hud.LowerCards();
-                });
-            } else {
-                Debug.LogError("Failed to find my next hand of cards");
-            }
+            //DestroyTiles();
+            //DestroyPlayers();
+            //GenerateTiles(turn.end.gameBoard.tiles);
+            //GeneratePlayers(turn.end.players);
+            //var myPlayer = turn.end.players.Find(p => p.name == State.myName);
+            ////if (myPlayer == null) myPlayer = turn.end.players[0]; // DEBUGGING ONLY
+            //if (myPlayer != null) {
+            //    Debug.Log("Player: " + JsonUtility.ToJson(myPlayer, true));
+            //    hud.ShowHand(myPlayer.hand, 1, (selected) => {
+            //        onSelected(selected);
+            //        hud.LowerCards();
+            //    });
+            //} else {
+            //    Debug.LogError("Failed to find my next hand of cards");
+            //}
         }
 
         private void GenerateTiles(List<Tile> tileData) {
@@ -118,8 +138,11 @@ namespace Logic {
                 var pos = obj.transform.localPosition;
                 pos.x = p.pos.x;
                 pos.z = p.pos.y;
-                pos.y = 0;
+                pos.y = 1;
                 obj.transform.localPosition = pos;
+                var pData = obj.GetComponent<PlayerData>();
+                pData.name= p.name;
+
             });
         }
 
