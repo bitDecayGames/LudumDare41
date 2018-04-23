@@ -27,8 +27,8 @@ func attemptMove(player *state.Player, direction utils.Vector, stepSeq []Step, g
 			pushPos := utils.VecAdd(otherPlayer.Pos, direction)
 			if isEmptyTile(pushPos, g) && !isPlayerOccupying(pushPos, g) {
 				// we push the other player
-				otherMove := FacingToMoveAction(direction, otherPlayer.Name)
-				playermove := FacingToMoveAction(direction, player.Name)
+				otherMove := FacingToMoveAction(direction, otherPlayer)
+				playermove := FacingToMoveAction(direction, player)
 				step := Step{
 					Actions: []Action{
 						otherMove,
@@ -41,7 +41,7 @@ func attemptMove(player *state.Player, direction utils.Vector, stepSeq []Step, g
 			}
 		} else {
 			// free to move
-			playermove := FacingToMoveAction(direction, player.Name)
+			playermove := FacingToMoveAction(direction, player)
 			step := Step{
 				Actions: []Action{
 					playermove,
@@ -54,15 +54,16 @@ func attemptMove(player *state.Player, direction utils.Vector, stepSeq []Step, g
 	return stepSeq, g
 }
 
-func FacingToMoveAction(facing utils.Vector, id string) Action {
+func FacingToMoveAction(facing utils.Vector, p *state.Player) Action {
+	destPos := utils.VecAdd(p.Pos, facing)
 	if facing.X == 0 && facing.Y == 1 {
-		return GetAction(Action_move_north, id)
+		return GetAction(Action_move_north, p.Name, destPos)
 	} else if facing.X == 0 && facing.Y == -1 {
-		return GetAction(Action_move_south, id)
+		return GetAction(Action_move_south, p.Name, destPos)
 	} else if facing.X == 1 && facing.Y == 0 {
-		return GetAction(Action_move_east, id)
+		return GetAction(Action_move_east, p.Name, destPos)
 	} else if facing.X == -1 && facing.Y == 0 {
-		return GetAction(Action_move_west, id)
+		return GetAction(Action_move_west, p.Name, destPos)
 	} else {
 		panic(fmt.Sprintf("Bad facing received: %v", facing))
 	}

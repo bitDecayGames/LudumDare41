@@ -23,7 +23,7 @@ func rotate(player *state.Player, degrees int, stepSeq []Step, g state.GameState
 
 	step := Step{
 		Actions: []Action{
-			DegreesToRotateAction(degrees, player.Name),
+			DegreesToRotateAction(degrees, player),
 		},
 	}
 	stepSeq = append(stepSeq, step)
@@ -31,15 +31,15 @@ func rotate(player *state.Player, degrees int, stepSeq []Step, g state.GameState
 	return stepSeq, g
 }
 
-func DegreesToRotateAction(degrees int, id string) Action {
+func DegreesToRotateAction(degrees int, p *state.Player) Action {
 	switch degrees {
 	case 90:
-		return GetAction(Action_rotate_counter_clockwise, id)
+		return GetAction(Action_rotate_counter_clockwise, p.Name, p.Pos)
 	case -90:
-		return GetAction(Action_rotate_clockwise, id)
+		return GetAction(Action_rotate_clockwise, p.Name, p.Pos)
 	case 180:
 		fallthrough
 	default:
-		return GetAction(Action_rotate_180, id)
+		return GetAction(Action_rotate_180, p.Name, p.Pos)
 	}
 }

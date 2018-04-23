@@ -108,7 +108,7 @@ func TestRespawn(t *testing.T) {
 		Board:   gameboard.LoadBoard("foo"),
 	}
 
-	step, newState := respawnDeadPlayers(testState)
+	step, newState := respawnObjects(testState)
 
 	newP1 := newState.Players[0]
 	newP2 := newState.Players[1]
