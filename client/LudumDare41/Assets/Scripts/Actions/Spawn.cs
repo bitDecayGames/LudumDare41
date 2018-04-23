@@ -32,7 +32,6 @@ public class Spawn : IActionScript
 			curY *= speed;
 			pos.y = curY + initialAltitude;
 			
-			Debug.Log("I'm faaaaallllinnnngggg! " + pos.y);
 			transform.localPosition = pos;
 			if (duration <= 0) {
 				Destroy(this);
