@@ -13,6 +13,8 @@ type Player struct {
 
 	Pos    utils.Vector `json:"pos"`
 	Facing utils.Vector `json:"facing"`
+
+	Points int `json:"points"`
 }
 
 func (p *Player) DiscardCard(c cards.Card) {

@@ -164,11 +164,12 @@ func (g *Game) ExecuteTurn() {
 		fmt.Println(fmt.Sprintf("%+v", c))
 		newSteps, newState := logic.ApplyCard(c, intermState)
 		stepSequence.Steps = append(stepSequence.Steps, newSteps...)
+
 		intermState = newState
 	}
 
 	// respawn any dead players.  This assumes zero downtime -- you die, you respawn instantly
-	step, intermState := respawnDeadPlayers(intermState)
+	step, intermState := respawnObjects(intermState)
 	stepSequence.Steps = append(stepSequence.Steps, step)
 
 	intermState = DealCards(intermState)
@@ -181,7 +182,7 @@ func (g *Game) ExecuteTurn() {
 	g.CurrentState = intermState
 }
 
-func respawnDeadPlayers(g state.GameState) (logic.Step, state.GameState) {
+func respawnObjects(g state.GameState) (logic.Step, state.GameState) {
 	step := logic.Step{}
 
 	// Get empty tiles
@@ -217,6 +218,19 @@ func respawnDeadPlayers(g state.GameState) (logic.Step, state.GameState) {
 
 					break
 				}
+			}
+		}
+	}
+
+	if utils.VecEquals(g.Crate, utils.DeadVector) {
+		for k, tile := range emptyTiles {
+			if !tile.TempOccupied {
+				log.Printf("Respawning crate at %+v", tile.Pos)
+				g.Crate = tile.Pos
+				step.Actions = append(step.Actions, logic.GetAction(logic.Action_spawn, "gameBoard", tile.Pos))
+				tile.TempOccupied = true
+				emptyTiles[k] = tile
+				break
 			}
 		}
 	}

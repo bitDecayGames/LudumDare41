@@ -174,9 +174,7 @@ func TestApplyingCardRotate(t *testing.T) {
 	}
 	gs := state.GameState{
 		Players: []state.Player{testPlayer},
-		// Board: gameboard.GameBoard{
-		// 	Tiles: [][]gameboard.Tile{[]gameboard.Tile{gameboard.Tile{TileType: gameboard.Empty_tile}, gameboard.Tile{TileType: gameboard.Empty_tile}}},
-		// },
+		Crate:   utils.DeadVector,
 	}
 
 	seq, newState := ApplyCard(testCard, gs)
@@ -214,6 +212,7 @@ func TestShootingPlayer(t *testing.T) {
 
 	gs := state.GameState{
 		Players: []state.Player{testPlayer, testPlayerTwo},
+		Crate:   utils.DeadVector,
 		Board: gameboard.GameBoard{
 			Tiles: [][]gameboard.Tile{
 				[]gameboard.Tile{

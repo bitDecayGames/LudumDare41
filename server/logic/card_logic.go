@@ -62,11 +62,33 @@ func ApplyCard(c cards.Card, g state.GameState) ([]Step, state.GameState) {
 		steps, g = shootMainGun(affectedPlayer, steps, g)
 	}
 
+	// check for map interaction (crate pickups, etc)
 	for i, p := range g.Players {
-		if p.Name == affectedPlayer.Name {
-			g.Players[i] = *affectedPlayer
+		if !utils.VecEquals(p.Pos, utils.DeadVector) && utils.VecEquals(p.Pos, g.Crate) {
+			g.Players[i].Points += 1
+			steps = append(steps, Step{
+				Actions: []Action{
+					GetAction(Action_collect_crate, p.Name, g.Crate),
+				},
+			})
+			g.Crate = utils.DeadVector
+
+			if g.Players[i].Points >= POINTS_FOR_VICTORY {
+				steps = append(steps, Step{
+					Actions: []Action{
+						GetAction(Action_victory, p.Name, p.Pos),
+					},
+				})
+			}
 		}
 	}
+
+	// set our player data back into the game state
+	// for i, p := range g.Players {
+	// 	if p.Name == affectedPlayer.Name {
+	// 		g.Players[i] = *affectedPlayer
+	// 	}
+	// }
 
 	return steps, g
 }

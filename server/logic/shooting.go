@@ -9,6 +9,8 @@ func shootMainGun(affectedPlayer *state.Player, stepSeq []Step, g state.GameStat
 	// see what direction the player is facing
 	found, target := findFirstObstacleInDirection(affectedPlayer, g)
 
+	//fmt.Println(fmt.Sprintf("AffectedPlayer: %+v\nTarget: %+v", affectedPlayer, target))
+
 	stepSeq = append(stepSeq,
 		Step{
 			Actions: []Action{
