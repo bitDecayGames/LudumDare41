@@ -10,7 +10,8 @@ public class Rotate : IActionScript
     // Use this for initialization
     void Start () {
         rotation = degrees / time;
-	}
+        soundPlayer.playSound(SoundsManager.SFX.EngineRev);
+    }
 	
 	// Update is called once per frame
 	void Update () {

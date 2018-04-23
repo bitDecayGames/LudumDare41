@@ -9,7 +9,7 @@ public class Spawn : IActionScript
 	private bool inited = false;
 
 	void Start() {
-		speed = 1 / duration;
+		speed = .33f / duration;
 	}
 	
 	void Update() {

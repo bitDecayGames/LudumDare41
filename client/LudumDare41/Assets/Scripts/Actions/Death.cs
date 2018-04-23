@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Death : IActionScript
 {
@@ -8,9 +6,9 @@ public class Death : IActionScript
 	private float speed;
 
 	void Start () {
-		speed = 1 / duration;
-        
-	}
+		speed = .33f / duration;
+        soundPlayer.playSound(SoundsManager.SFX.TankDeath);
+    }
 	
 	void Update () {
 		duration -= Time.deltaTime;
