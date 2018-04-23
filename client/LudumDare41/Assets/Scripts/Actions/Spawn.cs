@@ -15,11 +15,15 @@ public class Spawn : IActionScript
 	
 	// Update is called once per frame
 	void Update () {
-        Vector3 pos = transform.position;
-        pos.x = actionData.position.x;
-        pos.y = actionData.position.y;
-        transform.position = pos;
-        GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
-        Destroy(this);  
-    }
+		if (actionData != null && actionData.position != null) {
+			Vector3 pos = transform.position;
+			if (pos != null) {
+				pos.x = actionData.position.x;
+				pos.y = actionData.position.y;
+				transform.position = pos;
+				GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+				Destroy(this);
+			}
+		}
+	}
 }
