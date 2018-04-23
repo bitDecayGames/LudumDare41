@@ -13,7 +13,6 @@ public class LoopAfter : MonoBehaviour
 	}
 
 	void Update() {
-		Debug.Log("Current time: " + Time.time);
 		if (Time.time - _startTime > 3f && FirstAudioSource != null && _myAudioSource != null)
 		{
 			if (!FirstAudioSource.isPlaying && !_myAudioSource.isPlaying)

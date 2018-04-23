@@ -200,6 +200,11 @@ namespace Logic {
                                     iAction = deathComp;
                                     break;
                                 case "SHOOTMAINGUNACTION":
+                                    Debug.Log("laserbeam");
+                                    LaserBeam laserComp = player.AddComponent<LaserBeam>();
+                                    laserComp.parent = player.transform;
+                                    iAction = laserComp;
+                                    break;
                                     default:
                                         Debug.LogError("Failed to handle action: " + action.actionType);
                                     actionCompleted(action);
