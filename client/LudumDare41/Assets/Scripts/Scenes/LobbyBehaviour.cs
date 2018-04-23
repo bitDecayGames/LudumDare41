@@ -9,9 +9,7 @@ using Utils;
 public class LobbyBehaviour : MonoBehaviour, IUpdateStreamSubscriber {
 
 	public Text title;
-	public Text waitingText;
-	public Transform lobbyMembers;
-	public LobbyMember lobbyMemberPrefab;
+	public Text playerTextArea;
 	public Button startBtn;
 
 	private bool isFirstPlayer = false;
@@ -20,29 +18,33 @@ public class LobbyBehaviour : MonoBehaviour, IUpdateStreamSubscriber {
 		if (State.lobby == null) throw new Exception("Lobby was null in the Lobby Scene... whoops...");
 
 		title.text = "Lobby: " + State.lobby.code;
-		
+		startBtn.interactable = false;
+
 		isFirstPlayer = State.lobby.players.FindIndex(p => p.name == State.myName) == 0;
 		
-		startBtn.gameObject.SetActive(isFirstPlayer);
-		waitingText.gameObject.SetActive(!isFirstPlayer);
+		if (isFirstPlayer)
+		{
+			SetStartButtonForOwner();
+		}
+		else
+		{
+			SetStartButtonForJoiner();
+		}
 		
 		RefreshLobbyMembers();
 
-		if (isFirstPlayer) startBtn.enabled = false;
 		var updater = GetComponent<UpdateStream>();
 		updater.Subscribe(this);
-		updater.StartListening(() => { startBtn.enabled = true; });
+		updater.StartListening(() => { startBtn.interactable = true;});
 	}
 
-	public void RefreshLobbyMembers() {
-		foreach (Transform child in lobbyMembers) {
-			Destroy(child.gameObject); // remove all lobby member prefabs
-		}
-		State.lobby.players.ForEach(p => {
-			var lobbyMember = Instantiate(lobbyMemberPrefab);
-			lobbyMember.transform.SetParent(lobbyMembers);
-			lobbyMember.name.text = p.name;
-		});
+	public void RefreshLobbyMembers()
+	{
+		playerTextArea.text = "";
+		State.lobby.players.ForEach(p =>
+			{
+				playerTextArea.text = playerTextArea.text + p.name + "\n";
+			});
 	}
 
 	public void StartGame() {
@@ -75,5 +77,16 @@ public class LobbyBehaviour : MonoBehaviour, IUpdateStreamSubscriber {
 			GetComponent<UpdateStream>().StopListening();
 			SceneManager.LoadScene("Game");
 		}
+	}
+
+	public void SetStartButtonForOwner()
+	{
+		startBtn.GetComponentInChildren<Text>().text = "Start";
+	}
+
+	public void SetStartButtonForJoiner()
+	{
+		startBtn.interactable = false;
+		startBtn.GetComponentInChildren<Text>().text = "Waiting for Player 1 to start the game...";
 	}
 }
