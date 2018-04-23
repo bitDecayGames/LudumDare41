@@ -17,6 +17,7 @@ const Action_spawn = "spawnAction"
 const Action_play_next_card = "playNextCardAction"
 const Action_dispose_next_card = "disposeNextCardAction"
 
+const Action_set_next_crate = "setNextCrateAction"
 const Action_drop_crate = "dropCrateAction"
 const Action_collect_crate = "collectCrateAction"
 const Action_victory = "victoryAction"
