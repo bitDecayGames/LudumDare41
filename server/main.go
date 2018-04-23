@@ -36,7 +36,10 @@ func main() {
 
 	log.Printf("Server started on %s", host)
 
-	http.ListenAndServe(host, r)
+	err := http.ListenAndServe(host, r)
+	if err != nil {
+		log.Panic(err)
+	}
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
