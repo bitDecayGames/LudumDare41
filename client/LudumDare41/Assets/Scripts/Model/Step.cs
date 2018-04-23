@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Model.Action.Abstract;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Model {
-    [System.Serializable]
+    [Serializable]
     public class Step {
-        public string id;
-        public List<IAction> actions;
+        public List<ActionData> actions;
     }
 }

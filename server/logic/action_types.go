@@ -13,3 +13,6 @@ const Action_shoot_main_gun = "shootMainGunAction"
 
 const Action_death = "deathAction"
 const Action_spawn = "spawnAction"
+
+const Action_play_next_card = "playNextCardAction"
+const Action_dispose_next_card = "disposeNextCardAction"

@@ -69,6 +69,13 @@ ModelImporter:
     2100006: Material_002__turret_green_psd
     2100008: Material_004__belly_green_psd
     2100010: Material_005
+    2100012: Material_006__treadAnimation_png
+    2100014: Material_006__treads_grey_png
+    2100016: Material_007__cannon_grey_png
+    2100018: Material_001__turret_grey_png
+    2100020: Material_009__belly_grey_png
+    2100022: Material_005__belly_grey_png
+    2100024: Material_004__belly_grey_png
     4300000: Cube_006
     7400000: Idle
     7400002: ArmatureAction
@@ -77,6 +84,11 @@ ModelImporter:
     9500000: //RootNode
     13700000: Cube_006
   externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_001__turret_grey_png
+    second: {fileID: 2100000, guid: 53eca88e465703c488df1e39f1d0e188, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -100,13 +112,43 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Material_004__belly_grey_png
+    second: {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Material_005
-    second: {fileID: 2100000, guid: 5d08953ce79791641ba13241de869d58, type: 2}
+    second: {fileID: 2100000, guid: 658f00a371c44614e9be3881a5e40ef8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_005__belly_grey_png
+    second: {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_006__treadAnimation_png
+    second: {fileID: 2100000, guid: 166bc7220eb1d23458307f4172d5b77c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Material_006__treads_green_psd
     second: {fileID: 2100000, guid: 5d08953ce79791641ba13241de869d58, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_006__treads_grey_png
+    second: {fileID: 2100000, guid: 5d08953ce79791641ba13241de869d58, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_007__cannon_grey_png
+    second: {fileID: 2100000, guid: 658f00a371c44614e9be3881a5e40ef8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_009__belly_grey_png
+    second: {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

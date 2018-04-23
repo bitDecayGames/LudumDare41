@@ -16,10 +16,7 @@ namespace Utils {
             t.start = GenerateGameState();
             t.end = GenerateGameState();
             t.end.tick = t.start.tick + 1;
-            // TODO: need to test steps
-            t.steps = new List<Step>();
-            // TODO: need to test inputs
-            t.inputs = new List<Card>();
+            t.diff = GenerateStepSequence();
             return t;
         }
 
@@ -71,5 +68,10 @@ namespace Utils {
             c.cardType = cardTypes[rnd.Next(cardTypes.Length)];
             return c;
         }
+
+        public static StepSequence GenerateStepSequence() {
+            return null;// TODO
+        }
+        
     }
 }

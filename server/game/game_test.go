@@ -92,27 +92,39 @@ func TestCardSubmission(t *testing.T) {
 }
 
 func TestRespawn(t *testing.T) {
-	p := state.Player{
-		Pos: utils.DeadVector,
+	p1 := state.Player{
+		Name: "p1",
+		Pos:  utils.DeadVector,
 	}
-	testState := state.GameState{
-		Players: []state.Player{p},
-		Board: gameboard.GameBoard{
-			Tiles: [][]gameboard.Tile{
-				{gameboard.Tile{TileType: gameboard.Empty_tile}},
-			},
+	p2 := state.Player{
+		Name: "p2",
+		Pos: utils.Vector{
+			X: 1,
+			Y: 1,
 		},
 	}
-
-	step, newState := respawnDeadPlayer(testState)
-	if !utils.VecEquals(newState.Players[0].Pos, utils.Vector{X: 0, Y: 0}) {
-		t.Fatal("Player not respawned as expected")
+	testState := state.GameState{
+		Players: []state.Player{p1, p2},
+		Board:   gameboard.LoadBoard("foo"),
 	}
 
-	if len(step.Actions) != 1 || step.Actions[0].GetActionType() != logic.Action_spawn {
+	step, newState := respawnDeadPlayers(testState)
+
+	newP1 := newState.Players[0]
+	newP2 := newState.Players[1]
+
+	if !utils.VecEquals(newP2.Pos, p2.Pos) {
+		t.Fatal("Player 2 not located as expected")
+	}
+
+	if utils.VecEquals(newP1.Pos, newP2.Pos) {
+		t.Fatal("Player 1 and Player 2 are in the same position")
+	}
+
+	if len(step.Actions) != 1 || step.Actions[0].ActionType != logic.Action_spawn {
 		t.Errorf("Spawn action didn't return, got: %+v", step)
 		t.Errorf("Length of actions: %v", len(step.Actions))
-		t.Fatalf("Action Type %v", step.Actions[0].GetActionType())
+		t.Fatalf("Action Type %v", step.Actions[0].ActionType)
 	}
 }
 

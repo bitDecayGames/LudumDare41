@@ -3,6 +3,7 @@ package game
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"sort"
 
 	"github.com/bitDecayGames/LudumDare41/server/utils"
@@ -13,7 +14,9 @@ import (
 	"github.com/bitDecayGames/LudumDare41/server/state"
 )
 
-const HAND_SIZE = 5
+const (
+	HAND_SIZE = 5
+)
 
 type Game struct {
 	Name string
@@ -22,7 +25,9 @@ type Game struct {
 	Board   gameboard.GameBoard
 	CardSet cards.CardSet
 
-	CurrentState  state.GameState
+	CurrentState state.GameState
+	LastSequence logic.StepSequence
+
 	PreviousState state.GameState
 
 	pendingSubmissions map[string][]cards.Card // Player submissions
@@ -161,7 +166,7 @@ func (g *Game) ExecuteTurn() {
 	}
 
 	// respawn any dead players.  This assumes zero downtime -- you die, you respawn instantly
-	step, intermState := respawnDeadPlayer(intermState)
+	step, intermState := respawnDeadPlayers(intermState)
 	stepSequence.Steps = append(stepSequence.Steps, step)
 
 	intermState = DealCards(intermState)
@@ -170,27 +175,49 @@ func (g *Game) ExecuteTurn() {
 	fmt.Println(stepSequence)
 	fmt.Println(fmt.Sprintf("Pending Seq %+v", g.pendingSequence))
 	intermState.Tick += 1
+	g.LastSequence = stepSequence
 	g.CurrentState = intermState
 }
 
-func respawnDeadPlayer(g state.GameState) (logic.Step, state.GameState) {
+func respawnDeadPlayers(g state.GameState) (logic.Step, state.GameState) {
 	step := logic.Step{}
-	for i, p := range g.Players {
-		if utils.VecEquals(p.Pos, utils.DeadVector) {
-			g.Players[i].Pos = getEmptyTile(g)
-			step.Actions = append(step.Actions, logic.GetSpawnAction(p.Name))
-		}
-	}
-	return step, g
-}
 
-func getEmptyTile(g state.GameState) utils.Vector {
-	for x, col := range g.Board.Tiles {
-		for y, t := range col {
-			if t.TileType == gameboard.Empty_tile {
-				return utils.Vector{X: x, Y: y}
+	// Get empty tiles
+	emptyTiles := g.Board.GetTilesByType(gameboard.Empty_tile)
+	// Randomly sort them
+	rand.Shuffle(len(emptyTiles), func(i, j int) {
+		emptyTiles[i], emptyTiles[j] = emptyTiles[j], emptyTiles[i]
+	})
+
+	// Flag tiles other players are on
+	for i, et := range emptyTiles {
+		for _, p := range g.Players {
+			if utils.VecEquals(et.Pos, p.Pos) {
+				et.TempOccupied = true
+				emptyTiles[i] = et
 			}
 		}
 	}
-	return utils.DeadVector
+
+	// Find dead players
+	for i, p := range g.Players {
+		if utils.VecEquals(p.Pos, utils.DeadVector) {
+			// Find tiles to place respawned players on.
+			// NOTE This could hit an unsolvable situation
+			for k, tile := range emptyTiles {
+				if !tile.TempOccupied {
+					log.Printf("Respawning player %s at %+v", p.Name, tile.Pos)
+					g.Players[i].Pos = tile.Pos
+					step.Actions = append(step.Actions, logic.GetAction(logic.Action_spawn, p.Name))
+
+					tile.TempOccupied = true
+					emptyTiles[k] = tile
+
+					break
+				}
+			}
+		}
+	}
+
+	return step, g
 }

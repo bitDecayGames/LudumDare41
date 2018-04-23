@@ -1,9 +1,12 @@
 package test_scripts
 
 import (
+	"encoding/json"
 	"fmt"
-	"math"
+	"log"
 	"testing"
+
+	"github.com/bitDecayGames/LudumDare41/server/logic"
 
 	"github.com/bitDecayGames/LudumDare41/server/cards"
 	"github.com/bitDecayGames/LudumDare41/server/gameboard"
@@ -23,7 +26,7 @@ func TestFullRun(t *testing.T) {
 	lobby.AddPlayer("Jake")
 
 	board := gameboard.LoadBoard("default")
-	cardSet := cards.LoadSet("default")
+	cardSet := cards.LoadSet(logic.CardSetMap["debug"])
 
 	gameServer := game.NewGameService()
 	g := gameServer.NewGame(lobby, board, cardSet)
@@ -31,6 +34,9 @@ func TestFullRun(t *testing.T) {
 	if len(g.Players) < 2 {
 		t.Fatal("Not all players are in game")
 	}
+
+	g.AggregateTurn()
+	g.ExecuteTurn()
 
 	for _, player := range g.CurrentState.Players {
 		fmt.Println(fmt.Sprintf("Player %v cards: %v", player.Name, player.Hand))
@@ -46,17 +52,12 @@ func TestFullRun(t *testing.T) {
 		}
 	}
 
-	turnCards := g.AggregateTurn()
-	fmt.Println(turnCards)
-	lastValue := math.MaxInt64
-	for _, card := range turnCards {
-		if card.Priority >= lastValue {
-			t.Fatal("Cards are not properly priority sorted")
-		}
-		lastValue = card.Priority
-	}
-
+	g.AggregateTurn()
 	g.ExecuteTurn()
+
+	bytes, err := json.Marshal(g.LastSequence)
+	log.Println(err)
+	fmt.Println(fmt.Sprintf("Dat Json: %v", string(bytes)))
 
 	for _, p := range g.CurrentState.Players {
 		if len(p.Hand) != 5 {

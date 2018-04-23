@@ -12,7 +12,7 @@ func shootMainGun(affectedPlayer *state.Player, stepSeq []Step, g state.GameStat
 	stepSeq = append(stepSeq,
 		Step{
 			Actions: []Action{
-				GetShootAction(affectedPlayer.Name),
+				GetAction(Action_shoot_main_gun, affectedPlayer.Name),
 			},
 		})
 	// if player, kill it. If wall, do nothing? (Maybe report what wall was hit?)
@@ -20,7 +20,7 @@ func shootMainGun(affectedPlayer *state.Player, stepSeq []Step, g state.GameStat
 		stepSeq = append(stepSeq,
 			Step{
 				Actions: []Action{
-					GetDeathAction(target.Name),
+					GetAction(Action_death, target.Name),
 				},
 			})
 		target.DiscardEntireHand()
@@ -49,46 +49,4 @@ func findFirstObstacleInDirection(player *state.Player, g state.GameState) (bool
 	}
 	// shouldn't get here. This means that we never found a player or a wall
 	return false, nil
-}
-
-func GetShootAction(ID string) Action {
-	return ShootMainGunsAction{PlayerID: ID, ActionID: GetNextActionId()}
-}
-
-type ShootMainGunsAction struct {
-	ActionID string
-	PlayerID string
-}
-
-func (smga ShootMainGunsAction) GetID() string {
-	return smga.ActionID
-}
-
-func (smga ShootMainGunsAction) GetActionType() string {
-	return Action_shoot_main_gun
-}
-
-func (smga ShootMainGunsAction) GetPlayerID() string {
-	return smga.PlayerID
-}
-
-func GetDeathAction(ID string) Action {
-	return DeathAction{PlayerID: ID, ActionID: GetNextActionId()}
-}
-
-type DeathAction struct {
-	ActionID string
-	PlayerID string
-}
-
-func (da DeathAction) GetID() string {
-	return da.ActionID
-}
-
-func (da DeathAction) GetActionType() string {
-	return Action_death
-}
-
-func (da DeathAction) GetPlayerID() string {
-	return da.PlayerID
 }

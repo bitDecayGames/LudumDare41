@@ -10,6 +10,15 @@ public class AnimateTank : MonoBehaviour
     {
         float OffsetX = Time.time * ScrollX;
         float OffsetY = Time.time * ScrollY;
-        GetComponent<Renderer>().material.mainTextureOffset = new Vector2(OffsetX, OffsetY);
+        var materials = GetComponent<Renderer>().materials;
+        foreach (Material m in materials)
+        {
+            Debug.Log("Material name: " + m.name);
+            if (m.name == "TreadAnimation (Instance)")
+            {
+                Debug.Log("Found the right material!");
+                m.mainTextureOffset = new Vector2(OffsetX, OffsetY);
+            }
+        }
     }
 }
