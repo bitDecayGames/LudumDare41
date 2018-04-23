@@ -4,22 +4,19 @@ using UnityEngine;
 
 public class Rotate : MonoBehaviour {
     public string rotateType;
-    private float endDegrees;
-    private float startingDegrees;
+    public float degrees;
 	// Use this for initialization
 	void Start () {
-        startingDegrees = transform.rotation.y;
-        endDegrees = startingDegrees - 45;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
         float rotation = Time.deltaTime;
-        float translation = Time.deltaTime * 10;
-        transform.Translate(0, 0, translation);
-        Debug.Log("MOVING");
-        if (duration <= 0)
+        degrees -= Time.deltaTime;
+        transform.Rotate(0, rotation, 0);
+        Debug.Log("Rotating");
+        if (degrees <= 0)
             Destroy(this);
     }
 }

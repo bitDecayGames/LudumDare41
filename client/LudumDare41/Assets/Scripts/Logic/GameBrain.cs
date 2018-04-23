@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Model;
-using Model.Action.Abstract;
 using Network;
 using Prefabs;
 using UnityEngine;
@@ -89,9 +88,9 @@ namespace Logic {
             GenerateTiles(turn.start.gameBoard.tiles);
             GeneratePlayers(turn.start.players);
             SetupCamera(turn.start.gameBoard.width);
-            players[0].AddComponent<Move>().duration = 0.25f;
+            players[0].AddComponent<Rotate>().degrees = 90;
             Debug.LogError("Components duration" + players[0].GetComponent<Move>().duration.ToString());
-            stepSequence = turn.steps;
+            
             // TODO: based on the turn steps, create sequences of actions
             // TODO: all of these methods will eventually need to become asynchronous to handle the animation delays
 
