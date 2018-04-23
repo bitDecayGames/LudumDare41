@@ -83,7 +83,7 @@ namespace Logic {
             //if (myPlayer == null) myPlayer = turn.end.players[0]; // DEBUGGING ONLY
             if (myPlayer != null) {
                 Debug.Log("Player: " + JsonUtility.ToJson(myPlayer, true));
-                hud.ShowHand(myPlayer.hand, 3, (selected) => {
+                hud.ShowHand(myPlayer.hand, 1, (selected) => {
                     onSelected(selected);
                     hud.LowerCards();
                 });
