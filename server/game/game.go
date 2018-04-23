@@ -130,6 +130,7 @@ func (g *Game) AggregateTurn() []cards.Card {
 		cardOrder := make([]cards.Card, 0)
 		for name, pendingCards := range g.pendingSubmissions {
 			if len(pendingCards) == 0 {
+				delete(g.pendingSubmissions, name)
 				continue
 			}
 			cardOrder = append(cardOrder, pendingCards[0])
