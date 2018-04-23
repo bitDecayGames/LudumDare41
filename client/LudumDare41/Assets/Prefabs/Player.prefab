@@ -245,6 +245,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4356143584805294}
   - component: {fileID: 137654851631753472}
+  - component: {fileID: 114681590991817254}
   m_Layer: 0
   m_Name: Cube.006
   m_TagString: Untagged
@@ -1218,6 +1219,19 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114681590991817254
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1383581130595252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad4f407371194343a3dbb237c671703a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScrollX: 0.03
+  ScrollY: 0
 --- !u!137 &137654851631753472
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -1238,6 +1252,7 @@ SkinnedMeshRenderer:
   - {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
   - {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
   - {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
+  - {fileID: 2100000, guid: 166bc7220eb1d23458307f4172d5b77c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1292,6 +1307,6 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 4044257382868996}
   m_AABB:
-    m_Center: {x: 0.00018598186, y: -0.0010801023, z: 0.0022139333}
-    m_Extent: {x: 0.0108173955, y: 0.013798102, z: 0.0069655543}
+    m_Center: {x: 0.00018598186, y: -0.0010067057, z: 0.0021868823}
+    m_Extent: {x: 0.0108173955, y: 0.013873924, z: 0.0069926055}
   m_DirtyAABB: 0
