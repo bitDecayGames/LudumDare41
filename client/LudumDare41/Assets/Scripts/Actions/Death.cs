@@ -8,7 +8,7 @@ public class Death : IActionScript
 	private float speed;
 
 	void Start () {
-		speed = 1 / duration;
+		speed = .33f / duration;
         
 	}
 	
