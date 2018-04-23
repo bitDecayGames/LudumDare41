@@ -8,7 +8,7 @@ public class SettingsBehaviour : MonoBehaviour {
 	public InputField hostNameInput;
 
 	void Start() {
-		hostNameInput.text = State.host.Replace("http://", "").Replace("https://", "");
+//		hostNameInput.text = State.host.Replace("http://", "").Replace("https://", "");
 	}
 	
 	public void SaveHostName() {
