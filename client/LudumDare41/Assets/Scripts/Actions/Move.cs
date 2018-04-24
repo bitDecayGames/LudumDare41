@@ -14,6 +14,7 @@ public class Move : IActionScript
     void Start () {
         speed = distance / duration;
         soundPlayer.playSound(SoundsManager.SFX.EngineRev);
+        GetComponentInChildren<AnimateTank>().enabled = true;
 
     }
 	
