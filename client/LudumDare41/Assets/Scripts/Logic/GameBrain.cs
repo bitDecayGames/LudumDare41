@@ -302,6 +302,21 @@ namespace Logic {
                 else if (p.facing.y > 0) yrot = 90;
                 else if (p.facing.y < 0) yrot = -90;
                 obj.transform.eulerAngles = new Vector3(0,yrot,0);
+                if(p.team == 1)
+                {
+                    Material BlueTreads = new Material(Shader.Find("BlueTreads"));
+                    Material BlueCannon = new Material(Shader.Find("BlueCannon"));
+                    Material BlueBelly = new Material(Shader.Find("BlueBelly"));
+                    Material BlueTurret = new Material(Shader.Find("BlueTurret"));
+                    obj.GetComponentInChildren<MeshRenderer>().materials[0] = BlueTreads;
+                    obj.GetComponentInChildren<MeshRenderer>().materials[1] = BlueCannon;
+                    obj.GetComponentInChildren<MeshRenderer>().materials[2] = BlueTurret;
+                    obj.GetComponentInChildren<MeshRenderer>().materials[3] = BlueTreads;
+                    obj.GetComponentInChildren<MeshRenderer>().materials[4] = BlueTreads;
+                    obj.GetComponentInChildren<MeshRenderer>().materials[5] = BlueTreads;
+
+                }
+                    
                 
             });
         }
