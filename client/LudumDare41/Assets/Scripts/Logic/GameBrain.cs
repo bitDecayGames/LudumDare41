@@ -61,6 +61,10 @@ namespace Logic {
             map = Instantiate(MapFactoryPrefab, transform);
             map.transform.localPosition = new Vector3(0, 0, 0);
             SoundPlayer = Instantiate(SoundPlayerPrefab);
+            var canvas = hud.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = camera;
+            
 //            SoundPlayer.playSoundLoop(SoundsManager.SFX.EngineIdleLoop);
 
 
