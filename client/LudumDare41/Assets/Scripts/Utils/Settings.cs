@@ -1,6 +1,6 @@
 ﻿namespace Utils {
     public class Settings
     {
-        public static float MusicVolume = .25f;
+        public static float MusicVolume = .45f;
     }
 }
