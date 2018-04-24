@@ -7,9 +7,10 @@ namespace Utils {
         public GameBrain brain;
         private PlayerData me;
 
-        private int verticalOffset = 30;
+        private int verticalOffset;
         
         void Start() {
+            verticalOffset = (int)(Screen.height / 10f);
             brain = FindObjectOfType<GameBrain>();
         }
         

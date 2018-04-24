@@ -35,7 +35,7 @@ namespace Logic {
         private Action<List<Card>> userCardsSubmittion;
         private int actionsThisStep;
         private int stepsIndex;
-        private bool turnOffTiles = false;
+        private bool turnOffTiles = true;
 
         public bool isStepsComplete {
             get { return (stepsIndex >= currentTurn.diff.steps.Count); }
@@ -83,19 +83,20 @@ namespace Logic {
         }
 
         void Update() {
-            if (Input.GetKeyDown(KeyCode.Space) ||
-                Input.GetKeyDown(KeyCode.KeypadEnter) ||
-                Input.GetKeyDown(KeyCode.Return) ||
-                Input.GetKeyDown(KeyCode.I))
-            {
-                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
-            }
-
-            if (Input.GetKeyDown(KeyCode.T)) {
-                turnOffTiles = !turnOffTiles;
-                if (turnOffTiles) DestroyTiles();
-                else if (currentTurn != null) GenerateTiles(currentTurn.start.gameBoard.tiles);
-            }
+            // DEBUG
+//            if (Input.GetKeyDown(KeyCode.Space) ||
+//                Input.GetKeyDown(KeyCode.KeypadEnter) ||
+//                Input.GetKeyDown(KeyCode.Return) ||
+//                Input.GetKeyDown(KeyCode.I))
+//            {
+//                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
+//            }
+//
+//            if (Input.GetKeyDown(KeyCode.T)) {
+//                turnOffTiles = !turnOffTiles;
+//                if (turnOffTiles) DestroyTiles();
+//                else if (currentTurn != null) GenerateTiles(currentTurn.start.gameBoard.tiles);
+//            }
 
             if (isActionsComplete) stepCompleted();
         }
