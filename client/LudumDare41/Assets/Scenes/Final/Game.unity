@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465934, g: 0.49642956, b: 0.57482487, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -377,15 +377,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4816626898054142, guid: 3f3a070c21f2a42c5959bf7352c31279, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 5.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4816626898054142, guid: 3f3a070c21f2a42c5959bf7352c31279, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4816626898054142, guid: 3f3a070c21f2a42c5959bf7352c31279, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 5.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4816626898054142, guid: 3f3a070c21f2a42c5959bf7352c31279, type: 2}
       propertyPath: m_LocalRotation.x
@@ -407,12 +407,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
-        type: 2}
-      propertyPath: SoundPlayerObj
-      value: 
-      objectReference: {fileID: 1952846902498496, guid: a841f66a7a0c1cb4dac71418457c4c4a,
-        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f3a070c21f2a42c5959bf7352c31279, type: 2}
   m_IsPrefabParent: 0

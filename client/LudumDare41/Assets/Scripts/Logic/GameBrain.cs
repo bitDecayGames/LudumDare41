@@ -14,7 +14,7 @@ namespace Logic {
 
         public GameObject TilePrefab;
         public GameObject PlayerPrefab;
-        public PlayerHud PlayerHudPrefab;
+        public GameObject PlayerHudPrefab;
         public Hud HudPrefab;
         public EventSystem HudEventSystemPrefab;
         public List<TileMaterial> tileMaterials;
@@ -36,6 +36,7 @@ namespace Logic {
         private int actionsThisStep;
         private int stepsIndex;
         private bool turnOffTiles = true;
+        private GameObject playerHud;
 
         public bool isStepsComplete {
             get { return (stepsIndex >= currentTurn.diff.steps.Count); }
@@ -56,7 +57,6 @@ namespace Logic {
         private void Start() {
             camera = Camera.main;
             hud = Instantiate(HudPrefab);
-            Instantiate(PlayerHudPrefab, hud.transform).brain = this;
             Instantiate(HudEventSystemPrefab);
             map = Instantiate(MapFactoryPrefab, transform);
             map.transform.localPosition = new Vector3(0, 0, 0);
@@ -306,11 +306,20 @@ namespace Logic {
                 else if (p.facing.y > 0) yrot = 90;
                 else if (p.facing.y < 0) yrot = -90;
                 obj.transform.eulerAngles = new Vector3(0,yrot,0);
+
+                if (p.name == State.myName) {
+                    playerHud = Instantiate(PlayerHudPrefab, obj.transform);
+                    playerHud.transform.localPosition = new Vector3(0, 2, 0);
+                }
                 
             });
         }
 
         private void DestroyPlayers() {
+            if (playerHud != null) {
+                Destroy(playerHud);
+                playerHud = null;
+            }
             players.ForEach(Destroy);
             players.Clear();
         }

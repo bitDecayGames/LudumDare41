@@ -1,4 +1,5 @@
 ﻿using Logic;
+using Model;
 using UnityEngine;
 
 namespace Utils {
@@ -10,7 +11,7 @@ namespace Utils {
         private int verticalOffset;
         
         void Start() {
-            verticalOffset = (int)(Screen.height / 10f);
+            verticalOffset = (int)(Screen.height / 15f);
             brain = FindObjectOfType<GameBrain>();
         }
         
@@ -24,7 +25,12 @@ namespace Utils {
                     var playerPos = me.transform.position;
                     var newScreenPos = Camera.main.WorldToScreenPoint(playerPos);
                     newScreenPos.y += verticalOffset;
-                    transform.position = newScreenPos;
+//
+                    newScreenPos.x -= Screen.width / 2f;
+                    newScreenPos.y -= Screen.height / 2f;
+                    Debug.Log("Arrow from world:" + playerPos + " to scren:" + newScreenPos);
+                    transform.localPosition = newScreenPos;
+//                    transform.localPosition = me.transform.position + new Vector3(0, 1, 0);
                 }
             }
         }

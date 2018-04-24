@@ -54,7 +54,7 @@ MonoBehaviour:
   TilePrefab: {fileID: 1442746585869998, guid: 09e72db968c040a40b1a46d13d557a3a, type: 2}
   PlayerPrefab: {fileID: 1595927985036772, guid: 829d7cefe4bdd284b8d8a0cc95ecedb3,
     type: 2}
-  PlayerHudPrefab: {fileID: 114914318975029922, guid: b5512700c6c2c4911ae5ac3db814d779,
+  PlayerHudPrefab: {fileID: 1454098333830102, guid: 8711e6b83b770438fa94ac3a23626e58,
     type: 2}
   HudPrefab: {fileID: 114567668191537996, guid: 6876d46eb61345c479c4b423903ababf,
     type: 2}
