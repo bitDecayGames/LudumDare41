@@ -22,7 +22,6 @@ public class SoundsManager : MonoBehaviour {
     void Awake () {
         audioSource = GetComponent<AudioSource>();
         Debug.Log("Audio source: " + audioSource);
-        audioSource.volume = .25f;
     }
 	
 	// Update is called once per frame
