@@ -4,6 +4,7 @@ using System.Linq;
 using Model;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils;
 
 namespace Prefabs {
     public class Hud : MonoBehaviour {
@@ -13,39 +14,37 @@ namespace Prefabs {
         private int numberToSelect = -1;
         private Action<List<Card>> onSelectionComplete;
 
-        // HACK: this is probably bad...
-        private static float DEFAULT = -20f;
-        private static float LOWERED = -200f;
-        private static float RAISED = 10f;
-        private static float MAX_DIFF = 50f;
-
         private static float ANIM_SPEED = 0.1f;
-        private float bottomOfScreenY = 0;
-        
+
         void Start() {
-            bottomOfScreenY = -Screen.height / 2f;
-            
             var i = 0;
             Cards.ForEach(c => {
                 var index = i;
                 c.button.onClick.AddListener(() => {
                     SelectCard(index);
                 });
-                c.desiredHeight = LOWERED;
-                var pos = c.transform.localPosition;
-                pos.y = bottomOfScreenY + c.desiredHeight;
-                c.transform.localPosition = pos;
+                c.originalHeight = c.button.transform.localPosition.y;
                 i++;
             });
             LowerCards();
         }
 
         void Update() {
-            Cards.ForEach(c => {
-                var pos = c.transform.localPosition;
-                pos.y = pos.y + (bottomOfScreenY + c.desiredHeight - pos.y) * ANIM_SPEED;
-                c.transform.localPosition = pos;
-            });
+//            Cards.ForEach(c => {
+//                var pos = c.transform.localPosition;
+//                pos.y = pos.y + (bottomOfScreenY + c.desiredHeight - pos.y) * ANIM_SPEED;
+//                c.transform.localPosition = pos;
+//            });
+            
+            if (Input.GetKeyDown(KeyCode.A)) {
+                var cards = new List<Card>();
+                for (int i = 0; i < 5; i++) cards.Add(TurnDebugger.GenerateCard());
+                ShowHand(cards, 3, (c)=> {
+                });
+            }
+            else if (Input.GetKeyDown(KeyCode.S)) {
+                LowerCards();
+            }
         }
         
         public void ShowHand(List<Card> inputs, int numberToSelect, Action<List<Card>> onSelectionComplete) {
@@ -64,8 +63,8 @@ namespace Prefabs {
                 card.priorityText.text = "" + data.priority;
                 card.debugText.text = data.cardType;
                 card.selected = false;
-                card.desiredHeight = DEFAULT;
                 card.button.enabled = true;
+                card.SetHeightToOriginal();
             }
             this.onSelectionComplete = onSelectionComplete;
         }
@@ -73,12 +72,16 @@ namespace Prefabs {
         public void SelectCard(int index) {
             var card = Cards[index];
             card.selected = !card.selected;
-            card.desiredHeight = DEFAULT;
-            if (card.selected) selected.Add(card);
-            else selected.Remove(card);
+            if (card.selected) {
+                selected.Add(card);
+                card.SetHeightToRaised();
+            }
+            else {
+                selected.Remove(card);
+                card.SetHeightToOriginal();
+            }
             for (int i = 0; i < selected.Count; i++) {
                 var sel = selected[i];
-                sel.desiredHeight = RAISED + (1f - ((float)i / selected.Count)) * MAX_DIFF;
             }
 
             if (selected != null && onSelectionComplete != null && selected.Count >= numberToSelect) {
@@ -89,7 +92,7 @@ namespace Prefabs {
         public void LowerCards() {
             selected.Clear();
             Cards.ForEach(c => {
-                c.desiredHeight = LOWERED;
+                c.SetHeightToLowered();
                 c.selected = false;
                 c.card = null;
                 c.priorityText.text = "";
