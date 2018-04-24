@@ -15,7 +15,7 @@ public abstract class IActionScript : MonoBehaviour
     {
         if(onComplete != null)
         {
-            soundPlayer.playSoundLoop(SoundsManager.SFX.EngineIdleLoop);
+//            soundPlayer.playSoundLoop(SoundsManager.SFX.EngineIdleLoop);
             tankAnimation.enabled = false;
             onComplete.Invoke(actionData);
 
