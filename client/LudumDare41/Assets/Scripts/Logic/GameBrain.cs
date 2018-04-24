@@ -72,8 +72,8 @@ namespace Logic {
         private void SetupCamera(int boardWidth) {
             var pos = camera.transform.position;
             pos.x = transform.position.x + boardWidth / 2f - 0.5f;
-            pos.y = transform.position.y + 7;
-            pos.z = transform.position.z - 4;
+            pos.y = transform.position.y + 8;
+            pos.z = transform.position.z - 4.5f;
             camera.transform.position = pos;
             var canvas = hud.GetComponent<Canvas>();
             canvas.worldCamera = camera;
@@ -209,9 +209,11 @@ namespace Logic {
                                     iAction = deathComp;
                                     break;
                                 case "SHOOTMAINGUNACTION":
-                                    Shoot shootComp = player.AddComponent<Shoot>();
-                                    shootComp.soundPlayer = SoundPlayer;
-                                    iAction = shootComp;
+                                    Debug.Log("laserbeam");
+                                    LaserBeam laserComp = player.AddComponent<LaserBeam>();
+                                    laserComp.soundPlayer = SoundPlayer;
+                                    laserComp.parent = player.transform;
+                                    iAction = laserComp;
                                     break;
                                 default:
                                     Debug.LogError("Failed to handle action: " + action.actionType);

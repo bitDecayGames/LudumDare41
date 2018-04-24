@@ -8,8 +8,8 @@ const (
 	Empty_tile = "empty"
 	Wall_tile  = "wall"
 
-	width  = 5
-	height = 6
+	width  = 10
+	height = 10
 )
 
 type Tile struct {
@@ -25,6 +25,19 @@ type GameBoard struct {
 	FlattenedTiles []Tile `json:"tiles"`
 	Width          int    `json:"width"`
 	Height         int    `json:"height"`
+}
+
+var gameMap = [][]int{
+	[]int{0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	[]int{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+	[]int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+	[]int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	[]int{0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
 }
 
 func (gb GameBoard) GetTilesByType(tileType string) []Tile {
@@ -52,13 +65,16 @@ func LoadBoard(name string) GameBoard {
 	}
 
 	// Generate tiles
-	for x := 0; x < width; x++ {
+	for col := 0; col < len(gameMap); col++ {
 		board.Tiles = append(board.Tiles, []Tile{})
-		for y := 0; y < height; y++ {
+		for row := 0; row < len(gameMap[col]); row++ {
 			tile := Tile{
 				TileType: Empty_tile,
 			}
-			board.Tiles[x] = append(board.Tiles[x], tile)
+			if gameMap[col][row] == 1 {
+				tile.TileType = Wall_tile
+			}
+			board.Tiles[col] = append(board.Tiles[col], tile)
 		}
 	}
 
