@@ -222,6 +222,7 @@ namespace Logic {
                             if (iAction != null) {
                                 iAction.actionData = action;
                                 iAction.onComplete = actionCompleted;
+                                iAction.tankAnimation = player.GetComponentInChildren<AnimateTank>();
                             }
                         }
                     }
