@@ -18,6 +18,7 @@ namespace Logic {
         public Hud HudPrefab;
         public EventSystem HudEventSystemPrefab;
         public List<TileMaterial> tileMaterials;
+        public List<Material> tankMaterials;
         public SoundsManager SoundPlayerPrefab;
         public MapFactory MapFactoryPrefab;
 
@@ -88,19 +89,19 @@ namespace Logic {
 
         void Update() {
             // DEBUG
-//            if (Input.GetKeyDown(KeyCode.Space) ||
-//                Input.GetKeyDown(KeyCode.KeypadEnter) ||
-//                Input.GetKeyDown(KeyCode.Return) ||
-//                Input.GetKeyDown(KeyCode.I))
-//            {
-//                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
-//            }
-//
-//            if (Input.GetKeyDown(KeyCode.T)) {
-//                turnOffTiles = !turnOffTiles;
-//                if (turnOffTiles) DestroyTiles();
-//                else if (currentTurn != null) GenerateTiles(currentTurn.start.gameBoard.tiles);
-//            }
+            if (Input.GetKeyDown(KeyCode.Space) ||
+                Input.GetKeyDown(KeyCode.KeypadEnter) ||
+                Input.GetKeyDown(KeyCode.Return) ||
+                Input.GetKeyDown(KeyCode.I))
+            {
+                ApplyTurn(TurnDebugger.GenerateTurn(), (s) => { s.ForEach(c => Debug.Log("C:" + c.id)); });
+            }
+            //
+            //            if (Input.GetKeyDown(KeyCode.T)) {
+            //                turnOffTiles = !turnOffTiles;
+            //                if (turnOffTiles) DestroyTiles();
+            //                else if (currentTurn != null) GenerateTiles(currentTurn.start.gameBoard.tiles);
+            //            }
 
             if (isActionsComplete) stepCompleted();
         }
@@ -308,16 +309,27 @@ namespace Logic {
                 obj.transform.eulerAngles = new Vector3(0,yrot,0);
                 if(p.team == 1)
                 {
-                    Material BlueTreads = new Material(Shader.Find("BlueTreads"));
-                    Material BlueCannon = new Material(Shader.Find("BlueCannon"));
-                    Material BlueBelly = new Material(Shader.Find("BlueBelly"));
-                    Material BlueTurret = new Material(Shader.Find("BlueTurret"));
-                    obj.GetComponentInChildren<MeshRenderer>().materials[0] = BlueTreads;
-                    obj.GetComponentInChildren<MeshRenderer>().materials[1] = BlueCannon;
-                    obj.GetComponentInChildren<MeshRenderer>().materials[2] = BlueTurret;
-                    obj.GetComponentInChildren<MeshRenderer>().materials[3] = BlueTreads;
-                    obj.GetComponentInChildren<MeshRenderer>().materials[4] = BlueTreads;
-                    obj.GetComponentInChildren<MeshRenderer>().materials[5] = BlueTreads;
+                    //Material BlueTreads = new Material(Shader.Find("Materials/TankTextures/BlueTreads"));
+                    //Material BlueCannon = new Material(Shader.Find("Materials/TankTextures/BlueCannon"));
+                    //Material BlueBelly = new Material(Shader.Find("Materials/TankTextures/BlueBelly"));
+                    //Material BlueTurret = new Material(Shader.Find("Materials/TankTextures/BlueTurret"));
+                    List<Material> blueMats = new List<Material>();
+                    foreach(Material mat in tankMaterials)
+                    {
+                        if (mat.name.Contains("Blue"))
+                            blueMats.Add(mat);
+                    }
+                    //beely
+                    //cannoon
+                    //treads
+                    //turret
+                    SkinnedMeshRenderer meshRenderer = obj.GetComponentInChildren<SkinnedMeshRenderer>();
+                    meshRenderer.materials[0] = blueMats[2];
+                    meshRenderer.materials[1] = blueMats[1];
+                    meshRenderer.materials[2] = blueMats[3];
+                    meshRenderer.materials[3] = blueMats[0];
+                    meshRenderer.materials[4] = blueMats[0];
+                    meshRenderer.materials[5] = blueMats[0];
 
                 }
                     

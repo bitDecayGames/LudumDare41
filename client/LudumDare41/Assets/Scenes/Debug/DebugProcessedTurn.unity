@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4465934, g: 0.49642956, b: 0.57482487, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -201,6 +201,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.size
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 4816626898054142, guid: 3f3a070c21f2a42c5959bf7352c31279, type: 2}
       propertyPath: m_LocalPosition.x
       value: 5.5
@@ -233,6 +238,86 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ab393e98d18850e469664673504314e9, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91d86e5216580e94ba4fd1f0ef8dc60d, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f5911ae7bf2a084db363de43e96623f, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6997c75d2a395b8448fbc55e3485878a, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[4]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0cd277f4019e2a540bc35d1bcaf37e77, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[5]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4e5cf01f309da3d4c96463d9739a4729, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[6]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6328b1338f9bb4a48aecac123d455e1f, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[7]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6483635bae46cfe499939ef87f5bb973, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[8]
+      value: 
+      objectReference: {fileID: 2100000, guid: ef7898376462d2e418b7d61d54194233, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[9]
+      value: 
+      objectReference: {fileID: 2100000, guid: 658f00a371c44614e9be3881a5e40ef8, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[10]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5d08953ce79791641ba13241de869d58, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[11]
+      value: 
+      objectReference: {fileID: 2100000, guid: 53eca88e465703c488df1e39f1d0e188, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[12]
+      value: 
+      objectReference: {fileID: 2100000, guid: 981a438c20dbec04ca8b4f1f2b0c3ad2, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[13]
+      value: 
+      objectReference: {fileID: 2100000, guid: a0e7637acd77a294996d09e176d9b5f6, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[14]
+      value: 
+      objectReference: {fileID: 2100000, guid: a5f1d6a5a83612f45879db6a84e53498, type: 2}
+    - target: {fileID: 114366457775935452, guid: 3f3a070c21f2a42c5959bf7352c31279,
+        type: 2}
+      propertyPath: tankMaterials.Array.data[15]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9275222104ab2714c930a06a243294c7, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f3a070c21f2a42c5959bf7352c31279, type: 2}
   m_IsPrefabParent: 0

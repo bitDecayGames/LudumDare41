@@ -55,6 +55,7 @@ namespace Utils {
             p.facing.x = rnd.Next(3) - 1;
             p.facing.y = rnd.Next(3) - 1;
             p.hand = new List<Card>();
+            p.team = 1;
             for (int i = 0; i < 5; i++) p.hand.Add(GenerateCard());
             return p;
         }
