@@ -1,8 +1,10 @@
+mkdir -p artifacts/
+
 export GOOS=windows
-go build -o Tanxz-server.exe
+go build -o ./artifacts/Tanxz-server.exe
 
 export GOOS=linux
-go build -o Tanxz-server-linux
+go build -o ./artifacts/Tanxz-server-linux
 
 export GOOS=darwin
-go build -o Tanxz-server-osx
+go build -o ./artifacts/Tanxz-server-osx
